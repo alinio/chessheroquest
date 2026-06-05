@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+/*
+ * ChessHeroQuest design tokens — the SINGLE source of visual truth.
+ * Mirrors DESIGN.md §3 exactly. Tailwind v4 turns each --color-* into
+ * utilities (bg-gold, text-text-hi, border-hairline, …) AND emits the var
+ * into :root so it stays reusable for custom effects (IQ glow, gradients).
+ *
+ * THE BOARD RULE: the epic treatment lives in the wrapper (HUD/map/cards),
+ * never on the squares. Board tokens stay legible "parchment / warm stone".
+ */
+@theme {
+  /* Backgrounds — deep, rich, never flat black */
+  --color-abyss: #0f1015; /* app background (inked night) */
+  --color-surface: #191b24; /* cards, sheets */
+  --color-raised: #232636; /* raised panels */
+  --color-hairline: #2e3142; /* borders, dividers */
+
+  /* Premium accent — prestige, IQ, "conquered" */
+  --color-gold: #e3b23c;
+  --color-gold-bright: #f4ce6a; /* glow / highlight */
+  --color-gold-deep: #9a7a22; /* shadow side */
+
+  /* Archetype signature colors (DNA tribes) */
+  --color-warrior: #c0392b; /* crimson — Aggressive Warrior */
+  --color-strategist: #6c5ce7; /* royal violet — Strategist */
+  --color-defender: #1e9e6a; /* emerald — Defender */
+  --color-trickster: #17a2a2; /* teal — Trickster */
+
+  /* Mastery states — ALWAYS paired with an icon/shape (color-blind safety) */
+  --color-state-gold: #e3b23c; /* conquered / mastered */
+  --color-state-solid: #3fb371; /* solid */
+  --color-state-review: #e0922b; /* due for review */
+  --color-state-leak: #d1495b; /* leak / failed */
+
+  /* Text */
+  --color-text-hi: #f3eee2; /* parchment white */
+  --color-text-mid: #b9b6ac;
+  --color-text-low: #7c7e8c;
+
+  /* Board (legible "carved stone / parchment", NOT ornate) */
+  --color-sq-light: #e8dfc8; /* ivory parchment */
+  --color-sq-dark: #6e5b4a; /* warm stone */
+  --color-sq-hint: rgba(227, 178, 60, 0.35); /* gold move hint */
+
+  /* Radius — board stays sharp/square (board radius = 0 = default none) */
+  --radius-card: 16px;
+  --radius-chip: 999px;
+}
+
+/* Fonts reference runtime vars injected by next/font → must be `inline`. */
+@theme inline {
+  --font-display: var(--font-cinzel);
+  --font-body: var(--font-manrope);
+}
+
+body {
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+/* Accessibility guardrail (DESIGN.md §9): honor reduced-motion globally. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
