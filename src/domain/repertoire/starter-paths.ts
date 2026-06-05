@@ -36,8 +36,19 @@ export const CARO_KANN_CLASSICAL: CuratedPath = {
   moves: ["e4", "c6", "d4", "d5", "Nc3", "dxe4", "Nxe4", "Bf5", "Ng3", "Bg6"],
 };
 
+export const EVANS_GAMBIT: CuratedPath = {
+  id: "evans-gambit",
+  name: "Evans Gambit",
+  eco: "C51",
+  archetype: "warrior",
+  description:
+    "Sacrifice a pawn to rip open lines, seize the center, and launch a furious attack.",
+  moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Bc5", "b4", "Bxb4", "c3", "Ba5"],
+};
+
 export const STARTER_PATHS: CuratedPath[] = [
   ITALIAN_GIUOCO_PIANISSIMO,
   SCANDINAVIAN_MAINLINE,
   CARO_KANN_CLASSICAL,
+  EVANS_GAMBIT,
 ];

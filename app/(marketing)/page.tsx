@@ -1,8 +1,8 @@
 /**
- * Marketing index ("/"). Placeholder for Step 0 — exists to validate that the
- * DESIGN.md tokens + Cinzel/Manrope fonts are wired. The real landing (Stop Losing
- * In The Opening → Take The Free Chess DNA Test) comes later.
+ * Marketing index ("/"). The pain hook + the free DNA Test CTA (master-vision §8).
  */
+import Link from "next/link";
+
 export default function MarketingHome() {
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-6 px-6 text-center">
@@ -15,16 +15,13 @@ export default function MarketingHome() {
       <p className="font-body text-text-mid max-w-sm">
         Discover your Chess DNA. Train your weaknesses. Gain Elo faster.
       </p>
-      <div
-        className="font-display text-gold-bright text-6xl font-black"
-        style={{ textShadow: "0 0 24px rgba(227, 178, 60, 0.5)" }}
-        aria-label="Opening IQ placeholder"
+      <Link
+        href="/dna"
+        className="rounded-chip bg-gold text-abyss mt-2 min-h-[48px] px-8 text-base font-semibold shadow-lg"
+        style={{ display: "inline-flex", alignItems: "center" }}
       >
-        0
-      </div>
-      <p className="text-text-low text-xs">
-        Étape 0 — scaffolding. Board, Chess DNA Test & Opening IQ à venir.
-      </p>
+        Take The Free Chess DNA Test
+      </Link>
     </main>
   );
 }
