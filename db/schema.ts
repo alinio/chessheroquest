@@ -262,6 +262,16 @@ export const aiExplanationCache = pgTable("ai_explanation_cache", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+// Cached Lichess Opening Explorer responses — keyed by hash(fen + filter).
+// Positions are finite + shared → cached marginal cost → ~0; respects rate limits.
+export const lichessExplorerCache = pgTable("lichess_explorer_cache", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  cacheKey: varchar("cache_key", { length: 128 }).notNull().unique(),
+  fen: text("fen").notNull(),
+  response: jsonb("response").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 // LAW #7: every sensitive admin action is logged. The admin is a fortress.
 export const auditLogs = pgTable(
   "audit_logs",
