@@ -11,6 +11,7 @@
  */
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 import { fenAfter, expectedMoveAt } from "@/src/domain/repertoire/line";
+import { GENERATED_DNA_BANK } from "./generated-bank";
 import type { DnaQuestion } from "./types";
 
 /** Half-move depths probed per path — deeper = more archetype-characteristic. */
@@ -49,7 +50,12 @@ export function buildQuestionBank(): DnaQuestion[] {
   return questions;
 }
 
-export const DNA_QUESTION_BANK: DnaQuestion[] = buildQuestionBank();
+/**
+ * The active bank: real Lichess-sourced questions once generated (LAW #2),
+ * otherwise the provisional derived bank.
+ */
+export const DNA_QUESTION_BANK: DnaQuestion[] =
+  GENERATED_DNA_BANK.length > 0 ? GENERATED_DNA_BANK : buildQuestionBank();
 
 /** How many questions a single DNA Test run uses (target 20 on the prod bank). */
 export const DNA_TEST_LENGTH = Math.min(20, DNA_QUESTION_BANK.length);

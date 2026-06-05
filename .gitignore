@@ -34,6 +34,9 @@ yarn-error.log*
 .env*
 !.env.example
 
+# Stockfish WASM — reproduced from node_modules by postinstall (7 MB, not committed)
+/public/stockfish/
+
 # vercel
 .vercel
 

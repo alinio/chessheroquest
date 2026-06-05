@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Static assets — third-party / minified (e.g. the Stockfish WASM engine).
+    "public/**",
   ]),
 ]);
 
