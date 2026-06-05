@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Chess } from "chess.js";
 import type { PieceDropHandlerArgs } from "react-chessboard";
 import Link from "next/link";
 import { Board } from "@/src/ui/board/Board";
+import { useCountUp } from "@/src/ui/hooks/useCountUp";
 import { DnaCard, ARCHETYPE_META } from "./DnaCard";
 import {
   DNA_QUESTION_BANK,
@@ -21,28 +22,6 @@ const FEEDBACK_MS = 700;
 
 function sideToMove(fen: string): "white" | "black" {
   return fen.split(" ")[1] === "b" ? "black" : "white";
-}
-
-/** Animated count-up for the IQ reveal; honors prefers-reduced-motion. */
-function useCountUp(target: number, durationMs = 1200): number {
-  const [value, setValue] = useState(0);
-  useEffect(() => {
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    const total = reduce ? 0 : durationMs; // reduced-motion → jump in one frame
-    let raf = 0;
-    let start = 0;
-    const step = (t: number) => {
-      if (!start) start = t;
-      const p = total <= 0 ? 1 : Math.min(1, (t - start) / total);
-      setValue(Math.round(target * (1 - Math.pow(1 - p, 3)))); // easeOutCubic
-      if (p < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [target, durationMs]);
-  return value;
 }
 
 export function DnaTest() {
