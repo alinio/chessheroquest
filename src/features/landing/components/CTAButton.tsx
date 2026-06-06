@@ -18,6 +18,8 @@ interface CTAButtonProps {
   label: string;
   /** `gold` is the loud 3D primary; `ghost` is a quiet outline pill. */
   variant?: "gold" | "ghost";
+  /** Flat gold (symmetric shadow, no 3D bottom offset) — for the header bar. */
+  flat?: boolean;
   className?: string;
   href?: string;
 }
@@ -35,6 +37,7 @@ export function CTAButton({
   section,
   label,
   variant = "gold",
+  flat = false,
   className = "",
   href = CTA_HREF,
 }: CTAButtonProps) {
@@ -51,12 +54,18 @@ export function CTAButton({
     );
   }
 
+  // Flat = symmetric shadow (header bar → equal top/bottom). 3D = extruded
+  // offset shadow + press (hero / sections).
+  const fx = flat
+    ? "shadow-[0_3px_16px_-4px_rgba(0,0,0,0.7),0_0_26px_-8px_rgba(244,206,106,0.55)] transition-[box-shadow,filter] duration-150 hover:brightness-[1.07] hover:shadow-[0_3px_18px_-4px_rgba(0,0,0,0.7),0_0_38px_-6px_rgba(244,206,106,0.85)]"
+    : "shadow-[0_6px_0_0_var(--color-gold-deep),0_14px_28px_-8px_rgba(0,0,0,0.85),0_0_30px_-8px_rgba(227,178,60,0.6)] transition-[transform,box-shadow,filter] duration-150 ease-out hover:-translate-y-0.5 hover:brightness-[1.07] hover:shadow-[0_8px_0_0_var(--color-gold-deep),0_18px_36px_-8px_rgba(0,0,0,0.85),0_0_48px_-6px_rgba(244,206,106,0.8)] active:translate-y-1 active:shadow-[0_2px_0_0_var(--color-gold-deep),0_8px_16px_-8px_rgba(0,0,0,0.85)]";
+
   return (
     <Link
       href={href}
       data-cta-section={section}
       onClick={() => track(EVENT_BY_SECTION[section], { section })}
-      className={`group relative inline-flex min-h-[54px] items-center justify-center overflow-hidden rounded-chip border border-gold-bright/70 bg-gradient-to-b from-gold-bright via-gold to-gold-deep px-8 text-base font-bold uppercase tracking-[0.06em] text-abyss [text-shadow:0_1px_0_rgba(255,255,255,0.45),0_-1px_0_rgba(0,0,0,0.18)] shadow-[0_6px_0_0_var(--color-gold-deep),0_14px_28px_-8px_rgba(0,0,0,0.85),0_0_30px_-8px_rgba(227,178,60,0.6)] transition-[transform,box-shadow,filter] duration-150 ease-out hover:-translate-y-0.5 hover:brightness-[1.07] hover:shadow-[0_8px_0_0_var(--color-gold-deep),0_18px_36px_-8px_rgba(0,0,0,0.85),0_0_48px_-6px_rgba(244,206,106,0.8)] active:translate-y-1 active:shadow-[0_2px_0_0_var(--color-gold-deep),0_8px_16px_-8px_rgba(0,0,0,0.85)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-bright focus-visible:ring-offset-2 focus-visible:ring-offset-abyss ${className}`}
+      className={`group relative inline-flex min-h-[54px] items-center justify-center overflow-hidden rounded-chip border border-gold-bright/70 bg-gradient-to-b from-gold-bright via-gold to-gold-deep px-8 text-base font-bold uppercase tracking-[0.06em] text-abyss [text-shadow:0_1px_0_rgba(255,255,255,0.45),0_-1px_0_rgba(0,0,0,0.18)] ${fx} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-bright focus-visible:ring-offset-2 focus-visible:ring-offset-abyss ${className}`}
     >
       {/* glossy top highlight (the beveled face) */}
       <span

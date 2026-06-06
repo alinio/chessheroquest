@@ -51,6 +51,7 @@ export function StickyCTA() {
               section="sticky"
               label="Take the Test"
               variant="gold"
+              flat
               className="whitespace-nowrap px-4 text-xs"
             />
           </span>
@@ -59,6 +60,7 @@ export function StickyCTA() {
               section="sticky"
               label={CTA_LABEL}
               variant="gold"
+              flat
               className="whitespace-nowrap sm:px-5 sm:text-sm"
             />
           </span>

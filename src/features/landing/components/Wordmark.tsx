@@ -18,7 +18,7 @@ export function Wordmark({
   // so the scrolled sticky bar (logo + CTA) still fits a phone.
   // Header = medium (≈64px desktop, compact on mobile so logo + CTA fit a phone
   // bar). Footer (alone, centered) can be larger.
-  const h = size === "lg" ? "h-24 sm:h-32" : "h-10 sm:h-[52px]";
+  const h = size === "lg" ? "h-24 sm:h-32" : "h-12 sm:h-20";
 
   return (
     <Link
