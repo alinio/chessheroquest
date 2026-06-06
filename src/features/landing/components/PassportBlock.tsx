@@ -43,21 +43,19 @@ export function PassportBlock() {
   }, []);
 
   return (
-    <Panel
-      variant="ornate"
-      innerClassName="grid gap-6 p-5 md:grid-cols-2 md:items-center md:p-6"
-    >
-      <div className="relative mx-auto aspect-square w-full max-w-[16rem] overflow-hidden rounded-xl border border-gold/30">
-        <Image
-          src={LANDING_ASSETS.passportTome}
-          alt="The Opening Passport — an ornate tome with wax seals"
-          fill
-          sizes="(max-width: 768px) 80vw, 256px"
-          className="object-cover"
-        />
-      </div>
+    <Panel variant="ornate" innerClassName="p-5 md:p-6">
+      <div className="grid gap-6 md:grid-cols-2 md:items-center">
+        <div className="relative mx-auto aspect-square w-full max-w-[18rem] overflow-hidden rounded-xl border border-gold/30">
+          <Image
+            src={LANDING_ASSETS.passportTome}
+            alt="The Opening Passport — an ornate tome with wax seals"
+            fill
+            sizes="(max-width: 768px) 80vw, 288px"
+            className="object-cover"
+          />
+        </div>
 
-      <div ref={ref}>
+        <div ref={ref}>
         <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-gold">
           {PASSPORT.title}
         </p>
@@ -95,6 +93,7 @@ export function PassportBlock() {
             );
           })}
         </ul>
+        </div>
       </div>
     </Panel>
   );

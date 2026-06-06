@@ -38,12 +38,12 @@ export function Kingdoms() {
         </Reveal>
 
         {/* Part 2 — Boss section (guardian cinematic) */}
-        <Reveal className="mt-6">
+        <Reveal className="mt-24 sm:mt-32">
           <BossBlock />
         </Reveal>
 
         {/* Part 3 — Opening Passport (tome + seal stamps) */}
-        <Reveal className="mt-6">
+        <Reveal className="mt-20 sm:mt-28">
           <PassportBlock />
         </Reveal>
 

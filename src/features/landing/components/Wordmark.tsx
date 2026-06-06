@@ -14,7 +14,9 @@ export function Wordmark({
   size?: "md" | "lg";
   href?: string;
 }) {
-  const h = size === "lg" ? 50 : 38;
+  // Responsive height — clearly bigger than before; mobile kept a touch smaller
+  // so the scrolled sticky bar (logo + CTA) still fits a phone.
+  const h = size === "lg" ? "h-24 sm:h-32" : "h-12 sm:h-[56px]";
 
   return (
     <Link
@@ -28,8 +30,7 @@ export function Wordmark({
         width={1478}
         height={418}
         priority
-        style={{ height: h, width: "auto" }}
-        className="object-contain transition-transform duration-300 group-hover:-translate-y-0.5"
+        className={`${h} w-auto object-contain transition-transform duration-300 group-hover:-translate-y-0.5`}
       />
     </Link>
   );

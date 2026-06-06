@@ -47,7 +47,7 @@ export function Panel({
   const surface =
     variant === "glass"
       ? transparent
-        ? "bg-surface/40 backdrop-blur-md"
+        ? "bg-surface/25 backdrop-blur-[6px]"
         : "bg-surface/70 backdrop-blur-xl"
       : "bg-gradient-to-b from-raised/90 to-surface";
 

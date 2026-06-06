@@ -34,7 +34,7 @@ export function Hero({ headline }: { headline: HeadlineCopy }) {
             </p>
           </Reveal>
           <Reveal index={3}>
-            <div className="mt-8 inline-flex flex-col items-center gap-3 md:items-start">
+            <div className="mt-8 inline-flex flex-col items-center gap-3">
               <CTAButton section="hero" label={HERO.ctaLabel} />
               <Microcopy items={["Free", "no signup to begin", "~2 minutes"]} />
             </div>
