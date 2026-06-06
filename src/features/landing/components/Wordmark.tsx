@@ -16,7 +16,9 @@ export function Wordmark({
 }) {
   // Responsive height — clearly bigger than before; mobile kept a touch smaller
   // so the scrolled sticky bar (logo + CTA) still fits a phone.
-  const h = size === "lg" ? "h-24 sm:h-32" : "h-12 sm:h-[56px]";
+  // Desktop: header matches the footer (h-32). Mobile: header stays small so the
+  // logo + CTA fit a phone bar; the footer (alone, centered) can be larger.
+  const h = size === "lg" ? "h-24 sm:h-32" : "h-11 sm:h-32";
 
   return (
     <Link

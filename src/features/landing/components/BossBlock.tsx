@@ -6,7 +6,6 @@ import { LANDING_ASSETS } from "../assets";
 import { BOSS } from "../copy";
 import { useIsClient, useReducedMotion } from "../hooks";
 import { Panel } from "./Panel";
-import { CTAButton } from "./CTAButton";
 
 /**
  * Boss section (Round 2 boss fix) — a single centered column with the guardian
@@ -37,10 +36,6 @@ export function BossBlock() {
           <BossVideo />
         </div>
       </Panel>
-
-      <div className="mt-8">
-        <CTAButton section="kingdoms" label={BOSS.ctaLabel} />
-      </div>
     </div>
   );
 }

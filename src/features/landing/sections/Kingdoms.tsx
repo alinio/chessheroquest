@@ -1,7 +1,6 @@
 import { WorldMapPreview } from "../components/WorldMapPreview";
 import { BossBlock } from "../components/BossBlock";
 import { PassportBlock } from "../components/PassportBlock";
-import { CTAButton } from "../components/CTAButton";
 import { OrnamentalDivider } from "../components/OrnamentalDivider";
 import { Reveal } from "../components/Reveal";
 import { KINGDOMS } from "../copy";
@@ -45,10 +44,6 @@ export function Kingdoms() {
         {/* Part 3 — Opening Passport (tome + seal stamps) */}
         <Reveal className="mt-20 sm:mt-28">
           <PassportBlock />
-        </Reveal>
-
-        <Reveal className="mt-12 flex justify-center">
-          <CTAButton section="kingdoms" label={KINGDOMS.ctaLabel} />
         </Reveal>
       </div>
     </section>
