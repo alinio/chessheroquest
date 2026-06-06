@@ -46,9 +46,14 @@ export function Hero({ headline }: { headline: HeadlineCopy }) {
           </Reveal>
         </div>
 
-        {/* DNA Card centerpiece */}
+        {/* DNA Card centerpiece — glass so the cinematic shows through, floating
+            with a pulsing gold halo, pushed down on desktop so the crown breathes. */}
         <Reveal index={2} className="flex justify-center md:justify-end">
-          <DNACard data={EXAMPLE_DNA} />
+          <div className="animate-[chq-float_6s_ease-in-out_infinite] [will-change:transform] md:mt-16">
+            <div className="rounded-card animate-[chq-card-glow_4.5s_ease-in-out_infinite]">
+              <DNACard data={EXAMPLE_DNA} />
+            </div>
+          </div>
         </Reveal>
       </div>
     </section>

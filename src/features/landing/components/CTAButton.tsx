@@ -16,7 +16,7 @@ const EVENT_BY_SECTION: Record<CtaSection, LandingEvent> = {
 interface CTAButtonProps {
   section: CtaSection;
   label: string;
-  /** Visual weight. `gold` is the loud primary; `ghost` is the sticky-bar pill. */
+  /** `gold` is the loud 3D primary; `ghost` is a quiet outline pill. */
   variant?: "gold" | "ghost";
   className?: string;
   href?: string;
@@ -24,8 +24,12 @@ interface CTAButtonProps {
 
 /**
  * The single conversion action (kickoff §1: "spectacle serves the CTA").
- * Always ≥44px tall (mobile thumb target, LAW #4) and always fires its analytics
- * event with full source context before navigating to the DNA Test.
+ *
+ * The `gold` variant is a fantasy/MMO-style 3D button: an extruded gold face
+ * (solid offset shadow = the button's "thickness"), a glossy top highlight, a
+ * periodic shine sweep, hover-lift + glow, and a real press-down on `:active`.
+ * Always ≥44px (thumb target, LAW #4) and fires its analytics event before
+ * navigating. All motion sits behind `prefers-reduced-motion` (globals.css).
  */
 export function CTAButton({
   section,
@@ -34,22 +38,39 @@ export function CTAButton({
   className = "",
   href = CTA_HREF,
 }: CTAButtonProps) {
-  const base =
-    "inline-flex min-h-[52px] items-center justify-center rounded-chip px-8 text-center text-base font-semibold tracking-wide transition-transform duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-bright focus-visible:ring-offset-2 focus-visible:ring-offset-abyss";
-
-  const skin =
-    variant === "gold"
-      ? "bg-gold text-abyss shadow-[0_10px_40px_-8px_rgba(227,178,60,0.55)] hover:bg-gold-bright"
-      : "border border-gold/60 bg-abyss/70 text-gold backdrop-blur hover:border-gold hover:text-gold-bright";
+  if (variant === "ghost") {
+    return (
+      <Link
+        href={href}
+        data-cta-section={section}
+        onClick={() => track(EVENT_BY_SECTION[section], { section })}
+        className={`inline-flex min-h-[48px] items-center justify-center rounded-chip border border-gold/60 bg-abyss/70 px-7 text-base font-semibold tracking-wide text-gold backdrop-blur transition-colors duration-150 hover:border-gold hover:text-gold-bright focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-bright focus-visible:ring-offset-2 focus-visible:ring-offset-abyss ${className}`}
+      >
+        {label}
+      </Link>
+    );
+  }
 
   return (
     <Link
       href={href}
       data-cta-section={section}
       onClick={() => track(EVENT_BY_SECTION[section], { section })}
-      className={`${base} ${skin} ${className}`}
+      className={`group relative inline-flex min-h-[54px] items-center justify-center overflow-hidden rounded-chip border border-gold-bright/70 bg-gradient-to-b from-gold-bright via-gold to-gold-deep px-8 text-base font-bold uppercase tracking-[0.06em] text-abyss [text-shadow:0_1px_0_rgba(255,255,255,0.45),0_-1px_0_rgba(0,0,0,0.18)] shadow-[0_6px_0_0_var(--color-gold-deep),0_14px_28px_-8px_rgba(0,0,0,0.85),0_0_30px_-8px_rgba(227,178,60,0.6)] transition-[transform,box-shadow,filter] duration-150 ease-out hover:-translate-y-0.5 hover:brightness-[1.07] hover:shadow-[0_8px_0_0_var(--color-gold-deep),0_18px_36px_-8px_rgba(0,0,0,0.85),0_0_48px_-6px_rgba(244,206,106,0.8)] active:translate-y-1 active:shadow-[0_2px_0_0_var(--color-gold-deep),0_8px_16px_-8px_rgba(0,0,0,0.85)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-bright focus-visible:ring-offset-2 focus-visible:ring-offset-abyss ${className}`}
     >
-      {label}
+      {/* glossy top highlight (the beveled face) */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-chip bg-gradient-to-b from-white/40 to-transparent"
+      />
+      {/* periodic shine sweep */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 overflow-hidden rounded-chip"
+      >
+        <span className="absolute -inset-y-2 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/55 to-transparent animate-[chq-btn-shine_4.5s_ease-in-out_infinite]" />
+      </span>
+      <span className="relative">{label}</span>
     </Link>
   );
 }

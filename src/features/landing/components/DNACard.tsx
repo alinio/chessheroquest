@@ -30,7 +30,7 @@ export function DNACard({
 
   return (
     <article
-      className={`relative w-full max-w-sm overflow-hidden rounded-card border border-gold/40 bg-surface/95 p-6 shadow-2xl backdrop-blur-md ${className}`}
+      className={`relative w-full max-w-sm overflow-hidden rounded-card border border-gold/40 bg-surface/70 p-6 shadow-2xl backdrop-blur-xl ${className}`}
       style={{ boxShadow: "0 28px 70px -16px rgba(0,0,0,0.8)" }}
     >
       {/* archetype color wash at the top edge */}
