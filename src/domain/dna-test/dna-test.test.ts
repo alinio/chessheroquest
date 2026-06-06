@@ -124,7 +124,7 @@ describe("adaptive engine", () => {
     expect(selectNextPosition(DNA_TEST_BANK, used, START_DIFFICULTY, counts)!.id).toBe(first.id);
     // walk the whole bank without repeats
     const seen = new Set<string>();
-    let target = START_DIFFICULTY;
+    const target = START_DIFFICULTY;
     const fc: Record<string, number> = {};
     for (let i = 0; i < DNA_TEST_BANK.length; i++) {
       const pick = selectNextPosition(DNA_TEST_BANK, seen, target, fc) as TestPosition;
@@ -134,6 +134,5 @@ describe("adaptive engine", () => {
     }
     expect(seen.size).toBe(DNA_TEST_BANK.length);
     expect(selectNextPosition(DNA_TEST_BANK, seen, target, fc)).toBeNull();
-    void target;
   });
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
 import { GradientDefs, LogoMark, ProgressBar } from "@/src/ui/design-system/icons";
@@ -13,22 +13,31 @@ import { useDnaTest } from "./useDnaTest";
 
 const SELECT_MS = 120; // gold-fill confirmation before auto-advance (wireframe §1)
 
+const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
+
+// Subscribe to external state the idiomatic way — no setState-in-effect.
 function useReducedMotion() {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReduced(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-  return reduced;
+  return useSyncExternalStore(
+    (cb) => {
+      const mq = window.matchMedia(REDUCED_QUERY);
+      mq.addEventListener("change", cb);
+      return () => mq.removeEventListener("change", cb);
+    },
+    () => window.matchMedia(REDUCED_QUERY).matches,
+    () => false,
+  );
 }
 
-const fmt = (ms: number) => {
-  const s = Math.floor(ms / 1000);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
-};
+// Hydration gate: false on the server, true once mounted on the client.
+function useHydrated() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+}
+
+const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
 const eyebrow = { fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--chq-text-muted)" } as const;
 
@@ -71,22 +80,19 @@ function TestRunner({
   onAnswer: (chosen: number | null, latencyMs?: number) => void;
 }) {
   const [selected, setSelected] = useState<number | "skip" | null>(null);
-  const startRef = useRef(0);
-  const [elapsed, setElapsed] = useState(0);
+  const [elapsedSec, setElapsedSec] = useState(0);
 
-  // Mounts per position (parent keys on position.id) → timer resets each question.
+  // Mounts per position (parent keys on position.id) → counts up 1s/tick. Subtle,
+  // informational; no impure time reads (purity-clean).
   useEffect(() => {
-    startRef.current = performance.now();
-    setElapsed(0);
-    const id = window.setInterval(() => setElapsed(performance.now() - startRef.current), 1000);
+    const id = window.setInterval(() => setElapsedSec((s) => s + 1), 1000);
     return () => window.clearInterval(id);
   }, []);
 
   const commit = (chosen: number | null, key: number | "skip") => {
     if (selected !== null) return; // one answer per position
     setSelected(key);
-    const latency = Math.round(performance.now() - startRef.current);
-    window.setTimeout(() => onAnswer(chosen, latency), reduced ? 0 : SELECT_MS);
+    window.setTimeout(() => onAnswer(chosen), reduced ? 0 : SELECT_MS);
   };
 
   return (
@@ -95,7 +101,7 @@ function TestRunner({
         <span style={{ ...eyebrow, color: "var(--chq-text-2)" }}>
           Position {index + 1} / {TEST_LENGTH}
         </span>
-        <span style={{ fontSize: 12, color: "var(--chq-text-muted)", fontVariantNumeric: "tabular-nums" }}>⏱ {fmt(elapsed)}</span>
+        <span style={{ fontSize: 12, color: "var(--chq-text-muted)", fontVariantNumeric: "tabular-nums" }}>⏱ {fmt(elapsedSec)}</span>
       </div>
 
       <ProgressBar value={index / TEST_LENGTH} height={4} ariaLabel={`Position ${index + 1} of ${TEST_LENGTH}`} />
@@ -148,8 +154,7 @@ function TestRunner({
 }
 
 export function DnaTestScreen() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = useHydrated();
   const reduced = useReducedMotion();
 
   const started = useDnaTest((s) => s.started);
