@@ -75,6 +75,7 @@ export const questStatusEnum = pgEnum("quest_status", [
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: varchar("email", { length: 320 }).notNull().unique(),
+  passwordHash: varchar("password_hash", { length: 255 }),
   displayName: varchar("display_name", { length: 64 }),
   archetype: archetypeEnum("archetype"), // set by the DNA Test
 
