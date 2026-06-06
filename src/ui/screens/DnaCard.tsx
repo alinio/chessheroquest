@@ -58,9 +58,7 @@ export function DnaCard({ result }: { result: DnaResult }) {
         >
           {result.initialIq}
         </p>
-        <p className="text-text-mid mt-2 text-sm">
-          {result.rank} · Top {Math.max(1, 100 - result.percentile)}%
-        </p>
+        <p className="text-text-mid mt-2 text-sm">{result.rank}</p>
       </div>
 
       {/* breakdown */}

@@ -15,8 +15,12 @@ export const IQ_MAX = 1000;
 
 /** Launch-default constants — replace with data-fit values (§4.4). */
 export const CALIBRATION = {
-  /** Concavity of Core→IQ. 1 = linear; <1 lifts mid scores; >1 suppresses them. */
-  coreToIqExponent: 1,
+  /**
+   * Concavity of Core→IQ. 1 = linear; <1 lifts low/mid scores so a first DNA-test
+   * ESTIMATE isn't demotivatingly low while staying monotonic (LAW #1). Re-fit on
+   * real IQ↔Elo data (§4.4) — this is a launch default.
+   */
+  coreToIqExponent: 0.65,
   /** Multiplier applied to Core^exponent before scaling to IQ_MAX. */
   coreToIqGain: 1,
 } as const;

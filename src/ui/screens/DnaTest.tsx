@@ -220,6 +220,9 @@ function DnaResultView({
           {iq}
         </p>
         <p className="text-text-mid mt-1 text-sm">{result.rank}</p>
+        <p className="text-text-low mt-1 text-xs">
+          Your starting estimate — it climbs as you train.
+        </p>
       </div>
 
       <DnaCard result={result} />
