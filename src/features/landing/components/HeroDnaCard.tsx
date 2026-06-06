@@ -16,22 +16,29 @@ export function HeroDnaCard() {
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
-    // setTimeout (even 0ms) keeps this off the synchronous effect path.
-    const id = setTimeout(() => setShown(true), reduce ? 0 : 600);
+    // ~1.2s beat: the king animates first, then the card materializes (Round 2 §1).
+    const id = setTimeout(() => setShown(true), reduce ? 0 : 1200);
     return () => clearTimeout(id);
   }, [reduce]);
 
   return (
-    <div
-      className={`transition-[opacity,transform] duration-700 ease-out ${
-        shown
-          ? "translate-y-0 scale-100 opacity-100"
-          : "translate-y-4 scale-95 opacity-0"
-      }`}
-    >
-      <div className="animate-[chq-float_6s_ease-in-out_infinite] [will-change:transform]">
-        <div className="rounded-card animate-[chq-card-glow_4.5s_ease-in-out_infinite]">
-          <DNACard data={EXAMPLE_DNA} />
+    <div className="relative">
+      {/* soft radial vignette for separation (not a hard panel) */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -inset-10 bg-[radial-gradient(closest-side,rgba(8,9,14,0.85),transparent)]"
+      />
+      <div
+        className={`relative w-[18.5rem] transition-[opacity,transform] duration-[900ms] ease-out sm:w-[20rem] ${
+          shown
+            ? "translate-y-0 scale-100 opacity-100"
+            : "translate-y-4 scale-95 opacity-0"
+        }`}
+      >
+        <div className="animate-[chq-float_6s_ease-in-out_infinite] [will-change:transform]">
+          <div className="rounded-card animate-[chq-card-glow_4.5s_ease-in-out_infinite]">
+            <DNACard data={EXAMPLE_DNA} />
+          </div>
         </div>
       </div>
     </div>

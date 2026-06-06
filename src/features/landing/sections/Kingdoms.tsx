@@ -1,6 +1,6 @@
 import { WorldMapPreview } from "../components/WorldMapPreview";
-import { BossPreview } from "../components/BossPreview";
-import { PassportPreview } from "../components/PassportPreview";
+import { BossBlock } from "../components/BossBlock";
+import { PassportBlock } from "../components/PassportBlock";
 import { CTAButton } from "../components/CTAButton";
 import { OrnamentalDivider } from "../components/OrnamentalDivider";
 import { Reveal } from "../components/Reveal";
@@ -37,15 +37,15 @@ export function Kingdoms() {
           <WorldMapPreview />
         </Reveal>
 
-        {/* Parts 2 & 3 — Boss Fight + Opening Passport (compact teasers) */}
-        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-          <Reveal>
-            <BossPreview />
-          </Reveal>
-          <Reveal index={1}>
-            <PassportPreview />
-          </Reveal>
-        </div>
+        {/* Part 2 — Boss section (guardian cinematic) */}
+        <Reveal className="mt-6">
+          <BossBlock />
+        </Reveal>
+
+        {/* Part 3 — Opening Passport (tome + seal stamps) */}
+        <Reveal className="mt-6">
+          <PassportBlock />
+        </Reveal>
 
         <Reveal className="mt-12 flex justify-center">
           <CTAButton section="kingdoms" label={KINGDOMS.ctaLabel} />

@@ -43,9 +43,9 @@ export function Hero({ headline }: { headline: HeadlineCopy }) {
           </Reveal>
         </div>
 
-        {/* DNA Card centerpiece — delayed reveal, floating, pushed low so the
-            crown breathes above it. */}
-        <div className="flex justify-center md:mt-20 md:justify-end">
+        {/* DNA Card centerpiece — delayed reveal, floating, pushed lower-right so
+            the animated crown breathes above it (Round 2 §1). */}
+        <div className="flex justify-center md:mt-28 md:translate-x-4 md:justify-end">
           <HeroDnaCard />
         </div>
       </div>

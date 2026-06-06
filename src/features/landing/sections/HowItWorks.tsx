@@ -1,15 +1,15 @@
 import { Panel } from "../components/Panel";
-import { StepIcon } from "../components/StepIcon";
+import { MiniScreen } from "../components/MiniScreen";
 import { OrnamentalDivider } from "../components/OrnamentalDivider";
 import { Reveal } from "../components/Reveal";
 import { HOW_IT_WORKS } from "../copy";
 
 /**
- * S4 · How it works (kickoff §S4 + pass 2 §6). Three steps in ornate panels, each
- * with a coded micro-illustration (positions flashing → ring filling → streak),
- * revealed on scroll. Copy verbatim. Anchored for the footer link.
+ * S4 · How it works (kickoff §S4 + Round 2 §4). Three steps, each with a coded
+ * mini screen-mockup (test → result → training) so the product reads "at a
+ * glance". Revealed on scroll. Anchored for the footer link.
  */
-const ICON_BY_STEP = ["positions", "score", "streak"] as const;
+const SCREEN_BY_STEP = ["test", "result", "train"] as const;
 
 export function HowItWorks() {
   return (
@@ -27,17 +27,17 @@ export function HowItWorks() {
         <ol className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
           {HOW_IT_WORKS.steps.map((step, i) => (
             <Reveal key={step.n} index={i} as="li">
-              <Panel variant="ornate" interactive innerClassName="h-full p-6">
-                <div className="flex items-center justify-between">
-                  <span className="font-display inline-flex h-11 w-11 items-center justify-center rounded-full border border-gold/50 text-lg font-black text-gold">
+              <Panel variant="ornate" interactive innerClassName="h-full p-5">
+                <MiniScreen kind={SCREEN_BY_STEP[i] ?? "test"} />
+                <div className="mt-4 flex items-center gap-3">
+                  <span className="font-display inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gold/50 text-base font-black text-gold">
                     {step.n}
                   </span>
-                  <StepIcon kind={ICON_BY_STEP[i] ?? "positions"} />
+                  <h3 className="font-display text-base font-bold leading-tight text-text-hi">
+                    {step.title}
+                  </h3>
                 </div>
-                <h3 className="font-display mt-4 text-lg font-bold text-text-hi">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-text-mid">
+                <p className="mt-2 text-sm leading-relaxed text-[#E9E9EE]">
                   {step.body}
                 </p>
               </Panel>
