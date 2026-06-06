@@ -31,39 +31,45 @@ export interface ArchetypeInfo {
   tagline: string;
   /** One-line, plain-language: what it means for how you play (pass 2 §5). */
   blurb: string;
-  /** DESIGN.md token color var for this tribe. */
+  /** The hero's World/realm (opening-boss-catalog §1–4). */
+  realm: string;
+  /** Accent hex — verbatim from the Art Direction Bible §1.1 hero palette. */
   colorVar: string;
 }
 
-/** The four DNA tribes (DESIGN.md archetype colors · crest art in assets.ts). */
+/** The four DNA tribes — accents + realms verbatim from the catalog/art bible. */
 export const ARCHETYPES: ArchetypeInfo[] = [
   {
     key: "warrior",
     label: "Aggressive Warrior",
     tagline: "Attack relentlessly",
     blurb: "You strike early and hunt the king before they're ready.",
-    colorVar: "var(--color-warrior)",
+    realm: "Ember Marches",
+    colorVar: "#E0413B",
   },
   {
     key: "strategist",
     label: "Strategist",
     tagline: "Outmaneuver, then crush",
     blurb: "You build small edges and squeeze them in the long game.",
-    colorVar: "var(--color-strategist)",
+    realm: "Obsidian Court",
+    colorVar: "#8B6CFF",
   },
   {
     key: "defender",
     label: "Defender",
     tagline: "Unbreakable and patient",
     blurb: "You soak up pressure, stay solid, and punish overreach.",
-    colorVar: "var(--color-defender)",
+    realm: "Aegis Bastion",
+    colorVar: "#2FB67A",
   },
   {
     key: "trickster",
     label: "Trickster",
     tagline: "Surprise and bewilder",
     blurb: "You steer into sharp, offbeat lines and spring traps.",
-    colorVar: "var(--color-trickster)",
+    realm: "Mirage Bazaar",
+    colorVar: "#38C7D6",
   },
 ];
 

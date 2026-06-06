@@ -94,6 +94,37 @@
   animation: chq-node-pulse 2.8s ease-in-out infinite;
 }
 
+/* §3.1 Move chip — pill, raised bg, gold border on hover, gold fill on select. */
+.chq-chip {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-radius: var(--chq-r-pill);
+  background: var(--chq-raised);
+  border: 1px solid var(--chq-line);
+  color: var(--chq-text-1);
+  font-family: var(--chq-font-body);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition:
+    border-color 0.12s ease,
+    background 0.12s ease;
+}
+.chq-chip:hover {
+  border-color: var(--chq-gold-4);
+}
+.chq-chip[data-selected="true"] {
+  background: var(--chq-gold-gradient);
+  color: #08080a;
+  border-color: transparent;
+}
+.chq-chip:disabled {
+  cursor: default;
+}
+
 /* §7 Entrance — fade + rise 12px, staggered via --chq-d. */
 @keyframes chq-rise {
   from {

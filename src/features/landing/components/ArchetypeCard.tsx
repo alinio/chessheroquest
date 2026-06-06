@@ -50,7 +50,13 @@ export function ArchetypeCard({ archetype }: { archetype: ArchetypeInfo }) {
         >
           {archetype.label}
         </h3>
-        <p className="mt-0.5 text-[0.8rem] font-medium text-text-mid">
+        <p
+          className="mt-1 text-[0.62rem] font-semibold uppercase tracking-[0.14em]"
+          style={{ color: archetype.colorVar }}
+        >
+          {archetype.realm}
+        </p>
+        <p className="mt-1.5 text-[0.8rem] font-medium text-text-mid">
           {archetype.tagline}
         </p>
         <p className="mt-2 text-[0.92rem] leading-snug text-[#E9E9EE]">

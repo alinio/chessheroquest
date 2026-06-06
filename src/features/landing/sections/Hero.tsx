@@ -34,7 +34,13 @@ export function Hero({ headline }: { headline: HeadlineCopy }) {
             </p>
           </Reveal>
           <Reveal index={3}>
-            <div className="mt-8 inline-flex flex-col items-center gap-3">
+            <p className="mt-5 max-w-md text-xs leading-relaxed text-text-low">
+              Powered by Stockfish and millions of real master games — real
+              analysis, never guesswork.
+            </p>
+          </Reveal>
+          <Reveal index={4}>
+            <div className="mt-7 inline-flex flex-col items-center gap-3">
               <CTAButton section="hero" label={HERO.ctaLabel} />
               <Microcopy items={["Free", "no signup to begin", "~2 minutes"]} />
             </div>

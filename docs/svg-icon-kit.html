@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChessHeroQuest — SVG Asset Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#08080A; --panel:#0D0D10; --raised:#14141A; --line:#1C1C22;
+    --gold1:#FCEBB6; --gold3:#D9A227; --gold4:#A9781A;
+    --t1:#E9E9EE; --t2:#A7A7B2; --tm:#6E6E78;
+    --warrior:#E0413B; --strategist:#8B6CFF; --defender:#2FB67A; --trickster:#38C7D6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(217,162,39,.06), transparent 60%),
+      var(--bg);
+    color:var(--t1);font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased;padding:48px 24px 80px}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-family:Cinzel,serif;font-weight:700;letter-spacing:.04em;font-size:30px;margin:0 0 6px;
+    background:linear-gradient(180deg,var(--gold1),var(--gold3) 70%,var(--gold4));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--t2);font-size:15px;margin:0 0 8px;max-width:680px;line-height:1.6}
+  .legend{color:var(--tm);font-size:13px;margin:0 0 40px;max-width:720px;line-height:1.6}
+  .legend b{color:var(--gold3)}
+  h2{font-family:Cinzel,serif;font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-size:13px;color:var(--gold3);
+    margin:40px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .stage{height:96px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+  .name{font-weight:600;font-size:14px;color:var(--t1)}
+  .file{font-family:ui-monospace,monospace;font-size:11px;color:var(--gold3);margin-top:3px}
+  .note{font-size:12px;color:var(--tm);margin-top:6px;line-height:1.45}
+  .tag{display:inline-block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:999px;margin-top:8px}
+  .tag.static{background:rgba(217,162,39,.12);color:var(--gold3);border:1px solid rgba(217,162,39,.3)}
+  .tag.dyn{background:rgba(139,108,255,.12);color:#b6a4ff;border:1px solid rgba(139,108,255,.3)}
+  .glow{filter:drop-shadow(0 0 10px rgba(217,162,39,.45))}
+  .row{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap}
+  .iqval{font-family:Cinzel,serif;font-weight:700}
+  .barwrap{width:100%}
+</style>
+</head>
+<body>
+<!-- shared gradient defs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FCEBB6"/><stop offset=".38" stop-color="#F3CF77"/><stop offset=".72" stop-color="#D9A227"/><stop offset="1" stop-color="#A9781A"/>
+  </linearGradient>
+  <linearGradient id="bronze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8A972"/><stop offset=".6" stop-color="#C77B3A"/><stop offset="1" stop-color="#8A4F22"/></linearGradient>
+  <linearGradient id="silver" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2F4F8"/><stop offset=".6" stop-color="#C7CBD4"/><stop offset="1" stop-color="#8E94A1"/></linearGradient>
+</defs></svg>
+
+<div class="wrap">
+  <h1>ChessHeroQuest — SVG Asset Kit</h1>
+  <p class="sub">The bespoke, coded marks of the game — gold-on-obsidian, matched to the Art Direction Bible. None of these go through Higgsfield: they're vector, crisp at every size.</p>
+  <p class="legend">
+    <span class="tag static">STATIC</span> = copy the SVG straight out, save as the named file.
+    &nbsp;&nbsp;<span class="tag dyn">DYNAMIC</span> = shown here at an example value; Claude Code builds these as <b>parametric React components</b> (the geometry is the spec). Generic UI icons (nav, hint, skip, share, settings…) come from <b>lucide</b>, recolored gold — not drawn here.
+  </p>
+
+  <!-- LOGO & FRAME -->
+  <h2>Logo &amp; Frame</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="stage"><svg width="56" height="56" viewBox="0 0 24 24" class="glow">
+        <path fill="url(#gold)" d="M3 17 L2.4 6 L7 11 L12 4 L17 11 L21.6 6 L21 17 Z"/>
+        <path fill="url(#gold)" d="M2.8 17 h18.4 v2.1 a1 1 0 0 1-1 1 H3.8 a1 1 0 0 1-1-1 Z"/>
+        <circle cx="2.4" cy="6" r="1.5" fill="#FCEBB6"/><circle cx="21.6" cy="6" r="1.5" fill="#FCEBB6"/><circle cx="12" cy="3.7" r="1.7" fill="#FCEBB6"/>
+      </svg></div>
+      <div class="name">Crown mark</div><div class="file">logo-mark.svg</div>
+      <div class="note">Header (32px) + favicon. The crisp small mark; the ornate crest logo stays for big lockups.</div>
+      <span class="tag static">STATIC</span>
+    </div>
+    <div class="card">
+      <div class="stage">
+        <svg width="72" height="72" viewBox="0 0 48 48">
+          <path fill="none" stroke="url(#gold)" stroke-width="2" stroke-linecap="round" d="M6 46 V16 a10 10 0 0 1 10-10 H46"/>
+          <path fill="none" stroke="url(#gold)" stroke-width="1.3" stroke-linecap="round" d="M14 22 q0-8 8-8"/>
+          <path fill="url(#gold)" d="M12.5 9 l2.2 3.5 -2.2 3.5 -2.2-3.5 Z"/>
+        </svg>
+      </div>
+      <div class="name">Ornate frame corner</div><div class="file">frame-corner.svg</div>
+      <div class="note">Mirror ×4 around any card/panel = the signature gold frame.</div>
+      <span class="tag static">STATIC</span>
+    </div>
+  </div>
+
+  <!-- MAP NODES -->
+  <h2>Map nodes — 4 states</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="stage"><svg width="76" height="76" viewBox="0 0 80 80" opacity=".55">
+        <circle cx="40" cy="40" r="30" fill="#0D0D10" stroke="#3A3A44" stroke-width="2.5" stroke-dasharray="5 6"/>
+        <rect x="32" y="40" width="16" height="12" rx="2" fill="#6E6E78"/>
+        <path d="M34 40 v-3 a6 6 0 0 1 12 0 v3" fill="none" stroke="#6E6E78" stroke-width="2.4"/>
+      </svg></div>
+      <div class="name">Locked</div><div class="file">node-locked.svg</div>
+      <div class="note">Dashed, dimmed, padlock.</div><span class="tag static">STATIC</span>
+    </div>
+    <div class="card">
+      <div class="stage"><svg width="76" height="76" viewBox="0 0 80 80" class="glow">
+        <circle cx="40" cy="40" r="34" fill="none" stroke="url(#gold)" stroke-width="1" opacity=".35"/>
+        <circle cx="40" cy="40" r="30" fill="#14141A" stroke="url(#gold)" stroke-width="3"/>
+        <path fill="url(#gold)" d="M40 28 a4 4 0 1 0 .01 0 Z M34 52 c0-5 3-8 6-8 s6 3 6 8 Z"/>
+      </svg></div>
+      <div class="name">Available</div><div class="file">node-available.svg</div>
+      <div class="note">Gold ring + glow pulse (CSS), pawn glyph.</div><span class="tag static">STATIC</span>
+    </div>
+    <div class="card">
+      <div class="stage"><svg width="76" height="76" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="30" fill="#14141A" stroke="#1C1C22" stroke-width="4"/>
+        <circle cx="40" cy="40" r="30" fill="none" stroke="url(#gold)" stroke-width="4" stroke-linecap="round" stroke-dasharray="117 189" transform="rotate(-90 40 40)"/>
+        <path fill="#A7A7B2" d="M40 28 a4 4 0 1 0 .01 0 Z M34 52 c0-5 3-8 6-8 s6 3 6 8 Z"/>
+      </svg></div>
+      <div class="name">In progress</div><div class="file">node (component)</div>
+      <div class="note">Progress arc = % of steps done (here ~62%).</div><span class="tag dyn">DYNAMIC</span>
+    </div>
+    <div class="card">
+      <div class="stage"><svg width="76" height="76" viewBox="0 0 80 80" class="glow">
+        <circle cx="40" cy="40" r="30" fill="#14141A" stroke="url(#gold)" stroke-width="3.5"/>
+        <path fill="url(#gold)" d="M40 24 l4.2 8.6 9.5 1.4 -6.9 6.7 1.6 9.4 -8.5-4.5 -8.5 4.5 1.6-9.4 -6.9-6.7 9.5-1.4 Z"/>
+      </svg></div>
+      <div class="name">Conquered</div><div class="file">node-conquered.svg</div>
+      <div class="note">Filled gold ring + star; path to next turns gold.</div><span class="tag static">STATIC</span>
+    </div>
+  </div>
+
+  <!-- MASTERY & SEALS -->
+  <h2>Mastery medals &amp; passport seal</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="stage"><div class="row">
+        <svg width="44" height="56" viewBox="0 0 48 56"><path fill="#8A4F22" d="M18 4 L24 24 L30 4 L26 4 L24 12 L22 4 Z"/><circle cx="24" cy="38" r="15" fill="url(#bronze)" stroke="#5E3417" stroke-width="1.5"/><path fill="#5E3417" d="M24 30 l2.1 4.3 4.7.7 -3.4 3.3.8 4.7 -4.2-2.2 -4.2 2.2.8-4.7 -3.4-3.3 4.7-.7 Z"/></svg>
+        <svg width="44" height="56" viewBox="0 0 48 56"><path fill="#8E94A1" d="M18 4 L24 24 L30 4 L26 4 L24 12 L22 4 Z"/><circle cx="24" cy="38" r="15" fill="url(#silver)" stroke="#6B7180" stroke-width="1.5"/><path fill="#6B7180" d="M24 30 l2.1 4.3 4.7.7 -3.4 3.3.8 4.7 -4.2-2.2 -4.2 2.2.8-4.7 -3.4-3.3 4.7-.7 Z"/></svg>
+        <svg width="44" height="56" viewBox="0 0 48 56" class="glow"><path fill="#A9781A" d="M18 4 L24 24 L30 4 L26 4 L24 12 L22 4 Z"/><circle cx="24" cy="38" r="15" fill="url(#gold)" stroke="#8A5E12" stroke-width="1.5"/><path fill="#8A5E12" d="M24 30 l2.1 4.3 4.7.7 -3.4 3.3.8 4.7 -4.2-2.2 -4.2 2.2.8-4.7 -3.4-3.3 4.7-.7 Z"/></svg>
+      </div></div>
+      <div class="name">Mastery — Bronze / Silver / Gold</div><div class="file">medal-{bronze|silver|gold}.svg</div>
+      <div class="note">Beat Easy / Medium / Hard. On nodes, opening panel, passport.</div><span class="tag static">STATIC</span>
+    </div>
+    <div class="card">
+      <div class="stage"><svg width="68" height="68" viewBox="0 0 64 64" class="glow">
+        <circle cx="32" cy="32" r="26" fill="url(#gold)"/>
+        <circle cx="32" cy="32" r="26" fill="none" stroke="#8A5E12" stroke-width="2"/>
+        <circle cx="32" cy="32" r="20" fill="none" stroke="#8A5E12" stroke-width="1" opacity=".6"/>
+        <path fill="#8A5E12" d="M24 36 L23 24 L28 29 L32 22 L36 29 L41 24 L40 36 Z M23.5 36 h17 v2.4 h-17 Z"/>
+      </svg></div>
+      <div class="name">Passport seal</div><div class="file">seal-base.svg</div>
+      <div class="note">Gold wax seal; per-opening emblem swaps the center. Stamps in on mastery.</div><span class="tag static">STATIC</span>
+    </div>
+  </div>
+
+  <!-- GAUGES & BARS -->
+  <h2>Gauges &amp; bars</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="stage"><svg width="92" height="92" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="50" fill="none" stroke="#1C1C22" stroke-width="9" stroke-linecap="round" stroke-dasharray="235.6 314.2" transform="rotate(135 60 60)"/>
+        <circle cx="60" cy="60" r="50" fill="none" stroke="url(#gold)" stroke-width="9" stroke-linecap="round" stroke-dasharray="100.8 314.2" transform="rotate(135 60 60)"/>
+        <text x="60" y="62" text-anchor="middle" class="iqval" font-size="30" fill="#F3CF77">428</text>
+        <text x="60" y="80" text-anchor="middle" font-family="Inter" font-size="10" letter-spacing="2" fill="#A7A7B2">IQ</text>
+      </svg></div>
+      <div class="name">Opening IQ gauge</div><div class="file">iq-gauge (component)</div>
+      <div class="note">270° arc, fills value/1000 (here 428). Cinzel gold number.</div><span class="tag dyn">DYNAMIC</span>
+    </div>
+    <div class="card">
+      <div class="stage barwrap"><svg width="100%" height="14" viewBox="0 0 240 14" preserveAspectRatio="none">
+        <rect x="1" y="1" width="238" height="12" rx="6" fill="#14141A" stroke="#1C1C22"/>
+        <rect x="2" y="2" width="142" height="10" rx="5" fill="url(#gold)"/>
+      </svg></div>
+      <div class="name">XP / progress bar</div><div class="file">progress-bar (component)</div>
+      <div class="note">Gold fill = %. Reused for XP, line-progress, gauntlet.</div><span class="tag dyn">DYNAMIC</span>
+    </div>
+  </div>
+
+  <!-- STREAK & STATUS -->
+  <h2>Streak &amp; status</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="stage"><div class="row">
+        <svg width="30" height="36" viewBox="0 0 24 30" class="glow"><path fill="url(#gold)" d="M13 1 C9 7 6 10 8 17 a6.5 6.5 0 0 0 12 1 c1-4-1-7-2-9 c-1.5 3-3 2.5-3.5 .5 C13.5 6 14 3.5 13 1 Z"/></svg>
+        <svg width="30" height="36" viewBox="0 0 24 30"><path fill="none" stroke="#6E6E78" stroke-width="1.6" d="M13 1 C9 7 6 10 8 17 a6.5 6.5 0 0 0 12 1 c1-4-1-7-2-9 c-1.5 3-3 2.5-3.5 .5 C13.5 6 14 3.5 13 1 Z"/></svg>
+        <svg width="30" height="36" viewBox="0 0 24 30"><path fill="#3A3A44" d="M13 1 C9 7 6 10 8 17 a6.5 6.5 0 0 0 12 1 c1-4-1-7-2-9 c-1.5 3-3 2.5-3.5 .5 C13.5 6 14 3.5 13 1 Z"/></svg>
+      </div></div>
+      <div class="name">Streak flame — active / at-risk / broken</div><div class="file">flame-{active|risk|broken}.svg</div>
+      <div class="note">Active = gold+glow, at-risk = outline, broken = gray.</div><span class="tag static">STATIC</span>
+    </div>
+    <div class="card">
+      <div class="stage"><div class="row">
+        <svg width="40" height="40" viewBox="0 0 24 24" class="glow"><rect x="5" y="10" width="14" height="10" rx="2" fill="url(#gold)"/><path d="M8 10 V7 a4 4 0 0 1 8 0 v3" fill="none" stroke="url(#gold)" stroke-width="2"/><rect x="11.1" y="13" width="1.8" height="4.5" rx=".9" fill="#0D0D10"/></svg>
+        <svg width="40" height="40" viewBox="0 0 24 24"><path fill="url(#gold)" d="M12 2 L20 5 V11 C20 16.2 16.4 20.2 12 22 C7.6 20.2 4 16.2 4 11 V5 Z"/><path fill="#0D0D10" d="M12 6 L16.5 7.6 V11 c0 3.3-2.2 6-4.5 7.2 Z" opacity=".25"/></svg>
+      </div></div>
+      <div class="name">Pro lock &amp; Life/Shield</div><div class="file">lock.svg · shield.svg</div>
+      <div class="note">Lock = paywalled content. Shield = gauntlet lives.</div><span class="tag static">STATIC</span>
+    </div>
+  </div>
+
+  <!-- ACCENTS -->
+  <h2>Hero accents (recolor per world)</h2>
+  <div class="grid">
+    <div class="card"><div class="stage"><div style="width:48px;height:48px;border-radius:12px;background:var(--warrior);box-shadow:0 0 16px rgba(224,65,59,.45)"></div></div><div class="name">Warrior</div><div class="file">#E0413B</div></div>
+    <div class="card"><div class="stage"><div style="width:48px;height:48px;border-radius:12px;background:var(--strategist);box-shadow:0 0 16px rgba(139,108,255,.45)"></div></div><div class="name">Strategist</div><div class="file">#8B6CFF</div></div>
+    <div class="card"><div class="stage"><div style="width:48px;height:48px;border-radius:12px;background:var(--defender);box-shadow:0 0 16px rgba(47,182,122,.45)"></div></div><div class="name">Defender</div><div class="file">#2FB67A</div></div>
+    <div class="card"><div class="stage"><div style="width:48px;height:48px;border-radius:12px;background:var(--trickster);box-shadow:0 0 16px rgba(56,199,214,.45)"></div></div><div class="name">Trickster</div><div class="file">#38C7D6</div></div>
+  </div>
+
+</div>
+</body>
+</html>

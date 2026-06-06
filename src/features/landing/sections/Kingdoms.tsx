@@ -27,6 +27,11 @@ export function Kingdoms() {
             </p>
           </Reveal>
           <Reveal index={2}>
+            <p className="font-display mt-6 text-sm font-semibold uppercase tracking-[0.18em] text-gold sm:text-base">
+              20 openings · 4 realms · 24 bosses to conquer
+            </p>
+          </Reveal>
+          <Reveal index={3}>
             <OrnamentalDivider className="mt-8" />
           </Reveal>
         </div>
