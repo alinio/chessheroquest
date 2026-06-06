@@ -1,27 +1,61 @@
 /**
- * Marketing index ("/"). The pain hook + the free DNA Test CTA (master-vision §8).
+ * Marketing landing ("/") — the premium viral quiz funnel (kickoff). One goal:
+ * the free Chess DNA Test.
+ *
+ * The channel-aware H1 (§4) is resolved HERE on the server from `searchParams`
+ * so the correct headline is in the SSR HTML (no flash / hydration mismatch) and
+ * doubles as the `headline_variant` analytics dimension (§10).
  */
-import Link from "next/link";
+import type { Metadata } from "next";
+import { LandingPage } from "@/src/features/landing/LandingPage";
+import { LANDING_ASSETS } from "@/src/features/landing/assets";
+import {
+  resolveHeadlineVariant,
+  firstParam,
+} from "@/src/features/landing/variants";
 
-export default function MarketingHome() {
-  return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-6 px-6 text-center">
-      <p className="font-display text-gold text-sm uppercase tracking-[0.3em]">
-        ChessHeroQuest
-      </p>
-      <h1 className="font-display text-text-hi max-w-md text-4xl font-bold">
-        Stop Losing In The Opening
-      </h1>
-      <p className="font-body text-text-mid max-w-sm">
-        Discover your Chess DNA. Train your weaknesses. Gain Elo faster.
-      </p>
-      <Link
-        href="/dna"
-        className="rounded-chip bg-gold text-abyss mt-2 min-h-[48px] px-8 text-base font-semibold shadow-lg"
-        style={{ display: "inline-flex", alignItems: "center" }}
-      >
-        Take The Free Chess DNA Test
-      </Link>
-    </main>
-  );
+const TITLE = "ChessHeroQuest — What's Your Chess DNA?";
+const DESCRIPTION =
+  "Take the free 2-minute Chess DNA Test to reveal your Opening IQ, your chess style, and the opening weaknesses holding back your rating. The RPG of chess openings.";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://chessheroquest.com",
+  ),
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    type: "website",
+    siteName: "ChessHeroQuest",
+    images: [
+      { url: LANDING_ASSETS.ogImage, width: 1600, height: 900, alt: TITLE },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [LANDING_ASSETS.ogImage],
+  },
+};
+
+type SearchParams = Record<string, string | string[] | undefined>;
+
+export default async function MarketingHome({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const sp = await searchParams;
+  const variant = resolveHeadlineVariant({
+    v: firstParam(sp.v),
+    utmSource: firstParam(sp.utm_source),
+    utmCampaign: firstParam(sp.utm_campaign),
+    keyword: firstParam(sp.keyword),
+  });
+
+  return <LandingPage variant={variant} />;
 }
