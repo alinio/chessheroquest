@@ -15,7 +15,7 @@ export function ShareCard({ data }: { data: ExampleDnaResult }) {
       <div className="rounded-[19px] bg-abyss p-4">
         <DNACard data={data} showExampleTag={false} />
         <p className="mt-3 text-center text-[0.65rem] uppercase tracking-[0.25em] text-gold">
-          What's your Chess DNA? · chessheroquest.com
+          What&apos;s your Chess DNA? · chessheroquest.com
         </p>
       </div>
     </div>

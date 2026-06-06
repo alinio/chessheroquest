@@ -28,13 +28,14 @@ export function OpeningIQGauge({
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || typeof IntersectionObserver === "undefined") {
-      setStart(true);
-      return;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      const id = requestAnimationFrame(() => setStart(true));
+      return () => cancelAnimationFrame(id);
     }
     const io = new IntersectionObserver(
       ([e]) => {
-        if (e.isIntersecting) {
+        if (e?.isIntersecting) {
           setStart(true);
           io.disconnect();
         }

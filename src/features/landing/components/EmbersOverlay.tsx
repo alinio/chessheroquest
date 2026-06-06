@@ -1,27 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { LANDING_ASSETS } from "../assets";
+import { useIsClient, useReducedMotion, useIsMobile } from "../hooks";
 
 /**
  * Ambient embers (assets §3 "Embers"). A low-opacity looping video composited
  * with `mix-blend-mode: screen` (drops the black bg) behind dark sections.
  *
  * OFF under `prefers-reduced-motion` AND on the mobile light-cut (kickoff §7/§8):
- * mobile gets the clean static page — embers are a desktop nicety only.
+ * mobile gets the clean static page — embers are a desktop nicety only. Also off
+ * during SSR (poster-only baseline) until hydration confirms the environment.
  */
 export function EmbersOverlay() {
-  const [enabled, setEnabled] = useState(false);
+  const isClient = useIsClient();
+  const reduce = useReducedMotion();
+  const isMobile = useIsMobile();
 
-  useEffect(() => {
-    const reduce = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    const isMobile = window.matchMedia("(max-width: 767px)").matches;
-    setEnabled(!reduce && !isMobile);
-  }, []);
-
-  if (!enabled) return null;
+  if (!isClient || reduce || isMobile) return null;
 
   return (
     <video

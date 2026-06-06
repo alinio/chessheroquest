@@ -15,9 +15,13 @@ export function StickyCTA() {
 
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 80);
-    onScroll();
+    // Defer the initial read off the effect body (avoid sync setState-in-effect).
+    const id = requestAnimationFrame(onScroll);
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      cancelAnimationFrame(id);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   return (

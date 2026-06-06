@@ -33,10 +33,10 @@ export function Reveal({
     const el = ref.current;
     if (!el) return;
 
-    // No IO support (or SSR) → show immediately; never hide content.
+    // No IO support → reveal on the next frame (deferred, never hide content).
     if (typeof IntersectionObserver === "undefined") {
-      setShown(true);
-      return;
+      const id = requestAnimationFrame(() => setShown(true));
+      return () => cancelAnimationFrame(id);
     }
 
     const io = new IntersectionObserver(
