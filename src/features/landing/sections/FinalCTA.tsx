@@ -17,7 +17,7 @@ export function FinalCTA() {
       <SectionBackdrop
         video={LANDING_ASSETS.backdrops.hall.video}
         poster={LANDING_ASSETS.backdrops.hall.poster}
-        opacity={0.30}
+        opacity={0.5}
       />
       {/* faint king echo */}
       <span
@@ -33,7 +33,7 @@ export function FinalCTA() {
       />
 
       <Reveal className="relative mx-auto max-w-2xl">
-        <Panel variant="ornate" innerClassName="px-6 py-12 text-center sm:px-12">
+        <Panel variant="glass" innerClassName="px-6 py-12 text-center sm:px-12">
           <h2 className="font-display text-3xl font-black leading-tight text-text-hi sm:text-5xl [text-wrap:balance]">
             Discover your Opening{" "}
             <span className="whitespace-nowrap">IQ — free.</span>
