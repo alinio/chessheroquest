@@ -86,6 +86,11 @@ export const subscriptionStatusEnum = pgEnum("subscription_status", [
   "canceled",
 ]);
 
+export const achievementTypeEnum = pgEnum("achievement_type", [
+  "opening_conquered",
+  "collector",
+]);
+
 /* ------------------------------------------------------------------ users */
 
 export const users = pgTable("users", {
@@ -244,6 +249,22 @@ export const dnaResults = pgTable("dna_results", {
   raw: jsonb("raw"), // per-position answers from the 20 adaptive items
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// Specialized titles earned by mastery (master-vision §28.6). One per key per user.
+export const achievements = pgTable(
+  "achievements",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: achievementTypeEnum("type").notNull(),
+    key: varchar("key", { length: 96 }).notNull(), // e.g. the conquered opening slug
+    title: varchar("title", { length: 128 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("achievements_user_key_uq").on(t.userId, t.key)],
+);
 
 export const quests = pgTable(
   "quests",

@@ -9,6 +9,7 @@ import { trainingEvents, users } from "@/db/schema";
 import { recordActivity, type StreakState } from "@/src/domain/gamification/streak";
 import { XP_REWARDS } from "@/src/domain/gamification/xp";
 import { upsertCardReview } from "@/src/data/repos/cards";
+import { reconcileOpeningAchievements } from "@/src/data/repos/achievements";
 
 export type TrainingMode = "learn" | "drill" | "review" | "sparring" | "dna_test";
 
@@ -77,6 +78,9 @@ export async function recordTraining(
       updatedAt: now,
     })
     .where(eq(users.id, userId));
+
+  // Award any newly-conquered opening titles (gold mastery).
+  await reconcileOpeningAchievements(userId);
 
   return { xp: newXp, streakCount: nextStreak.count };
 }

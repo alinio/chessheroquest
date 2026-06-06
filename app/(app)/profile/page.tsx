@@ -5,6 +5,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/src/lib/auth";
 import { getProgress, getLatestDnaResult } from "@/src/data/repos/progress";
+import { getAchievements } from "@/src/data/repos/achievements";
 import { rankForIq } from "@/src/domain/iq/calibration";
 import { xpProgress } from "@/src/domain/gamification/xp";
 import { isStreakAlive } from "@/src/domain/gamification/streak";
@@ -25,9 +26,10 @@ export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/signin");
 
-  const [progress, dna] = await Promise.all([
+  const [progress, dna, titles] = await Promise.all([
     getProgress(session.user.id),
     getLatestDnaResult(session.user.id),
+    getAchievements(session.user.id),
   ]);
 
   return (
@@ -64,6 +66,24 @@ export default async function ProfilePage() {
             <Stat label="Level" value={`${xpProgress(progress.xp).level}`} />
             <Stat label="Due" value={`${progress.dueCount}`} />
           </section>
+
+          {titles.length > 0 && (
+            <section className="flex flex-col gap-2">
+              <p className="font-display text-text-hi text-sm uppercase tracking-[0.2em]">
+                Titles
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {titles.map((t) => (
+                  <span
+                    key={t.key}
+                    className="border-gold/50 text-gold inline-flex items-center gap-1 rounded-chip border px-3 py-1 text-xs font-semibold"
+                  >
+                    <span aria-hidden>★</span> {t.title}
+                  </span>
+                ))}
+              </div>
+            </section>
+          )}
 
           {dna && (
             <>
