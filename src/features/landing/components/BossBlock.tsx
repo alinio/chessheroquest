@@ -10,9 +10,8 @@ import { Panel } from "./Panel";
 /**
  * Boss section (Round 2 boss fix) — a single centered column with the guardian
  * cinematic as the centerpiece: eyebrow → H2 → tag → line → VIDEO (ornate frame
- * hugging a 16:9 clip, edge-to-edge) → CTA below (never overlapping the video).
- * The clip is a one-shot (the hand moving the queen): plays once in view then
- * holds its last frame — no hard loop. Reduced-motion → poster only.
+ * hugging a 16:9 clip, edge-to-edge). Plays muted in view and loops.
+ * Reduced-motion → poster only.
  */
 export function BossBlock() {
   return (
@@ -23,10 +22,7 @@ export function BossBlock() {
       <h3 className="font-display mt-3 text-3xl font-bold text-text-hi sm:text-4xl">
         {BOSS.h2}
       </h3>
-      <span className="mt-3 inline-flex rounded-chip border border-warrior/50 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-warrior">
-        e.g. {BOSS.tag}
-      </span>
-      <p className="mt-3 max-w-md text-[0.95rem] leading-relaxed text-[#E9E9EE]">
+      <p className="mt-4 max-w-md text-[0.95rem] leading-relaxed text-[#E9E9EE]">
         {BOSS.body}
       </p>
 
@@ -80,6 +76,7 @@ function BossVideo() {
     <video
       ref={ref}
       muted
+      loop
       playsInline
       preload="none"
       poster={LANDING_ASSETS.boss.poster}
