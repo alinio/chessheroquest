@@ -6,6 +6,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/src/lib/auth";
 import { AppNav } from "@/src/ui/AppNav";
+import "@/src/ui/animations.css";
 
 export default async function AppLayout({
   children,

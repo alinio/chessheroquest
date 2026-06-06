@@ -1,0 +1,67 @@
+/*
+ * App "juice" — the epic feel, kept restrained (DESIGN.md: clean board, no motion
+ * that slows training). CSS-first, GPU-friendly (transform / opacity / filter).
+ * Prefixed chq-app-* to avoid colliding with the landing's keyframes in
+ * globals.css. The global prefers-reduced-motion guard there disables these
+ * automatically.
+ */
+
+@keyframes chq-app-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chq-app-reveal {
+  animation: chq-app-reveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.chq-app-d1 {
+  animation-delay: 60ms;
+}
+.chq-app-d2 {
+  animation-delay: 140ms;
+}
+.chq-app-d3 {
+  animation-delay: 220ms;
+}
+.chq-app-d4 {
+  animation-delay: 300ms;
+}
+
+/* Living gold halo around the hero Opening IQ. */
+@keyframes chq-app-halo {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 16px rgba(227, 178, 60, 0.35));
+  }
+  50% {
+    filter: drop-shadow(0 0 34px rgba(227, 178, 60, 0.6));
+  }
+}
+.chq-app-halo {
+  animation: chq-app-halo 3.4s ease-in-out infinite;
+}
+
+/* Seal stamped when a kingdom is conquered (gold). */
+@keyframes chq-app-stamp {
+  0% {
+    opacity: 0;
+    transform: scale(1.6) rotate(-8deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.92) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+.chq-app-stamp {
+  animation: chq-app-stamp 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}

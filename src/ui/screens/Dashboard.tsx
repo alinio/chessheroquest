@@ -68,12 +68,12 @@ export function Dashboard({
 
   return (
     <div className="flex flex-col gap-7">
-      <section className="text-center">
+      <section className="chq-app-reveal text-center">
         <p className="font-display text-text-mid text-xs uppercase tracking-[0.3em]">
           Opening IQ
         </p>
         <p
-          className="font-display text-gold-bright text-7xl font-black leading-none tabular-nums"
+          className="font-display text-gold-bright chq-app-halo text-7xl font-black leading-none tabular-nums"
           style={{ textShadow: "0 0 32px rgba(227,178,60,0.5)" }}
         >
           {animatedIq}
@@ -84,7 +84,7 @@ export function Dashboard({
         )}
       </section>
 
-      <section className="bg-surface rounded-card p-4">
+      <section className="chq-app-reveal chq-app-d1 bg-surface rounded-card p-4">
         <div className="flex items-center justify-between text-sm">
           <span className="text-text-mid">Road to {goal}</span>
           <span className="text-gold tabular-nums">
@@ -97,7 +97,7 @@ export function Dashboard({
         <p className="text-text-low mt-2 text-xs">Projected estimate — refined as you train.</p>
       </section>
 
-      <section className="grid grid-cols-2 gap-3">
+      <section className="chq-app-reveal chq-app-d2 grid grid-cols-2 gap-3">
         <div className="bg-surface rounded-card flex flex-col items-center p-4">
           <p className="text-3xl leading-none" aria-hidden>🔥</p>
           <p className="font-display text-text-hi mt-1 text-xl font-bold tabular-nums">
@@ -119,7 +119,7 @@ export function Dashboard({
         </div>
       </section>
 
-      <section className="flex flex-col gap-3">
+      <section className="chq-app-reveal chq-app-d3 flex flex-col gap-3">
         <p className="font-display text-text-hi text-sm uppercase tracking-[0.2em]">
           Today&apos;s missions
         </p>

@@ -43,7 +43,7 @@ export default async function ProfilePage() {
         <>
           <section className="text-center">
             <p
-              className="font-display text-gold-bright text-6xl font-black tabular-nums"
+              className="font-display text-gold-bright chq-app-halo text-6xl font-black tabular-nums"
               style={{ textShadow: "0 0 28px rgba(227,178,60,0.45)" }}
             >
               {progress.iq}
@@ -76,7 +76,7 @@ export default async function ProfilePage() {
                 {titles.map((t) => (
                   <span
                     key={t.key}
-                    className="border-gold/50 text-gold inline-flex items-center gap-1 rounded-chip border px-3 py-1 text-xs font-semibold"
+                    className="border-gold/50 text-gold chq-app-stamp inline-flex items-center gap-1 rounded-chip border px-3 py-1 text-xs font-semibold"
                   >
                     <span aria-hidden>★</span> {t.title}
                   </span>

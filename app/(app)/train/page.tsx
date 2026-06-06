@@ -71,7 +71,11 @@ export default async function TrainHubPage() {
                     {p.eco} · {ARCHETYPE_LABEL[p.archetype]}
                   </p>
                 </div>
-                <span className={`shrink-0 text-xs font-semibold ${meta.text}`}>
+                <span
+                  className={`shrink-0 text-xs font-semibold ${meta.text} ${
+                    state === "gold" ? "chq-app-stamp" : ""
+                  }`}
+                >
                   <span aria-hidden>{meta.icon} </span>
                   {meta.label}
                 </span>
