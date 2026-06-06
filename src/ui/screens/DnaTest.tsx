@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Board } from "@/src/ui/board/Board";
 import { useCountUp } from "@/src/ui/hooks/useCountUp";
 import { PENDING_DNA_KEY } from "@/src/ui/PendingDnaSync";
+import { ShareButton } from "@/src/ui/ShareButton";
 import { DnaCard, ARCHETYPE_META } from "./DnaCard";
 import {
   DNA_QUESTION_BANK,
@@ -230,6 +231,9 @@ function DnaResultView({
         >
           {loggedIn ? "Go to your hub" : "Save my Opening IQ — create account"}
         </Link>
+        <ShareButton
+          text={`My Chess DNA: ${meta.label} · Opening IQ ${result.initialIq}. Discover yours →`}
+        />
         <button
           type="button"
           onClick={onRetake}

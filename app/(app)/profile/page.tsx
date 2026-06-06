@@ -8,7 +8,8 @@ import { getProgress, getLatestDnaResult } from "@/src/data/repos/progress";
 import { rankForIq } from "@/src/domain/iq/calibration";
 import { xpProgress } from "@/src/domain/gamification/xp";
 import { isStreakAlive } from "@/src/domain/gamification/streak";
-import { DnaCard } from "@/src/ui/screens/DnaCard";
+import { DnaCard, ARCHETYPE_META } from "@/src/ui/screens/DnaCard";
+import { ShareButton } from "@/src/ui/ShareButton";
 import { SignOutButton } from "@/src/ui/SignOutButton";
 
 function Stat({ label, value }: { label: string; value: string }) {
@@ -64,7 +65,14 @@ export default async function ProfilePage() {
             <Stat label="Due" value={`${progress.dueCount}`} />
           </section>
 
-          {dna && <DnaCard result={dna} />}
+          {dna && (
+            <>
+              <DnaCard result={dna} />
+              <ShareButton
+                text={`My Chess DNA: ${ARCHETYPE_META[dna.archetype].label} · Opening IQ ${dna.initialIq}. Discover yours →`}
+              />
+            </>
+          )}
         </>
       ) : (
         <p className="text-text-mid text-center text-sm">
