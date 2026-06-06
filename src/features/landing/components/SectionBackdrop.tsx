@@ -15,10 +15,13 @@ export function SectionBackdrop({
   video,
   poster,
   opacity = 0.35,
+  dim = 1,
 }: {
   video: string;
   poster: string;
   opacity?: number;
+  /** Overlay darkness multiplier — lower = more of the loop shows through. */
+  dim?: number;
 }) {
   const isClient = useIsClient();
   const reduce = useReducedMotion();
@@ -59,7 +62,7 @@ export function SectionBackdrop({
           fill
           sizes="100vw"
           className="object-cover"
-          style={{ opacity }}
+          style={{ opacity, filter: "brightness(1.4) contrast(1.05) saturate(1.05)" }}
         />
       ) : (
         <video
@@ -70,13 +73,18 @@ export function SectionBackdrop({
           preload="none"
           poster={poster}
           className="absolute inset-0 h-full w-full object-cover"
-          style={{ opacity }}
+          style={{ opacity, filter: "brightness(1.4) contrast(1.05) saturate(1.05)" }}
         >
           <source src={video} type="video/mp4" />
         </video>
       )}
       {/* legibility overlay — dark enough for text, light enough to show the loop */}
-      <div className="absolute inset-0 bg-gradient-to-b from-abyss/80 via-abyss/35 to-abyss/85" />
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `linear-gradient(to bottom, rgba(15,16,21,${0.68 * dim}), rgba(15,16,21,${0.2 * dim}), rgba(15,16,21,${0.78 * dim}))`,
+        }}
+      />
     </div>
   );
 }

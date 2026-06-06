@@ -17,7 +17,8 @@ export function FinalCTA() {
       <SectionBackdrop
         video={LANDING_ASSETS.backdrops.hall.video}
         poster={LANDING_ASSETS.backdrops.hall.poster}
-        opacity={0.5}
+        opacity={0.72}
+        dim={0.55}
       />
       {/* faint king echo */}
       <span
