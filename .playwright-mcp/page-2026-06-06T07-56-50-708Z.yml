@@ -1,0 +1,463 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e8]:
+    - link "ChessHeroQuest home" [ref=e9] [cursor=pointer]:
+      - /url: /
+      - img [ref=e11]
+      - generic [ref=e18]: ChessHeroQuest
+    - generic:
+      - link "Take the Free Chess DNA Test":
+        - /url: /dna
+        - generic: Take the Free Chess DNA Test
+  - main [ref=e19]:
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - paragraph [ref=e27]: THE RPG OF CHESS OPENINGS
+        - heading "What's your Chess DNA?" [level=1] [ref=e29]
+        - paragraph [ref=e31]: Take the free 2-minute test to reveal your Opening IQ, your chess style, and the opening weaknesses holding back your rating.
+        - generic [ref=e33]:
+          - link "Take the Free Chess DNA Test" [ref=e34] [cursor=pointer]:
+            - /url: /dna
+            - generic [ref=e35]: Take the Free Chess DNA Test
+          - paragraph [ref=e36]:
+            - generic [ref=e37]: Free
+            - generic [ref=e38]: no signup to begin
+            - generic [ref=e40]: ~2 minutes
+      - generic [ref=e47]:
+        - generic:
+          - generic:
+            - img
+          - generic:
+            - img
+          - generic:
+            - img
+          - generic:
+            - img
+        - generic [ref=e48]:
+          - generic [ref=e50]:
+            - paragraph [ref=e51]: Your Chess DNA
+            - generic [ref=e52]: Example
+          - generic [ref=e53]:
+            - img "strategist crest" [ref=e57]
+            - paragraph [ref=e58]: Strategist
+          - generic [ref=e59]:
+            - paragraph [ref=e60]: Opening IQ
+            - paragraph [ref=e61]: "428"
+            - paragraph [ref=e62]: Top 38%
+          - generic [ref=e63]:
+            - generic [ref=e64]:
+              - term [ref=e65]:
+                - generic [ref=e66]: ◆
+                - text: Best Opening
+              - definition [ref=e67]: London System
+            - generic [ref=e68]:
+              - term [ref=e69]:
+                - generic [ref=e70]: ▲
+                - text: Biggest Weakness
+              - definition [ref=e71]: Sicilian Defense
+          - generic [ref=e72]: chessheroquest.com
+    - generic [ref=e74]:
+      - heading "You're losing games before move 10." [level=2] [ref=e76]
+      - paragraph [ref=e85]: You hit a position you don't understand. You walk into a trap you'd never seen. “Study your openings,” they say — then bury you in 300 variations you'll never remember. Start with the one score that shows where you actually stand.
+      - generic [ref=e87]:
+        - link "Take the Free Chess DNA Test" [ref=e88] [cursor=pointer]:
+          - /url: /dna
+          - generic [ref=e89]: Take the Free Chess DNA Test
+        - paragraph [ref=e90]:
+          - generic [ref=e91]: Free
+          - generic [ref=e92]: no signup to begin
+          - generic [ref=e94]: ~2 minutes
+    - generic [ref=e97]:
+      - generic [ref=e98]:
+        - heading "In two minutes, you'll know your game." [level=2] [ref=e100]
+        - paragraph [ref=e102]: Your Opening IQ. Your Chess DNA archetype. Your strongest opening. Your biggest weakness. And a Road to Elo with the exact openings to train next — built for how you actually play.
+      - generic [ref=e112]:
+        - generic:
+          - generic:
+            - img
+          - generic:
+            - img
+          - generic:
+            - img
+          - generic:
+            - img
+        - generic [ref=e114]:
+          - generic [ref=e115]:
+            - generic [ref=e117]:
+              - generic [ref=e118]:
+                - generic [ref=e119]: ♜
+                - generic [ref=e120]: ♞
+                - generic [ref=e121]: ♝
+                - generic [ref=e122]: ♛
+                - generic [ref=e123]: ♚
+                - generic [ref=e124]: ♝
+                - generic [ref=e125]: ♞
+                - generic [ref=e126]: ♜
+                - generic [ref=e127]: ♟
+                - generic [ref=e128]: ♟
+                - generic [ref=e129]: ♟
+                - generic [ref=e130]: ♟
+                - generic [ref=e132]: ♟
+                - generic [ref=e133]: ♟
+                - generic [ref=e134]: ♟
+                - generic [ref=e147]: ♟
+                - generic [ref=e155]: ♙
+                - generic [ref=e164]: ♘
+                - generic [ref=e167]: ♙
+                - generic [ref=e168]: ♙
+                - generic [ref=e169]: ♙
+                - generic [ref=e170]: ♙
+                - generic [ref=e172]: ♙
+                - generic [ref=e173]: ♙
+                - generic [ref=e174]: ♙
+                - generic [ref=e175]: ♖
+                - generic [ref=e176]: ♘
+                - generic [ref=e177]: ♗
+                - generic [ref=e178]: ♕
+                - generic [ref=e179]: ♔
+                - generic [ref=e180]: ♗
+                - generic [ref=e182]: ♖
+              - paragraph [ref=e183]:
+                - text: Analyzing your openings…
+                - generic [ref=e184]: 6/20
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                  - generic:
+                    - generic: Opening IQ
+                    - generic: "0"
+                - paragraph: Scoring your Opening IQ…
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+                      - generic:
+                        - img
+                      - generic:
+                        - img
+                      - generic:
+                        - img
+                    - generic:
+                      - generic:
+                        - paragraph: Your Chess DNA
+                        - generic: Example
+                      - generic:
+                        - generic:
+                          - generic:
+                            - img "strategist crest"
+                        - paragraph: Strategist
+                      - generic:
+                        - paragraph: Opening IQ
+                        - paragraph: "428"
+                        - paragraph: Top 38%
+                      - generic:
+                        - generic:
+                          - term:
+                            - generic: ◆
+                            - text: Best Opening
+                          - definition: London System
+                        - generic:
+                          - term:
+                            - generic: ▲
+                            - text: Biggest Weakness
+                          - definition: Sicilian Defense
+                      - generic: chessheroquest.com
+          - generic [ref=e185]:
+            - generic [ref=e187]: Test openings
+            - generic [ref=e190]: Score IQ
+            - generic [ref=e193]: Reveal DNA
+      - generic [ref=e194]:
+        - generic [ref=e197]:
+          - generic:
+            - generic:
+              - img
+            - generic:
+              - img
+            - generic:
+              - img
+            - generic:
+              - img
+          - generic [ref=e198]:
+            - img "warrior crest" [ref=e201]
+            - paragraph [ref=e202]: Aggressive Warrior
+            - paragraph [ref=e203]: Attack relentlessly
+            - paragraph [ref=e204]: You strike early and hunt the king before they're ready.
+        - generic [ref=e207]:
+          - generic:
+            - generic:
+              - img
+            - generic:
+              - img
+            - generic:
+              - img
+            - generic:
+              - img
+          - generic [ref=e208]:
+            - img "strategist crest" [ref=e211]
+            - paragraph [ref=e212]: Strategist
+            - paragraph [ref=e213]: Outmaneuver, then crush
+            - paragraph [ref=e214]: You build small edges and squeeze them in the long game.
+        - generic [ref=e217]:
+          - generic:
+            - generic:
+              - img
+            - generic:
+              - img
+            - generic:
+              - img
+            - generic:
+              - img
+          - generic [ref=e218]:
+            - img "defender crest" [ref=e221]
+            - paragraph [ref=e222]: Defender
+            - paragraph [ref=e223]: Unbreakable and patient
+            - paragraph [ref=e224]: You soak up pressure, stay solid, and punish overreach.
+        - generic [ref=e227]:
+          - generic:
+            - generic:
+              - img
+            - generic:
+              - img
+            - generic:
+              - img
+            - generic:
+              - img
+          - generic [ref=e228]:
+            - img "trickster crest" [ref=e231]
+            - paragraph [ref=e232]: Trickster
+            - paragraph [ref=e233]: Surprise and bewilder
+            - paragraph [ref=e234]: You steer into sharp, offbeat lines and spring traps.
+    - generic [ref=e236]:
+      - heading "Your opening quest starts in three steps." [level=2] [ref=e238]
+      - list [ref=e246]:
+        - listitem [ref=e247]:
+          - generic [ref=e249]:
+            - generic:
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+            - generic [ref=e250]:
+              - generic [ref=e252]: "1"
+              - heading "Take the free Chess DNA Test" [level=3] [ref=e259]
+              - paragraph [ref=e260]: 20 positions. Around 2 minutes. No signup to begin.
+        - listitem [ref=e261]:
+          - generic [ref=e263]:
+            - generic:
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+            - generic [ref=e264]:
+              - generic [ref=e265]:
+                - generic [ref=e266]: "2"
+                - img [ref=e268]
+              - heading "Get your Opening IQ" [level=3] [ref=e271]
+              - paragraph [ref=e272]: see your style, your strongest opening, your biggest weakness, and your Road to Elo.
+        - listitem [ref=e273]:
+          - generic [ref=e275]:
+            - generic:
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+            - generic [ref=e276]:
+              - generic [ref=e277]:
+                - generic [ref=e278]: "3"
+                - generic [ref=e281]: 🔥
+              - heading "Train 5 minutes a day" [level=3] [ref=e288]
+              - paragraph [ref=e289]: complete daily quests, fix weak lines, and build openings you'll actually remember.
+    - generic [ref=e291]:
+      - generic [ref=e292]:
+        - heading "Then the real game begins." [level=2] [ref=e294]
+        - paragraph [ref=e296]: Every opening becomes a kingdom to conquer. Train it, beat its boss, and add it to your Opening Passport.
+      - list [ref=e305]:
+        - listitem [ref=e306]:
+          - generic [ref=e308]:
+            - generic:
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+            - generic [ref=e310]:
+              - img "Italian Game kingdom" [ref=e311]
+              - generic [ref=e312]:
+                - paragraph [ref=e313]: Italian Game
+                - paragraph [ref=e314]: ★ Conquered
+        - listitem [ref=e315]:
+          - generic [ref=e317]:
+            - generic:
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+            - generic [ref=e319]:
+              - img "London System kingdom" [ref=e320]
+              - generic [ref=e321]: 🔒
+              - generic [ref=e322]:
+                - paragraph [ref=e323]: London System
+                - paragraph [ref=e324]: Conquer it in training to unlock
+        - listitem [ref=e325]:
+          - generic [ref=e327]:
+            - generic:
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+            - generic [ref=e329]:
+              - img "Sicilian Defense kingdom" [ref=e330]
+              - generic [ref=e331]: 🔒
+              - generic [ref=e332]:
+                - paragraph [ref=e333]: Sicilian Defense
+                - paragraph [ref=e334]: Conquer it in training to unlock
+        - listitem [ref=e335]:
+          - generic [ref=e337]:
+            - generic:
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+            - generic [ref=e339]:
+              - img "French Defense kingdom" [ref=e340]
+              - generic [ref=e341]: 🔒
+              - generic [ref=e342]:
+                - paragraph [ref=e343]: French Defense
+                - paragraph [ref=e344]: Conquer it in training to unlock
+        - listitem [ref=e345]:
+          - generic [ref=e347]:
+            - generic:
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+              - generic:
+                - img
+            - generic [ref=e349]:
+              - img "Caro-Kann kingdom" [ref=e350]
+              - generic [ref=e351]: 🔒
+              - generic [ref=e352]:
+                - paragraph [ref=e353]: Caro-Kann
+                - paragraph [ref=e354]: Conquer it in training to unlock
+      - generic [ref=e355]:
+        - generic [ref=e358]:
+          - generic:
+            - generic:
+              - img
+            - generic:
+              - img
+            - generic:
+              - img
+            - generic:
+              - img
+          - generic [ref=e360]:
+            - img "Sicilian Defense boss kingdom" [ref=e361]
+            - generic [ref=e363]:
+              - generic [ref=e364]:
+                - paragraph [ref=e365]: Kingdom Boss
+                - generic [ref=e366]: Sicilian
+              - paragraph [ref=e367]: The Dragon Variation
+              - paragraph [ref=e368]: Each opening's toughest variation — beat it to conquer the kingdom.
+        - generic [ref=e373]:
+          - generic:
+            - generic:
+              - img
+            - generic:
+              - img
+            - generic:
+              - img
+            - generic:
+              - img
+          - generic [ref=e374]:
+            - paragraph [ref=e375]: Opening Passport
+            - paragraph [ref=e376]: Collect a seal for every opening you master.
+            - list [ref=e377]:
+              - listitem [ref=e378]:
+                - generic [ref=e379]: ★
+                - generic [ref=e380]: Italian
+              - listitem [ref=e381]:
+                - generic [ref=e382]: ★
+                - generic [ref=e383]: London
+              - listitem [ref=e384]:
+                - generic [ref=e385]: ○
+                - generic [ref=e386]: Caro-Kann
+              - listitem [ref=e387]:
+                - generic [ref=e388]: ○
+                - generic [ref=e389]: French
+              - listitem [ref=e390]:
+                - generic [ref=e391]: ○
+                - generic [ref=e392]: Sicilian
+      - link "Start with the Free Chess DNA Test" [ref=e394] [cursor=pointer]:
+        - /url: /dna
+        - generic [ref=e395]: Start with the Free Chess DNA Test
+    - generic [ref=e396]:
+      - generic: ♔
+      - generic [ref=e399]:
+        - generic:
+          - generic:
+            - img
+          - generic:
+            - img
+          - generic:
+            - img
+          - generic:
+            - img
+        - generic [ref=e400]:
+          - heading "Discover your Opening IQ — free." [level=2] [ref=e401]
+          - paragraph [ref=e402]: Take the 2-minute Chess DNA Test and reveal the openings shaping your game.
+          - generic [ref=e403]:
+            - link "Take the Free Chess DNA Test" [ref=e404] [cursor=pointer]:
+              - /url: /dna
+              - generic [ref=e405]: Take the Free Chess DNA Test
+            - paragraph [ref=e406]:
+              - generic [ref=e407]: Free
+              - generic [ref=e408]: ~2 minutes
+              - generic [ref=e410]: no signup to begin
+  - contentinfo [ref=e412]:
+    - generic [ref=e413]:
+      - link "ChessHeroQuest home" [ref=e414] [cursor=pointer]:
+        - /url: /
+        - img [ref=e416]
+        - generic [ref=e423]: ChessHeroQuest
+      - paragraph [ref=e424]: The RPG of chess openings.
+      - navigation [ref=e425]:
+        - link "How it works" [ref=e426] [cursor=pointer]:
+          - /url: "#how-it-works"
+        - link "Log in" [ref=e427] [cursor=pointer]:
+          - /url: /signin
+        - link "Privacy" [ref=e428] [cursor=pointer]:
+          - /url: /privacy
+        - link "Terms" [ref=e429] [cursor=pointer]:
+          - /url: /terms
