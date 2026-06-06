@@ -17,7 +17,7 @@ export function Pain() {
       <SectionBackdrop
         video={LANDING_ASSETS.backdrops.pain.video}
         poster={LANDING_ASSETS.backdrops.pain.poster}
-        opacity={0.38}
+        opacity={0.55}
       />
       {/* low ominous ember glow over the board */}
       <div

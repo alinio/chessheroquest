@@ -19,7 +19,7 @@ export function WhatYouGet() {
       <SectionBackdrop
         video={LANDING_ASSETS.backdrops.hall.video}
         poster={LANDING_ASSETS.backdrops.hall.poster}
-        opacity={0.22}
+        opacity={0.42}
       />
       <div className="relative mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">

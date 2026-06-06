@@ -24,8 +24,12 @@ export function AnimatedCrest({
   const isClient = useIsClient();
   const reduce = useReducedMotion();
   const ref = useRef<HTMLVideoElement | null>(null);
+  const stillOnly = !isClient || reduce;
 
+  // Re-run once the <video> mounts (after hydration swaps out the SSR poster),
+  // so the IntersectionObserver actually attaches and play() fires in view.
   useEffect(() => {
+    if (stillOnly) return;
     const v = ref.current;
     if (!v || typeof IntersectionObserver === "undefined") return;
     const io = new IntersectionObserver(
@@ -40,12 +44,12 @@ export function AnimatedCrest({
     );
     io.observe(v);
     return () => io.disconnect();
-  }, []);
+  }, [stillOnly]);
 
   const shared = `object-contain [mix-blend-mode:screen] ${className}`;
 
   // SSR + reduced-motion + no-JS → static PNG.
-  if (!isClient || reduce) {
+  if (stillOnly) {
     return (
       <Image
         src={LANDING_ASSETS.crests[archetype]}

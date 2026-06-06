@@ -27,7 +27,10 @@ export function SectionBackdrop({
   // Poster-only on mobile (light cut) — backdrops are heavy; crests still loop.
   const stillOnly = !isClient || reduce || isMobile;
 
+  // Re-run when the <video> actually mounts (after hydration swaps out the SSR
+  // poster) — otherwise the ref is null on first mount and play() never fires.
   useEffect(() => {
+    if (stillOnly) return;
     const v = ref.current;
     if (!v || typeof IntersectionObserver === "undefined") return;
     const io = new IntersectionObserver(
@@ -42,7 +45,7 @@ export function SectionBackdrop({
     );
     io.observe(v);
     return () => io.disconnect();
-  }, []);
+  }, [stillOnly]);
 
   return (
     <div
@@ -72,8 +75,8 @@ export function SectionBackdrop({
           <source src={video} type="video/mp4" />
         </video>
       )}
-      {/* legibility overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-abyss/85 via-abyss/55 to-abyss/85" />
+      {/* legibility overlay — dark enough for text, light enough to show the loop */}
+      <div className="absolute inset-0 bg-gradient-to-b from-abyss/80 via-abyss/35 to-abyss/85" />
     </div>
   );
 }
