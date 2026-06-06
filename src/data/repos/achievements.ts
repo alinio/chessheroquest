@@ -10,22 +10,38 @@ import { getOpeningMastery } from "@/src/data/repos/openings";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 import { openingTitle } from "@/src/domain/achievements";
 
-/** Award a title for every opening the user has conquered (gold) but not yet earned. */
+type AchievementInsert = {
+  userId: string;
+  type: "opening_conquered" | "collector";
+  key: string;
+  title: string;
+};
+
+/** Award titles for every conquered (gold) opening, plus Collector when all are done. */
 export async function reconcileOpeningAchievements(userId: string): Promise<void> {
   const mastery = await getOpeningMastery(userId);
   const conquered = STARTER_PATHS.filter((p) => mastery[p.id]?.state === "gold");
   if (conquered.length === 0) return;
 
+  const values: AchievementInsert[] = conquered.map((p) => ({
+    userId,
+    type: "opening_conquered",
+    key: p.id,
+    title: openingTitle(p.id, p.name),
+  }));
+
+  if (conquered.length === STARTER_PATHS.length) {
+    values.push({
+      userId,
+      type: "collector",
+      key: "opening-collector",
+      title: "Opening Collector",
+    });
+  }
+
   await db
     .insert(achievements)
-    .values(
-      conquered.map((p) => ({
-        userId,
-        type: "opening_conquered" as const,
-        key: p.id,
-        title: openingTitle(p.id, p.name),
-      })),
-    )
+    .values(values)
     .onConflictDoNothing({ target: [achievements.userId, achievements.key] });
 }
 

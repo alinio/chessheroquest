@@ -43,6 +43,20 @@ export const LANDING_ASSETS = {
     defender: `${BASE}/crest-defender-anim.mp4`,
     trickster: `${BASE}/crest-trickster-anim.mp4`,
   },
+  // Archetype card illustrations (portrait hero art per tribe — Round 2 §3).
+  archetypeArt: {
+    warrior: `${BASE}/archetype-warrior.png`,
+    strategist: `${BASE}/archetype-strategist.png`,
+    defender: `${BASE}/archetype-defender.png`,
+    trickster: `${BASE}/archetype-trickster.png`,
+  },
+  // Passport section anchor — ornate tome + wax seals (Round 2 §7).
+  passportTome: `${BASE}/passport-tome.png`,
+  // Boss section — the giant guardian cinematic (one-shot; Round 2 §6).
+  boss: {
+    video: `${BASE}/scene-guardian.mp4`,
+    poster: `${BASE}/scene-guardian-poster.jpg`,
+  },
   // Ambient section backdrops (low-opacity video + poster/reduced-motion still).
   backdrops: {
     pain: {
