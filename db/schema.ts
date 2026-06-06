@@ -70,6 +70,22 @@ export const questStatusEnum = pgEnum("quest_status", [
   "expired",
 ]);
 
+// Billing (master-vision §21).
+export const planEnum = pgEnum("plan", [
+  "free",
+  "pro_monthly",
+  "pro_annual",
+  "lifetime",
+]);
+
+export const subscriptionStatusEnum = pgEnum("subscription_status", [
+  "none",
+  "active",
+  "past_due",
+  "paused",
+  "canceled",
+]);
+
 /* ------------------------------------------------------------------ users */
 
 export const users = pgTable("users", {
@@ -85,6 +101,14 @@ export const users = pgTable("users", {
   consentMarketing: boolean("consent_marketing").notNull().default(false),
   profilePublic: boolean("profile_public").notNull().default(false), // private by default
   consentAt: timestamp("consent_at", { withTimezone: true }),
+
+  // Billing (Paddle). Plan/status mirror the verified webhook state.
+  plan: planEnum("plan").notNull().default("free"),
+  subscriptionStatus: subscriptionStatusEnum("subscription_status")
+    .notNull()
+    .default("none"),
+  paddleCustomerId: varchar("paddle_customer_id", { length: 64 }),
+  paddleSubscriptionId: varchar("paddle_subscription_id", { length: 64 }),
 
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
