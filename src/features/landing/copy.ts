@@ -23,8 +23,30 @@ export const PAIN = {
 } as const;
 
 export const WHAT_YOU_GET = {
-  h2: "In two minutes, you'll know your game.",
+  h2: "See the game behind your games.",
   body: "Your Opening IQ. Your Chess DNA archetype. Your strongest opening. Your biggest weakness. And a Road to Elo with the exact openings to train next — built for how you actually play.",
+} as const;
+
+/** Intro above the archetype row (Round 2 §3). */
+export const ARCHETYPE_INTRO = {
+  title: "Every player has a Chess DNA.",
+  sub: "Four ways to win. The free test reveals which one is yours.",
+  ctaLabel: CTA_LABEL,
+} as const;
+
+/** Boss section (Round 2 §6). */
+export const BOSS = {
+  kicker: "Kingdom Boss",
+  h2: "Face the Kingdom Bosses.",
+  tag: "The Dragon Variation",
+  body: "Each opening's toughest variation. Beat it to conquer the kingdom.",
+  ctaLabel: CTA_LABEL_START,
+} as const;
+
+/** Passport section (Round 2 §7). */
+export const PASSPORT = {
+  title: "Your Opening Passport",
+  body: "Master an opening, earn its seal. Collect them all.",
 } as const;
 
 export const HOW_IT_WORKS = {

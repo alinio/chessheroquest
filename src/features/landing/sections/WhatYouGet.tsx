@@ -1,7 +1,9 @@
 import { TestDemo } from "../components/TestDemo";
 import { ArchetypeCard } from "../components/ArchetypeCard";
 import { OrnamentalDivider } from "../components/OrnamentalDivider";
+import { SectionBackdrop } from "../components/SectionBackdrop";
 import { Reveal } from "../components/Reveal";
+import { LANDING_ASSETS } from "../assets";
 import { WHAT_YOU_GET } from "../copy";
 import { ARCHETYPES } from "../exampleData";
 
@@ -13,8 +15,13 @@ import { ARCHETYPES } from "../exampleData";
  */
 export function WhatYouGet() {
   return (
-    <section className="relative px-5 py-24">
-      <div className="mx-auto max-w-6xl">
+    <section className="relative overflow-hidden px-5 py-24">
+      <SectionBackdrop
+        video={LANDING_ASSETS.backdrops.hall.video}
+        poster={LANDING_ASSETS.backdrops.hall.poster}
+        opacity={0.4}
+      />
+      <div className="relative mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">
           <Reveal>
             <h2 className="font-display text-3xl font-bold leading-tight text-text-hi sm:text-4xl">
