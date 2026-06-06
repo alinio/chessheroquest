@@ -1,13 +1,14 @@
 /**
- * /train — the Openings hub (precursor to the World Map). Lists the curated
- * lines with the user's coverage (positions studied) so the collection visibly
- * "colours in". Each opening opens Learn or Drill.
+ * /train — the Openings hub (precursor to the World Map). Each line shows its
+ * mastery state (the kingdom colour: leak → review → solid → gold/conquered),
+ * derived from coverage + FSRS retention. Opens Learn or Drill.
  */
 import Link from "next/link";
 import { auth } from "@/src/lib/auth";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 import type { Archetype } from "@/src/domain/repertoire/types";
-import { getOpeningCoverage } from "@/src/data/repos/openings";
+import type { MasteryState } from "@/src/domain/mastery";
+import { getOpeningMastery } from "@/src/data/repos/openings";
 
 const ARCHETYPE_LABEL: Record<Archetype, string> = {
   warrior: "Aggressive Warrior",
@@ -16,9 +17,17 @@ const ARCHETYPE_LABEL: Record<Archetype, string> = {
   trickster: "Trickster",
 };
 
+// State always carries an icon + label, never colour alone (DESIGN.md §9).
+const STATE_META: Record<MasteryState, { label: string; icon: string; bar: string; text: string }> = {
+  leak: { label: "Leak", icon: "▲", bar: "bg-state-leak", text: "text-state-leak" },
+  review: { label: "Review", icon: "◆", bar: "bg-state-review", text: "text-state-review" },
+  solid: { label: "Solid", icon: "●", bar: "bg-state-solid", text: "text-state-solid" },
+  gold: { label: "Conquered", icon: "★", bar: "bg-gold", text: "text-gold" },
+};
+
 export default async function TrainHubPage() {
   const session = await auth();
-  const coverage = session?.user?.id ? await getOpeningCoverage(session.user.id) : {};
+  const mastery = session?.user?.id ? await getOpeningMastery(session.user.id) : {};
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-5 px-4 py-6">
@@ -29,11 +38,12 @@ export default async function TrainHubPage() {
 
       <div className="flex flex-col gap-3">
         {STARTER_PATHS.map((p) => {
-          const cov = coverage[p.id];
-          const total = cov?.total ?? p.moves.length;
-          const studied = cov?.studied ?? 0;
+          const m = mastery[p.id];
+          const total = m?.total ?? p.moves.length;
+          const studied = m?.studied ?? 0;
+          const state = m?.state ?? "leak";
+          const meta = STATE_META[state];
           const pct = total === 0 ? 0 : Math.round((studied / total) * 100);
-          const conquered = total > 0 && studied >= total;
 
           return (
             <div key={p.id} className="bg-surface border-hairline rounded-card border p-4">
@@ -44,22 +54,16 @@ export default async function TrainHubPage() {
                     {p.eco} · {ARCHETYPE_LABEL[p.archetype]}
                   </p>
                 </div>
-                {conquered && (
-                  <span className="bg-gold text-abyss rounded-chip shrink-0 px-2 py-0.5 text-[0.6rem] font-bold uppercase">
-                    Conquered
-                  </span>
-                )}
+                <span className={`shrink-0 text-xs font-semibold ${meta.text}`}>
+                  <span aria-hidden>{meta.icon} </span>
+                  {meta.label}
+                </span>
               </div>
 
               <div className="bg-raised mt-3 h-1.5 w-full overflow-hidden rounded-chip">
-                <div
-                  className={`h-full rounded-chip ${conquered ? "bg-gold" : "bg-state-solid"}`}
-                  style={{ width: `${pct}%` }}
-                />
+                <div className={`h-full rounded-chip ${meta.bar}`} style={{ width: `${pct}%` }} />
               </div>
-              <p className="text-text-low mt-1 text-xs tabular-nums">
-                {studied}/{total} positions
-              </p>
+              <p className="text-text-low mt-1 text-xs tabular-nums">{studied}/{total} positions</p>
 
               <div className="mt-3 flex gap-2">
                 <Link

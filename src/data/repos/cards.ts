@@ -9,9 +9,9 @@ import { db } from "@/src/data/db";
 import { cards, nodes } from "@/db/schema";
 import { newCard, reviewCard, type Card } from "@/src/domain/srs/fsrs";
 
-type CardRow = typeof cards.$inferSelect;
+export type CardRow = typeof cards.$inferSelect;
 
-function rowToCard(row: CardRow): Card {
+export function rowToCard(row: CardRow): Card {
   return {
     due: row.dueAt,
     stability: row.stability,
