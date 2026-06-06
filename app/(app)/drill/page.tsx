@@ -1,11 +1,13 @@
 /**
  * /drill — SRS recall over a curated line (build order #3). Surfaces FSRS
- * scheduling. Server component selects the path; the client Drill runs it.
+ * scheduling and, for the signed-in user, records the session (streak + XP + moat).
  */
+import { auth } from "@/src/lib/auth";
 import { Drill } from "@/src/ui/screens/Drill";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 
-export default function DrillPage() {
+export default async function DrillPage() {
+  const session = await auth();
   const path = STARTER_PATHS[0]!;
 
   return (
@@ -14,7 +16,7 @@ export default function DrillPage() {
         <p className="font-display text-gold text-xs uppercase tracking-[0.3em]">Drill</p>
         <h1 className="font-display text-text-hi text-2xl font-bold">Recall the line</h1>
       </header>
-      <Drill path={path} />
+      <Drill path={path} userId={session?.user?.id} />
     </main>
   );
 }

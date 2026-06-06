@@ -6,6 +6,7 @@ import type { PieceDropHandlerArgs } from "react-chessboard";
 import Link from "next/link";
 import { Board } from "@/src/ui/board/Board";
 import { useCountUp } from "@/src/ui/hooks/useCountUp";
+import { PENDING_DNA_KEY } from "@/src/ui/PendingDnaSync";
 import { DnaCard, ARCHETYPE_META } from "./DnaCard";
 import {
   DNA_QUESTION_BANK,
@@ -85,13 +86,19 @@ export function DnaTest({ userId }: { userId?: string }) {
           const finalResult = scoreDna(asked, nextAnswers);
           setResult(finalResult);
           setPhase("result");
-          // Persist for signed-in users (seeds their Opening IQ). Fire-and-forget.
+          // Signed in → persist now. Anonymous → stash for after signup (funnel).
           if (userId) {
             void fetch("/api/dna-test", {
               method: "POST",
               headers: { "content-type": "application/json" },
               body: JSON.stringify(finalResult),
             });
+          } else {
+            try {
+              localStorage.setItem(PENDING_DNA_KEY, JSON.stringify(finalResult));
+            } catch {
+              /* storage unavailable — anonymous result simply won't carry over */
+            }
           }
           return;
         }
@@ -175,7 +182,7 @@ export function DnaTest({ userId }: { userId?: string }) {
   }
 
   if (phase === "result" && result) {
-    return <DnaResultView result={result} onRetake={begin} />;
+    return <DnaResultView result={result} onRetake={begin} loggedIn={!!userId} />;
   }
 
   return null;
@@ -184,9 +191,11 @@ export function DnaTest({ userId }: { userId?: string }) {
 function DnaResultView({
   result,
   onRetake,
+  loggedIn,
 }: {
   result: DnaResult;
   onRetake: () => void;
+  loggedIn: boolean;
 }) {
   const iq = useCountUp(result.initialIq);
   const meta = ARCHETYPE_META[result.archetype];
@@ -216,10 +225,10 @@ function DnaResultView({
 
       <div className="flex w-full max-w-sm flex-col gap-3">
         <Link
-          href="/train"
+          href={loggedIn ? "/dashboard" : "/signup"}
           className="rounded-chip bg-gold text-abyss flex min-h-[48px] items-center justify-center px-6 text-base font-semibold"
         >
-          Start your Road
+          {loggedIn ? "Go to your hub" : "Save my Opening IQ — create account"}
         </Link>
         <button
           type="button"

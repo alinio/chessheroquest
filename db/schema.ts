@@ -110,6 +110,11 @@ export const users = pgTable("users", {
   paddleCustomerId: varchar("paddle_customer_id", { length: 64 }),
   paddleSubscriptionId: varchar("paddle_subscription_id", { length: 64 }),
 
+  // Engagement (daily loop). Streak day index = floor(epochMs / 86_400_000).
+  xp: integer("xp").notNull().default(0),
+  streakCount: integer("streak_count").notNull().default(0),
+  streakLastActiveDay: integer("streak_last_active_day"),
+
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

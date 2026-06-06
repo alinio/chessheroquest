@@ -6,7 +6,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/src/lib/auth";
 import { getProgress } from "@/src/data/repos/progress";
+import { isStreakAlive } from "@/src/domain/gamification/streak";
 import { Dashboard } from "@/src/ui/screens/Dashboard";
+import { PendingDnaSync } from "@/src/ui/PendingDnaSync";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -24,9 +26,23 @@ export default async function DashboardPage() {
       </header>
 
       {progress ? (
-        <Dashboard iq={progress.iq} archetype={progress.archetype} />
+        <Dashboard
+          iq={progress.iq}
+          archetype={progress.archetype}
+          streakDays={
+            isStreakAlive(
+              { count: progress.streakCount, lastActiveDay: progress.streakLastActiveDay },
+              new Date(),
+            )
+              ? progress.streakCount
+              : 0
+          }
+          xp={progress.xp}
+        />
       ) : (
         <section className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
+          {/* Carry over an anonymous DNA result, then this re-renders with real data. */}
+          <PendingDnaSync />
           <p className="text-text-mid max-w-xs">
             You haven&apos;t taken the Chess DNA Test yet — it seeds your Opening IQ.
           </p>

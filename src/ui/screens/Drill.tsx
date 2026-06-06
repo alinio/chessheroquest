@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Chess } from "chess.js";
 import type { PieceDropHandlerArgs } from "react-chessboard";
 import Link from "next/link";
@@ -18,6 +18,7 @@ interface DrillResult {
   ply: number;
   correct: boolean;
   intervalMs: number;
+  latencyMs: number;
 }
 type Feedback = "idle" | "correct" | "wrong";
 
@@ -47,15 +48,21 @@ function formatInterval(ms: number): string {
  * FSRS (LAW #6) — the resulting review interval is surfaced so the hidden engine
  * is verifiable. Cards are session-local for now (persistence lands with auth).
  */
-export function Drill({ path }: { path: CuratedPath }) {
+export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) {
   const items = useMemo(() => buildItems(path), [path]);
   const [index, setIndex] = useState(0);
   const [feedback, setFeedback] = useState<Feedback>("idle");
   const [boardFen, setBoardFen] = useState(items[0]?.fen ?? "");
   const [results, setResults] = useState<DrillResult[]>([]);
   const [done, setDone] = useState(items.length === 0);
+  const questStartRef = useRef(0);
 
   const current = items[index];
+
+  // (Re)start the per-question timer whenever a new position is shown.
+  useEffect(() => {
+    questStartRef.current = performance.now();
+  }, [index]);
 
   const onPieceDrop = useCallback(
     ({ sourceSquare, targetSquare }: PieceDropHandlerArgs): boolean => {
@@ -76,6 +83,7 @@ export function Drill({ path }: { path: CuratedPath }) {
         ply: current.ply,
         correct,
         intervalMs: card.due.getTime() - now.getTime(),
+        latencyMs: Math.round(performance.now() - questStartRef.current),
       };
 
       setBoardFen(game.fen());
@@ -87,6 +95,21 @@ export function Drill({ path }: { path: CuratedPath }) {
         const nextItem = items[next];
         if (!nextItem) {
           setDone(true);
+          // Persist the session for signed-in users: streak + XP + moat events.
+          if (userId) {
+            const finalResults = [...results, result];
+            void fetch("/api/train", {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({
+                mode: "drill",
+                attempts: finalResults.map((r) => ({
+                  correct: r.correct,
+                  latencyMs: r.latencyMs,
+                })),
+              }),
+            });
+          }
           return;
         }
         setIndex(next);
@@ -96,7 +119,7 @@ export function Drill({ path }: { path: CuratedPath }) {
 
       return true;
     },
-    [current, feedback, index, items],
+    [current, feedback, index, items, results, userId],
   );
 
   const restart = useCallback(() => {

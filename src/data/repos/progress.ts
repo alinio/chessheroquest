@@ -37,6 +37,9 @@ export interface UserProgress {
   /** Core competence [0,1] behind that IQ. */
   core: number;
   archetype: (typeof users.$inferSelect)["archetype"];
+  xp: number;
+  streakCount: number;
+  streakLastActiveDay: number | null;
 }
 
 /** The user's current progression, or null if they haven't taken the DNA Test yet. */
@@ -51,14 +54,23 @@ export async function getProgress(userId: string): Promise<UserProgress | null> 
   if (!latest) return null;
 
   const userRow = await db
-    .select({ archetype: users.archetype })
+    .select({
+      archetype: users.archetype,
+      xp: users.xp,
+      streakCount: users.streakCount,
+      streakLastActiveDay: users.streakLastActiveDay,
+    })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1);
+  const u = userRow[0];
 
   return {
     iq: latest.value,
     core: latest.core,
-    archetype: userRow[0]?.archetype ?? null,
+    archetype: u?.archetype ?? null,
+    xp: u?.xp ?? 0,
+    streakCount: u?.streakCount ?? 0,
+    streakLastActiveDay: u?.streakLastActiveDay ?? null,
   };
 }
