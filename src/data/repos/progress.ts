@@ -79,3 +79,14 @@ export async function getProgress(userId: string): Promise<UserProgress | null> 
     dueCount,
   };
 }
+
+/** The user's latest DNA result (the full shareable object), or null. */
+export async function getLatestDnaResult(userId: string): Promise<DnaResult | null> {
+  const rows = await db
+    .select({ raw: dnaResults.raw })
+    .from(dnaResults)
+    .where(eq(dnaResults.userId, userId))
+    .orderBy(desc(dnaResults.createdAt))
+    .limit(1);
+  return (rows[0]?.raw as DnaResult | undefined) ?? null;
+}

@@ -5,6 +5,7 @@
  */
 import { redirect } from "next/navigation";
 import { auth } from "@/src/lib/auth";
+import { AppNav } from "@/src/ui/AppNav";
 
 export default async function AppLayout({
   children,
@@ -13,5 +14,10 @@ export default async function AppLayout({
 }) {
   const session = await auth();
   if (!session?.user) redirect("/signin");
-  return <>{children}</>;
+  return (
+    <>
+      <div className="pb-20">{children}</div>
+      <AppNav />
+    </>
+  );
 }
