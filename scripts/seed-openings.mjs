@@ -1,12 +1,12 @@
 /**
  * Seed the opening tree: path_templates + nodes (one node per unique position).
- * Reference data so FSRS cards can be keyed to real positions. Idempotent —
- * skips if already seeded. Run with network access to the DB:
+ * Reference data so FSRS cards can be keyed to real positions. INCREMENTAL +
+ * idempotent — adds openings missing from the DB, never duplicates. Run with DB
+ * access:
  *
  *   node --env-file=.env.local scripts/seed-openings.mjs
  *
- * Self-contained ESM (chess.js + @neondatabase/serverless). The curated lines
- * MIRROR src/domain/repertoire/starter-paths.ts — keep them in sync.
+ * Self-contained ESM. The curated lines MIRROR src/domain/repertoire/starter-paths.ts.
  */
 import { Chess } from "chess.js";
 import { neon } from "@neondatabase/serverless";
@@ -16,6 +16,14 @@ const PATHS = [
   { slug: "scandinavian-mainline", name: "Scandinavian Defense — Mainline", archetype: "trickster", eco: "B01", description: "Strike at the center immediately.", moves: ["e4", "d5", "exd5", "Qxd5", "Nc3", "Qa5", "d4", "Nf6", "Nf3", "c6"] },
   { slug: "caro-kann-classical", name: "Caro-Kann Defense — Classical", archetype: "defender", eco: "B18", description: "A rock-solid reply to 1.e4.", moves: ["e4", "c6", "d4", "d5", "Nc3", "dxe4", "Nxe4", "Bf5", "Ng3", "Bg6"] },
   { slug: "evans-gambit", name: "Evans Gambit", archetype: "warrior", eco: "C51", description: "Sacrifice a pawn for a furious attack.", moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Bc5", "b4", "Bxb4", "c3", "Ba5"] },
+  { slug: "kings-gambit", name: "King's Gambit Accepted", archetype: "warrior", eco: "C37", description: "Offer the f-pawn for a roaring attack.", moves: ["e4", "e5", "f4", "exf4", "Nf3", "g5", "Bc4", "Bg7", "d4", "d6"] },
+  { slug: "sicilian-dragon", name: "Sicilian Defense — Dragon", archetype: "warrior", eco: "B70", description: "Fianchetto the dragon bishop.", moves: ["e4", "c5", "Nf3", "d6", "d4", "cxd4", "Nxd4", "Nf6", "Nc3", "g6"] },
+  { slug: "queens-gambit-declined", name: "Queen's Gambit Declined", archetype: "strategist", eco: "D35", description: "A classical, rock-solid centre.", moves: ["d4", "d5", "c4", "e6", "Nc3", "Nf6", "Bg5", "Be7", "e3", "O-O"] },
+  { slug: "london-system", name: "London System", archetype: "strategist", eco: "D02", description: "A reliable setup against anything.", moves: ["d4", "d5", "Nf3", "Nf6", "Bf4", "e6", "e3", "c5", "c3", "Nc6"] },
+  { slug: "slav-defense", name: "Slav Defense", archetype: "defender", eco: "D17", description: "Support the centre with c6.", moves: ["d4", "d5", "c4", "c6", "Nf3", "Nf6", "Nc3", "dxc4", "a4", "Bf5"] },
+  { slug: "french-defense", name: "French Defense — Classical", archetype: "defender", eco: "C11", description: "A sturdy pawn chain.", moves: ["e4", "e6", "d4", "d5", "Nc3", "Nf6", "Bg5", "Be7", "e5", "Nfd7"] },
+  { slug: "budapest-gambit", name: "Budapest Gambit", archetype: "trickster", eco: "A52", description: "A surprise gambit against 1.d4.", moves: ["d4", "Nf6", "c4", "e5", "dxe5", "Ng4", "Nf3", "Nc6", "Bf4", "Bb4"] },
+  { slug: "englund-gambit", name: "Englund Gambit", archetype: "trickster", eco: "A40", description: "A cheeky 1...e5 against 1.d4.", moves: ["d4", "e5", "dxe5", "Nc6", "Nf3", "Qe7", "Nc3", "Nxe5", "Nxe5", "Qxe5"] },
 ];
 
 function fenAfter(moves, ply) {
@@ -26,31 +34,31 @@ function fenAfter(moves, ply) {
 
 const sql = neon(process.env.DATABASE_URL);
 
-const existing = await sql`select count(*)::int c from path_templates`;
-if (existing[0].c > 0) {
-  console.log(`Already seeded (${existing[0].c} path_templates) — skipping.`);
-  process.exit(0);
-}
+const existingSlugs = new Set((await sql`select slug from path_templates`).map((r) => r.slug));
+const existingFens = new Set((await sql`select fen from nodes`).map((r) => r.fen));
 
-const seenFen = new Set();
-let nodeCount = 0;
+let addedPaths = 0;
+let addedNodes = 0;
 
 for (const p of PATHS) {
+  if (existingSlugs.has(p.slug)) continue; // already seeded
+
   const inserted = await sql`
     insert into path_templates (slug, name, archetype, description)
     values (${p.slug}, ${p.name}, ${p.archetype}, ${p.description})
     returning id`;
   const pathId = inserted[0].id;
+  addedPaths += 1;
 
   for (let ply = 0; ply < p.moves.length; ply++) {
     const fen = fenAfter(p.moves, ply);
-    if (seenFen.has(fen)) continue; // one node per unique position
-    seenFen.add(fen);
+    if (existingFens.has(fen)) continue; // position already owned by another line
+    existingFens.add(fen);
     await sql`
       insert into nodes (path_template_id, fen, move, is_player_move, eco)
       values (${pathId}, ${fen}, ${p.moves[ply]}, true, ${p.eco})`;
-    nodeCount += 1;
+    addedNodes += 1;
   }
 }
 
-console.log(`Seeded ${PATHS.length} path_templates and ${nodeCount} nodes.`);
+console.log(`Seed: +${addedPaths} path_templates, +${addedNodes} nodes (now ${existingSlugs.size + addedPaths} openings).`);

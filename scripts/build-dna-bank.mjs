@@ -19,6 +19,14 @@ const PATHS = [
   { id: "scandinavian-mainline", archetype: "trickster", moves: ["e4", "d5", "exd5", "Qxd5", "Nc3", "Qa5", "d4", "Nf6", "Nf3", "c6"] },
   { id: "caro-kann-classical", archetype: "defender", moves: ["e4", "c6", "d4", "d5", "Nc3", "dxe4", "Nxe4", "Bf5", "Ng3", "Bg6"] },
   { id: "evans-gambit", archetype: "warrior", moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Bc5", "b4", "Bxb4", "c3", "Ba5"] },
+  { id: "kings-gambit", archetype: "warrior", moves: ["e4", "e5", "f4", "exf4", "Nf3", "g5", "Bc4", "Bg7", "d4", "d6"] },
+  { id: "sicilian-dragon", archetype: "warrior", moves: ["e4", "c5", "Nf3", "d6", "d4", "cxd4", "Nxd4", "Nf6", "Nc3", "g6"] },
+  { id: "queens-gambit-declined", archetype: "strategist", moves: ["d4", "d5", "c4", "e6", "Nc3", "Nf6", "Bg5", "Be7", "e3", "O-O"] },
+  { id: "london-system", archetype: "strategist", moves: ["d4", "d5", "Nf3", "Nf6", "Bf4", "e6", "e3", "c5", "c3", "Nc6"] },
+  { id: "slav-defense", archetype: "defender", moves: ["d4", "d5", "c4", "c6", "Nf3", "Nf6", "Nc3", "dxc4", "a4", "Bf5"] },
+  { id: "french-defense", archetype: "defender", moves: ["e4", "e6", "d4", "d5", "Nc3", "Nf6", "Bg5", "Be7", "e5", "Nfd7"] },
+  { id: "budapest-gambit", archetype: "trickster", moves: ["d4", "Nf6", "c4", "e5", "dxe5", "Ng4", "Nf3", "Nc6", "Bf4", "Bb4"] },
+  { id: "englund-gambit", archetype: "trickster", moves: ["d4", "e5", "dxe5", "Nc6", "Nf3", "Qe7", "Nc3", "Nxe5", "Nxe5", "Qxe5"] },
 ];
 
 const PROBE_PLIES = [4, 5, 6, 7, 8];
