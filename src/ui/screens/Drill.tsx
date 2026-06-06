@@ -16,6 +16,7 @@ interface DrillItem {
 }
 interface DrillResult {
   ply: number;
+  fen: string;
   correct: boolean;
   intervalMs: number;
   latencyMs: number;
@@ -81,6 +82,7 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
       const card = reviewCard(newCard(now), correct, now);
       const result: DrillResult = {
         ply: current.ply,
+        fen: current.fen,
         correct,
         intervalMs: card.due.getTime() - now.getTime(),
         latencyMs: Math.round(performance.now() - questStartRef.current),
@@ -106,6 +108,7 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
                 attempts: finalResults.map((r) => ({
                   correct: r.correct,
                   latencyMs: r.latencyMs,
+                  fen: r.fen,
                 })),
               }),
             });

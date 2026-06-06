@@ -8,12 +8,15 @@ import { db } from "@/src/data/db";
 import { trainingEvents, users } from "@/db/schema";
 import { recordActivity, type StreakState } from "@/src/domain/gamification/streak";
 import { XP_REWARDS } from "@/src/domain/gamification/xp";
+import { upsertCardReview } from "@/src/data/repos/cards";
 
 export type TrainingMode = "learn" | "drill" | "review" | "sparring" | "dna_test";
 
 export interface TrainingAttempt {
   correct: boolean;
   latencyMs: number;
+  /** FEN of the position answered — persists an FSRS card when present. */
+  fen?: string;
 }
 
 export interface TrainingOutcome {
@@ -38,6 +41,11 @@ export async function recordTraining(
         latencyMs: a.latencyMs,
       })),
     );
+  }
+
+  // Persist the FSRS card for each answered position (cross-session retention).
+  for (const a of attempts) {
+    if (a.fen) await upsertCardReview(userId, a.fen, a.correct, now);
   }
 
   const rows = await db

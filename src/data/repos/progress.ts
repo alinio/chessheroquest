@@ -6,6 +6,7 @@
 import { desc, eq } from "drizzle-orm";
 import { db } from "@/src/data/db";
 import { dnaResults, openingIqSnapshots, users } from "@/db/schema";
+import { getDueCount } from "@/src/data/repos/cards";
 import type { DnaResult } from "@/src/domain/dna/types";
 
 /** Persist a completed DNA Test: result row + initial IQ snapshot + user archetype. */
@@ -40,6 +41,8 @@ export interface UserProgress {
   xp: number;
   streakCount: number;
   streakLastActiveDay: number | null;
+  /** Cards due for review now — the Daily Quest size. */
+  dueCount: number;
 }
 
 /** The user's current progression, or null if they haven't taken the DNA Test yet. */
@@ -64,6 +67,7 @@ export async function getProgress(userId: string): Promise<UserProgress | null> 
     .where(eq(users.id, userId))
     .limit(1);
   const u = userRow[0];
+  const dueCount = await getDueCount(userId, new Date());
 
   return {
     iq: latest.value,
@@ -72,5 +76,6 @@ export async function getProgress(userId: string): Promise<UserProgress | null> 
     xp: u?.xp ?? 0,
     streakCount: u?.streakCount ?? 0,
     streakLastActiveDay: u?.streakLastActiveDay ?? null,
+    dueCount,
   };
 }

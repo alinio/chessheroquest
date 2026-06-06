@@ -10,7 +10,13 @@ import { recordTraining } from "@/src/data/repos/stats";
 const BodySchema = z.object({
   mode: z.enum(["learn", "drill", "review", "sparring", "dna_test"]),
   attempts: z
-    .array(z.object({ correct: z.boolean(), latencyMs: z.number().int().min(0) }))
+    .array(
+      z.object({
+        correct: z.boolean(),
+        latencyMs: z.number().int().min(0),
+        fen: z.string().min(1).optional(),
+      }),
+    )
     .max(200),
 });
 

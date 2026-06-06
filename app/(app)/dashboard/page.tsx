@@ -38,6 +38,7 @@ export default async function DashboardPage() {
               : 0
           }
           xp={progress.xp}
+          dueCount={progress.dueCount}
         />
       ) : (
         <section className="flex flex-1 flex-col items-center justify-center gap-5 text-center">

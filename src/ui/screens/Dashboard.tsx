@@ -28,6 +28,8 @@ export interface DashboardProps {
   streakDays?: number;
   /** Total XP (0 until earned). */
   xp?: number;
+  /** Cards due for review now. */
+  dueCount?: number;
 }
 
 /**
@@ -40,6 +42,7 @@ export function Dashboard({
   goal = 1200,
   streakDays = 0,
   xp = 0,
+  dueCount = 0,
 }: DashboardProps) {
   const animatedIq = useCountUp(iq);
   const rank = rankForIq(iq);
@@ -49,7 +52,7 @@ export function Dashboard({
   const archetypeLabel = archetype ? ARCHETYPE_META[archetype].label : null;
 
   const quests = generateDailyQuests({
-    dueCount: 5,
+    dueCount,
     weakestOpeningName: "your weakest line",
     bossOpeningName: "today's opening",
   });
