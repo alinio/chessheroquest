@@ -29,6 +29,8 @@ export interface ArchetypeInfo {
   key: LandingArchetypeKey;
   label: string;
   tagline: string;
+  /** One-line, plain-language: what it means for how you play (pass 2 §5). */
+  blurb: string;
   /** DESIGN.md token color var for this tribe. */
   colorVar: string;
 }
@@ -39,24 +41,28 @@ export const ARCHETYPES: ArchetypeInfo[] = [
     key: "warrior",
     label: "Aggressive Warrior",
     tagline: "Attack relentlessly",
+    blurb: "You strike early and hunt the king before they're ready.",
     colorVar: "var(--color-warrior)",
   },
   {
     key: "strategist",
     label: "Strategist",
     tagline: "Outmaneuver, then crush",
+    blurb: "You build small edges and squeeze them in the long game.",
     colorVar: "var(--color-strategist)",
   },
   {
     key: "defender",
     label: "Defender",
     tagline: "Unbreakable and patient",
+    blurb: "You soak up pressure, stay solid, and punish overreach.",
     colorVar: "var(--color-defender)",
   },
   {
     key: "trickster",
     label: "Trickster",
     tagline: "Surprise and bewilder",
+    blurb: "You steer into sharp, offbeat lines and spring traps.",
     colorVar: "var(--color-trickster)",
   },
 ];

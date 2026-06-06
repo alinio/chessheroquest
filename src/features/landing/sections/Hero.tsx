@@ -1,24 +1,21 @@
 import { HeroMedia } from "../components/HeroMedia";
-import { EmbersOverlay } from "../components/EmbersOverlay";
-import { DNACard } from "../components/DNACard";
+import { HeroDnaCard } from "../components/HeroDnaCard";
 import { CTAButton } from "../components/CTAButton";
+import { Microcopy } from "../components/Microcopy";
 import { Reveal } from "../components/Reveal";
 import { HERO } from "../copy";
-import { EXAMPLE_DNA } from "../exampleData";
 import type { HeadlineCopy } from "../variants";
 
 /**
- * S1 · Hero (kickoff §S1). Cinematic background with the H1 + DNA Card over the
- * negative space (left on desktop, top on mobile). The DNA Card is the
- * centerpiece visual; the board art is only ambiance (kickoff §1).
- *
- * The H1/sub are channel-aware (§4) and resolved on the server → in the SSR HTML.
+ * S1 · Hero (kickoff §S1 + pass 2 §1). Cinematic king + H1 land first; the DNA
+ * Card materializes after ~0.6s over the negative space (left on desktop, top on
+ * mobile), pushed low-right so the crown + embers stay visible. The board art is
+ * only ambiance (kickoff §1).
  */
 export function Hero({ headline }: { headline: HeadlineCopy }) {
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden pt-16">
+    <section className="relative flex min-h-screen items-center overflow-hidden pt-20">
       <HeroMedia />
-      <EmbersOverlay />
 
       <div className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-10 px-5 py-16 md:grid-cols-2">
         {/* copy column (negative space) */}
@@ -39,22 +36,18 @@ export function Hero({ headline }: { headline: HeadlineCopy }) {
             </p>
           </Reveal>
           <Reveal index={3}>
-            <div className="mt-7 flex flex-col items-start gap-3">
+            <div className="mt-7 inline-flex flex-col items-center gap-3">
               <CTAButton section="hero" label={HERO.ctaLabel} />
-              <p className="text-xs text-text-low">{HERO.microcopy}</p>
+              <Microcopy items={["Free", "no signup to begin", "~2 minutes"]} />
             </div>
           </Reveal>
         </div>
 
-        {/* DNA Card centerpiece — glass so the cinematic shows through, floating
-            with a pulsing gold halo, pushed down on desktop so the crown breathes. */}
-        <Reveal index={2} className="flex justify-center md:justify-end">
-          <div className="animate-[chq-float_6s_ease-in-out_infinite] [will-change:transform] md:mt-16">
-            <div className="rounded-card animate-[chq-card-glow_4.5s_ease-in-out_infinite]">
-              <DNACard data={EXAMPLE_DNA} />
-            </div>
-          </div>
-        </Reveal>
+        {/* DNA Card centerpiece — delayed reveal, floating, pushed low so the
+            crown breathes above it. */}
+        <div className="flex justify-center md:mt-20 md:justify-end">
+          <HeroDnaCard />
+        </div>
       </div>
     </section>
   );

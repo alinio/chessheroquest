@@ -86,6 +86,44 @@ body {
   }
 }
 
+/* Sequential flash (positions flipping by / streak days lighting up). */
+@keyframes chq-flash {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Looping ring fill for the step-2 "score" micro-icon. */
+@keyframes chq-ring {
+  0% {
+    stroke-dashoffset: 113;
+  }
+  45%,
+  72% {
+    stroke-dashoffset: 40;
+  }
+  100% {
+    stroke-dashoffset: 113;
+  }
+}
+
+/* Slow glow pulse behind archetype crests / icons. */
+@keyframes chq-crest-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
 /* Periodic shine sweep across the RPG button face. */
 @keyframes chq-btn-shine {
   0% {

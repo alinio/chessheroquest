@@ -1,5 +1,6 @@
 import { StickyCTA } from "./components/StickyCTA";
 import { LandingAnalytics } from "./components/LandingAnalytics";
+import { BackdropAtmosphere } from "./components/BackdropAtmosphere";
 import { Hero } from "./sections/Hero";
 import { Pain } from "./sections/Pain";
 import { WhatYouGet } from "./sections/WhatYouGet";
@@ -24,8 +25,9 @@ export function LandingPage({ variant }: { variant: HeadlineVariant }) {
   return (
     <>
       <LandingAnalytics variant={variant} />
+      <BackdropAtmosphere />
       <StickyCTA />
-      <main className="flex flex-col">
+      <main className="relative z-10 flex flex-col">
         <Hero headline={headline} />
         <Pain />
         <WhatYouGet />

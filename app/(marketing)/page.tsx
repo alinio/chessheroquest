@@ -18,10 +18,12 @@ const TITLE = "ChessHeroQuest — What's Your Chess DNA?";
 const DESCRIPTION =
   "Take the free 2-minute Chess DNA Test to reveal your Opening IQ, your chess style, and the opening weaknesses holding back your rating. The RPG of chess openings.";
 
+// Canonical/OG must resolve to the public domain — NOT the env URL (prod
+// NEXT_PUBLIC_APP_URL is localhost) and NOT the Vercel preview URL.
+const SITE_URL = "https://chessheroquest.com";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://chessheroquest.com",
-  ),
+  metadataBase: new URL(SITE_URL),
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: "/" },
