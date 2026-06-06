@@ -14,8 +14,8 @@ import { Panel } from "./Panel";
  * docs/opening-boss-catalog.md. prefers-reduced-motion → poster still.
  */
 interface KingdomBoss {
-  key: string;
   world: string;
+  archetype: string;
   accent: string;
   name: string;
   title: string;
@@ -24,46 +24,47 @@ interface KingdomBoss {
   poster: string;
 }
 
+// Boss section — world-boss plates (canonical, from docs/opening-boss-catalog.md)
 const BOSSES: [KingdomBoss, KingdomBoss, KingdomBoss, KingdomBoss] = [
   {
-    key: "warrior",
     world: "Ember Marches",
+    archetype: "Warrior",
     accent: "#E0413B",
-    name: "Ignar",
-    title: "The Crowned Conflagration",
-    lore: "A colossal armored war-king enthroned on a heap of molten swords — the final gauntlet of every Warrior opening.",
+    name: "Ignar, the Crowned Conflagration",
+    title: "Warlord of the Ember Marches",
+    lore: "Every Warrior opening ends at his throne of molten swords. Break him, and the Ember Marches are yours.",
     video: "/art/bosses/endboss-warrior-cinematic.mp4",
-    poster: "/art/bosses/endboss-warrior.jpeg",
+    poster: "/art/bosses/endboss-warrior.webp",
   },
   {
-    key: "strategist",
     world: "Obsidian Court",
+    archetype: "Strategist",
     accent: "#8B6CFF",
     name: "Theron the Eternal",
     title: "Regent of the Obsidian Court",
-    lore: "The supreme strategist on an astral throne, the whole board reflected in the stars — the gauntlet of positional mastery.",
+    lore: "The supreme strategist who reads the whole board in the stars. Outthink him to claim the Court.",
     video: "/art/bosses/endboss-strategist-cinematic.mp4",
-    poster: "/art/bosses/endboss-strategist.png",
+    poster: "/art/bosses/endboss-strategist.webp",
   },
   {
-    key: "defender",
     world: "Aegis Bastion",
+    archetype: "Defender",
     accent: "#2FB67A",
-    name: "Aegidius",
-    title: "The Last Wall",
-    lore: "A colossal living fortress-golem, ramparts for shoulders and a gate for a heart — the final, unbreakable gauntlet.",
+    name: "Aegidius, the Last Wall",
+    title: "Bastion Keeper of the Aegis",
+    lore: "A living fortress that has never been breached. Outlast him, and the Aegis Bastion falls.",
     video: "/art/bosses/endboss-defender-cinematic.mp4",
-    poster: "/art/bosses/endboss-defender.png",
+    poster: "/art/bosses/endboss-defender.webp",
   },
   {
-    key: "trickster",
     world: "Mirage Bazaar",
+    archetype: "Trickster",
     accent: "#38C7D6",
-    name: "Vesper",
-    title: "The Hall of Mirrors",
-    lore: "A shapeshifting trickster fighting from an infinite mirror-hall, every reflection a different gambit — the gauntlet of deception.",
+    name: "Vesper, the Hall of Mirrors",
+    title: "Masked Illusionist of the Mirage Bazaar",
+    lore: "Every reflection hides a different trap. See through him to conquer the Mirage Bazaar.",
     video: "/art/bosses/endboss-trickster-cinematic.mp4",
-    poster: "/art/bosses/endboss-trickster.png",
+    poster: "/art/bosses/endboss-trickster.webp",
   },
 ];
 
@@ -93,7 +94,7 @@ export function BossBlock() {
           const active = i === idx;
           return (
             <button
-              key={b.key}
+              key={b.world}
               type="button"
               onClick={() => setIdx(i)}
               aria-pressed={active}
@@ -118,7 +119,7 @@ export function BossBlock() {
         innerClassName="p-1.5"
       >
         <div className="relative aspect-video w-full overflow-hidden rounded-[12px]">
-          <BossCinematic key={boss.key} boss={boss} />
+          <BossCinematic key={boss.world} boss={boss} />
 
           {/* coded name plate (text never baked into the video) */}
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/55 to-transparent p-4 text-left sm:p-6">
