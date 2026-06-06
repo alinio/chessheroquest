@@ -5,6 +5,7 @@ import { Chess } from "chess.js";
 import type { PieceDropHandlerArgs } from "react-chessboard";
 import Link from "next/link";
 import { Board } from "@/src/ui/board/Board";
+import { CoachSheet } from "@/src/ui/screens/CoachSheet";
 import type { CuratedPath } from "@/src/domain/repertoire/types";
 import { fenAfter, expectedMoveAt } from "@/src/domain/repertoire/line";
 import { newCard, reviewCard } from "@/src/domain/srs/fsrs";
@@ -56,6 +57,13 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
   const [boardFen, setBoardFen] = useState(items[0]?.fen ?? "");
   const [results, setResults] = useState<DrillResult[]>([]);
   const [done, setDone] = useState(items.length === 0);
+  // On a wrong answer we pause auto-advance and coach the player on the line.
+  const [pending, setPending] = useState<DrillResult | null>(null);
+  const [coach, setCoach] = useState<{ open: boolean; loading: boolean; text: string | null }>({
+    open: false,
+    loading: false,
+    text: null,
+  });
   const questStartRef = useRef(0);
 
   const current = items[index];
@@ -64,6 +72,38 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
   useEffect(() => {
     questStartRef.current = performance.now();
   }, [index]);
+
+  // Advance to the next position, or finish the session (persist for signed-in
+  // users: streak + XP + FSRS cards + moat events).
+  const commit = useCallback(
+    (result: DrillResult) => {
+      setResults((r) => [...r, result]);
+      const nextItem = items[index + 1];
+      if (!nextItem) {
+        setDone(true);
+        if (userId) {
+          const finalResults = [...results, result];
+          void fetch("/api/train", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              mode: "drill",
+              attempts: finalResults.map((r) => ({
+                correct: r.correct,
+                latencyMs: r.latencyMs,
+                fen: r.fen,
+              })),
+            }),
+          });
+        }
+        return;
+      }
+      setIndex(index + 1);
+      setBoardFen(nextItem.fen);
+      setFeedback("idle");
+    },
+    [index, items, results, userId],
+  );
 
   const onPieceDrop = useCallback(
     ({ sourceSquare, targetSquare }: PieceDropHandlerArgs): boolean => {
@@ -91,39 +131,47 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
       setBoardFen(game.fen());
       setFeedback(correct ? "correct" : "wrong");
 
-      window.setTimeout(() => {
-        setResults((r) => [...r, result]);
-        const next = index + 1;
-        const nextItem = items[next];
-        if (!nextItem) {
-          setDone(true);
-          // Persist the session for signed-in users: streak + XP + moat events.
-          if (userId) {
-            const finalResults = [...results, result];
-            void fetch("/api/train", {
-              method: "POST",
-              headers: { "content-type": "application/json" },
-              body: JSON.stringify({
-                mode: "drill",
-                attempts: finalResults.map((r) => ({
-                  correct: r.correct,
-                  latencyMs: r.latencyMs,
-                  fen: r.fen,
-                })),
-              }),
-            });
-          }
-          return;
-        }
-        setIndex(next);
-        setBoardFen(nextItem.fen);
-        setFeedback("idle");
-      }, 700);
+      if (correct) {
+        window.setTimeout(() => commit(result), 700);
+      } else {
+        // Pause and coach: explain why the line's move is stronger. The verified
+        // best move is GIVEN to the coach (LAW #2) — it never analyses for itself.
+        setPending(result);
+        setCoach({ open: true, loading: true, text: null });
+        fetch("/api/coach", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            fen: current.fen,
+            move: san,
+            bestMove: current.expected,
+            openingName: path.name,
+            eco: path.eco,
+          }),
+        })
+          .then((r) => r.json())
+          .then((d) =>
+            setCoach({
+              open: true,
+              loading: false,
+              text: d.explanation ?? d.error ?? "Coach unavailable.",
+            }),
+          )
+          .catch(() => setCoach({ open: true, loading: false, text: "Coach unavailable." }));
+      }
 
       return true;
     },
-    [current, feedback, index, items, results, userId],
+    [current, feedback, commit, path],
   );
+
+  const onContinue = useCallback(() => {
+    if (!pending) return;
+    const next = pending;
+    setPending(null);
+    setCoach((c) => ({ ...c, open: false }));
+    commit(next);
+  }, [pending, commit]);
 
   const restart = useCallback(() => {
     setIndex(0);
@@ -131,6 +179,8 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
     setFeedback("idle");
     setDone(items.length === 0);
     setBoardFen(items[0]?.fen ?? "");
+    setPending(null);
+    setCoach({ open: false, loading: false, text: null });
   }, [items]);
 
   if (done) {
@@ -204,11 +254,28 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
         {feedback === "correct" ? (
           <span className="text-state-solid">✓ Correct</span>
         ) : feedback === "wrong" ? (
-          <span className="text-state-leak">✗ Keep this one in review</span>
+          <span className="text-state-leak">✗ Not the line — here&apos;s why</span>
         ) : (
           <span className="text-text-low">Recall the move.</span>
         )}
       </p>
+
+      {pending && (
+        <button
+          type="button"
+          onClick={onContinue}
+          className="rounded-chip bg-gold text-abyss mx-auto min-h-[44px] px-8 text-sm font-semibold"
+        >
+          Continue
+        </button>
+      )}
+
+      <CoachSheet
+        open={coach.open}
+        loading={coach.loading}
+        text={coach.text}
+        onClose={onContinue}
+      />
     </section>
   );
 }
