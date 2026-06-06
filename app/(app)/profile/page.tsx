@@ -11,6 +11,7 @@ import { xpProgress } from "@/src/domain/gamification/xp";
 import { isStreakAlive } from "@/src/domain/gamification/streak";
 import { DnaCard, ARCHETYPE_META } from "@/src/ui/screens/DnaCard";
 import { ShareButton } from "@/src/ui/ShareButton";
+import { RoadGoalPicker } from "@/src/ui/RoadGoalPicker";
 import { SignOutButton } from "@/src/ui/SignOutButton";
 
 function Stat({ label, value }: { label: string; value: string }) {
@@ -66,6 +67,8 @@ export default async function ProfilePage() {
             <Stat label="Level" value={`${xpProgress(progress.xp).level}`} />
             <Stat label="Due" value={`${progress.dueCount}`} />
           </section>
+
+          <RoadGoalPicker current={progress.eloGoal} />
 
           {titles.length > 0 && (
             <section className="flex flex-col gap-2">

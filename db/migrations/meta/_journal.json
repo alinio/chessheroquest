@@ -43,6 +43,13 @@
       "when": 1780734057398,
       "tag": "0005_demonic_magik",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1780736563484,
+      "tag": "0006_useful_roland_deschain",
+      "breakpoints": true
     }
   ]
 }

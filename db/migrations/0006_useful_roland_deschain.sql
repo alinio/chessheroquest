@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "elo_goal" integer DEFAULT 1200 NOT NULL;

@@ -119,6 +119,8 @@ export const users = pgTable("users", {
   xp: integer("xp").notNull().default(0),
   streakCount: integer("streak_count").notNull().default(0),
   streakLastActiveDay: integer("streak_last_active_day"),
+  // Road to Elo goal (master-vision §5): 1000 | 1200 | 1500 | 1800.
+  eloGoal: integer("elo_goal").notNull().default(1200),
 
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

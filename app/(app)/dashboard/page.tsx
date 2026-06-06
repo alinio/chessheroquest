@@ -9,6 +9,7 @@ import { getProgress } from "@/src/data/repos/progress";
 import { getOpeningMastery } from "@/src/data/repos/openings";
 import { isStreakAlive } from "@/src/domain/gamification/streak";
 import { pickFocusOpenings } from "@/src/domain/gamification/focus";
+import type { EloGoal } from "@/src/domain/gamification/road";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 import { Dashboard } from "@/src/ui/screens/Dashboard";
 import { PendingDnaSync } from "@/src/ui/PendingDnaSync";
@@ -40,6 +41,7 @@ export default async function DashboardPage() {
         <Dashboard
           iq={progress.iq}
           archetype={progress.archetype}
+          goal={progress.eloGoal as EloGoal}
           streakDays={
             isStreakAlive(
               { count: progress.streakCount, lastActiveDay: progress.streakLastActiveDay },

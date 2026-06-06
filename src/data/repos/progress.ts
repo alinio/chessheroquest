@@ -41,6 +41,8 @@ export interface UserProgress {
   xp: number;
   streakCount: number;
   streakLastActiveDay: number | null;
+  /** Chosen Road-to-Elo goal. */
+  eloGoal: number;
   /** Cards due for review now — the Daily Quest size. */
   dueCount: number;
 }
@@ -62,6 +64,7 @@ export async function getProgress(userId: string): Promise<UserProgress | null> 
       xp: users.xp,
       streakCount: users.streakCount,
       streakLastActiveDay: users.streakLastActiveDay,
+      eloGoal: users.eloGoal,
     })
     .from(users)
     .where(eq(users.id, userId))
@@ -76,6 +79,7 @@ export async function getProgress(userId: string): Promise<UserProgress | null> 
     xp: u?.xp ?? 0,
     streakCount: u?.streakCount ?? 0,
     streakLastActiveDay: u?.streakLastActiveDay ?? null,
+    eloGoal: u?.eloGoal ?? 1200,
     dueCount,
   };
 }
