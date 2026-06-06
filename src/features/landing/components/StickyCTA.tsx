@@ -45,12 +45,23 @@ export function StickyCTA() {
               : "pointer-events-none -translate-y-1 opacity-0"
           }`}
         >
-          <CTAButton
-            section="sticky"
-            label={CTA_LABEL}
-            variant="gold"
-            className="whitespace-nowrap px-4 text-xs sm:px-5 sm:text-sm"
-          />
+          {/* short label on mobile (logo + full label don't fit on a phone bar) */}
+          <span className="sm:hidden">
+            <CTAButton
+              section="sticky"
+              label="Take the Test"
+              variant="gold"
+              className="whitespace-nowrap px-4 text-xs"
+            />
+          </span>
+          <span className="hidden sm:block">
+            <CTAButton
+              section="sticky"
+              label={CTA_LABEL}
+              variant="gold"
+              className="whitespace-nowrap sm:px-5 sm:text-sm"
+            />
+          </span>
         </div>
       </div>
     </div>
