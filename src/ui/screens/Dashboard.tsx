@@ -13,12 +13,6 @@ import { generateDailyQuests, type QuestType } from "@/src/domain/gamification/q
 import { xpProgress } from "@/src/domain/gamification/xp";
 import type { Archetype } from "@/src/domain/repertoire/types";
 
-const QUEST_LINK: Record<QuestType, string> = {
-  daily_quest: "/train",
-  weakness_battle: "/train",
-  boss_fight: "/train",
-};
-
 export interface DashboardProps {
   /** Real Opening IQ from the user's latest snapshot. */
   iq: number;
@@ -30,6 +24,12 @@ export interface DashboardProps {
   xp?: number;
   /** Cards due for review now. */
   dueCount?: number;
+  /** Weakest opening (Weakness Battle target). */
+  weakestName?: string;
+  weakestSlug?: string;
+  /** Boss candidate (strongest not-yet-conquered line). */
+  bossName?: string;
+  bossSlug?: string;
 }
 
 /**
@@ -43,7 +43,16 @@ export function Dashboard({
   streakDays = 0,
   xp = 0,
   dueCount = 0,
+  weakestName,
+  weakestSlug,
+  bossName,
+  bossSlug,
 }: DashboardProps) {
+  const questHref = (type: QuestType): string => {
+    if (type === "weakness_battle" && weakestSlug) return `/drill/${weakestSlug}`;
+    if (type === "boss_fight" && bossSlug) return `/train/${bossSlug}`;
+    return "/train";
+  };
   const animatedIq = useCountUp(iq);
   const rank = rankForIq(iq);
   const progress = roadProgress(iq, goal);
@@ -53,8 +62,8 @@ export function Dashboard({
 
   const quests = generateDailyQuests({
     dueCount,
-    weakestOpeningName: "your weakest line",
-    bossOpeningName: "today's opening",
+    weakestOpeningName: weakestName ?? null,
+    bossOpeningName: bossName ?? null,
   });
 
   return (
@@ -117,7 +126,7 @@ export function Dashboard({
         {quests.map((q) => (
           <Link
             key={q.type}
-            href={QUEST_LINK[q.type]}
+            href={questHref(q.type)}
             className="bg-surface border-hairline rounded-card flex items-center justify-between border p-4"
           >
             <div className="min-w-0">

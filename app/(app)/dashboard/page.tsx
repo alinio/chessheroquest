@@ -6,7 +6,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/src/lib/auth";
 import { getProgress } from "@/src/data/repos/progress";
+import { getOpeningMastery } from "@/src/data/repos/openings";
 import { isStreakAlive } from "@/src/domain/gamification/streak";
+import { pickFocusOpenings } from "@/src/domain/gamification/focus";
+import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 import { Dashboard } from "@/src/ui/screens/Dashboard";
 import { PendingDnaSync } from "@/src/ui/PendingDnaSync";
 
@@ -15,6 +18,14 @@ export default async function DashboardPage() {
   if (!session?.user?.id) redirect("/signin");
 
   const progress = await getProgress(session.user.id);
+  const mastery = progress ? await getOpeningMastery(session.user.id) : {};
+  const focus = pickFocusOpenings(
+    STARTER_PATHS.map((p) => ({
+      slug: p.id,
+      name: p.name,
+      state: mastery[p.id]?.state ?? "leak",
+    })),
+  );
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-7 px-4 py-6">
@@ -39,6 +50,10 @@ export default async function DashboardPage() {
           }
           xp={progress.xp}
           dueCount={progress.dueCount}
+          weakestName={focus.weakest?.name}
+          weakestSlug={focus.weakest?.slug}
+          bossName={focus.boss?.name}
+          bossSlug={focus.boss?.slug}
         />
       ) : (
         <section className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
