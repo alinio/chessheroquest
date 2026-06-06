@@ -1,5 +1,4 @@
 import { CTAButton } from "../components/CTAButton";
-import { Microcopy } from "../components/Microcopy";
 import { Panel } from "../components/Panel";
 import { SectionBackdrop } from "../components/SectionBackdrop";
 import { Reveal } from "../components/Reveal";
@@ -35,9 +34,8 @@ export function FinalCTA() {
           <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-text-mid sm:text-lg">
             {FINAL.body}
           </p>
-          <div className="mt-9 flex flex-col items-center gap-3">
+          <div className="mt-9 flex justify-center">
             <CTAButton section="final" label={FINAL.ctaLabel} />
-            <Microcopy items={["Free", "~2 minutes", "no signup to begin"]} />
           </div>
         </Panel>
       </Reveal>

@@ -1,3 +1,10 @@
+## Product & design source of truth (read before coding)
+- docs/game-design-doc.md        — game logic, plans, scoring, build order
+- docs/art-direction-bible.md    — design tokens, dimensions, assets, Higgsfield rules
+- docs/opening-boss-catalog.md   — openings, variations, bosses, design briefs
+- docs/screen-wireframe-spec.md  — exact screen-by-screen layouts
+
+
 # CLAUDE.md — ChessHeroQuest.com
 
 > **What this is.** ChessHeroQuest is the Duolingo-meets-RPG of chess openings (vision docs may call it "Opening Hero" — same product, renamed). Players take a free **Chess DNA Test**, get an **Opening IQ**, pick a **Road to Elo**, and conquer **opening kingdoms** through daily quests, drilling, bosses, ranks and leagues. It sells **progression**, not knowledge.

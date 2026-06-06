@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { LANDING_ASSETS } from "../assets";
 import { BOSS } from "../copy";
 import { useIsClient, useReducedMotion } from "../hooks";
@@ -40,7 +40,6 @@ function BossVideo() {
   const isClient = useIsClient();
   const reduce = useReducedMotion();
   const ref = useRef<HTMLVideoElement | null>(null);
-  const [muted, setMuted] = useState(true);
   const stillOnly = !isClient || reduce;
 
   useEffect(() => {
@@ -74,34 +73,16 @@ function BossVideo() {
   }
 
   return (
-    <>
-      <video
-        ref={ref}
-        muted={muted}
-        loop
-        playsInline
-        preload="none"
-        poster={LANDING_ASSETS.boss.poster}
-        className="absolute inset-0 h-full w-full object-cover"
-      >
-        <source src={LANDING_ASSETS.boss.video} type="video/mp4" />
-      </video>
-      {/* tap to unmute (browsers block sound on autoplay → click to enable) */}
-      <button
-        type="button"
-        onClick={() => {
-          const v = ref.current;
-          if (!v) return;
-          const next = !muted;
-          setMuted(next);
-          v.muted = next;
-          if (!next) v.play().catch(() => {});
-        }}
-        aria-label={muted ? "Unmute" : "Mute"}
-        className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full border border-gold/50 bg-abyss/70 text-sm text-gold backdrop-blur transition-colors hover:border-gold hover:text-gold-bright"
-      >
-        {muted ? "🔇" : "🔊"}
-      </button>
-    </>
+    <video
+      ref={ref}
+      muted
+      loop
+      playsInline
+      preload="none"
+      poster={LANDING_ASSETS.boss.poster}
+      className="absolute inset-0 h-full w-full object-cover"
+    >
+      <source src={LANDING_ASSETS.boss.video} type="video/mp4" />
+    </video>
   );
 }
