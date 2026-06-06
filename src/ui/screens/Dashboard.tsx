@@ -14,8 +14,8 @@ import { xpProgress } from "@/src/domain/gamification/xp";
 import type { Archetype } from "@/src/domain/repertoire/types";
 
 const QUEST_LINK: Record<QuestType, string> = {
-  daily_quest: "/drill",
-  weakness_battle: "/drill",
+  daily_quest: "/train",
+  weakness_battle: "/train",
   boss_fight: "/train",
 };
 

@@ -1,23 +1,51 @@
 /**
- * /train — the board surface (build order #1). Server component that selects a
- * curated path and hands it to the client LineTrainer. Mobile-first layout.
+ * /train — the Openings hub (precursor to the World Map). Lists the curated
+ * lines; each opens Learn (line trainer) or Drill (SRS recall).
  */
-import { LineTrainer } from "@/src/ui/board/LineTrainer";
+import Link from "next/link";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
+import type { Archetype } from "@/src/domain/repertoire/types";
 
-export default function TrainPage() {
-  const path = STARTER_PATHS[0]!;
+const ARCHETYPE_LABEL: Record<Archetype, string> = {
+  warrior: "Aggressive Warrior",
+  strategist: "Strategist",
+  defender: "Defender",
+  trickster: "Trickster",
+};
 
+export default function TrainHubPage() {
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-6">
+    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-5 px-4 py-6">
       <header className="text-center">
-        <p className="font-display text-gold text-xs uppercase tracking-[0.3em]">
-          Training
-        </p>
-        <h1 className="font-display text-text-hi text-2xl font-bold">Play the line</h1>
+        <p className="font-display text-gold text-xs uppercase tracking-[0.3em]">Openings</p>
+        <h1 className="font-display text-text-hi text-2xl font-bold">Choose a line</h1>
       </header>
 
-      <LineTrainer path={path} />
+      <div className="flex flex-col gap-3">
+        {STARTER_PATHS.map((p) => (
+          <div key={p.id} className="bg-surface border-hairline rounded-card border p-4">
+            <p className="font-display text-text-hi truncate">{p.name}</p>
+            <p className="text-text-low text-xs">
+              {p.eco} · {ARCHETYPE_LABEL[p.archetype]}
+            </p>
+            <p className="text-text-mid mt-1 text-xs">{p.description}</p>
+            <div className="mt-3 flex gap-2">
+              <Link
+                href={`/train/${p.id}`}
+                className="rounded-chip bg-gold text-abyss inline-flex min-h-[44px] flex-1 items-center justify-center text-sm font-semibold"
+              >
+                Learn
+              </Link>
+              <Link
+                href={`/drill/${p.id}`}
+                className="rounded-chip border-hairline text-text-mid inline-flex min-h-[44px] flex-1 items-center justify-center border text-sm"
+              >
+                Drill
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
     </main>
   );
 }
