@@ -37,7 +37,7 @@ export function StickyCTA() {
       }`}
     >
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 pb-3 pt-4">
-        <Wordmark size="md" compact />
+        <Wordmark size="md" />
         <div
           className={`transition-all duration-300 ${
             pastHero
