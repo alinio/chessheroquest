@@ -1,7 +1,6 @@
-import Image from "next/image";
-import { LANDING_ASSETS } from "../assets";
 import { ARCHETYPE_BY_KEY, type ExampleDnaResult } from "../exampleData";
 import { Panel } from "./Panel";
+import { AnimatedCrest } from "./AnimatedCrest";
 
 /**
  * The landing DNA Card (kickoff §6 + pass 2 §2) — THE main visual CTA driver and
@@ -66,12 +65,10 @@ export function DNACard({
             }}
           />
           <div className="relative h-[4.6rem] w-[4.6rem] overflow-hidden rounded-full bg-abyss/80 ring-1 ring-gold/25">
-            <Image
-              src={LANDING_ASSETS.crests[data.archetype]}
-              alt={`${meta.label} crest`}
-              width={96}
-              height={96}
-              className="h-full w-full object-contain [mix-blend-mode:screen]"
+            <AnimatedCrest
+              archetype={data.archetype}
+              size={74}
+              className="h-full w-full"
             />
           </div>
         </div>

@@ -1,25 +1,25 @@
 import { CTAButton } from "../components/CTAButton";
 import { Microcopy } from "../components/Microcopy";
 import { OrnamentalDivider } from "../components/OrnamentalDivider";
+import { SectionBackdrop } from "../components/SectionBackdrop";
 import { Reveal } from "../components/Reveal";
+import { LANDING_ASSETS } from "../assets";
 import { PAIN } from "../copy";
 
 /**
- * S2 · Pain (kickoff §S2 + pass 2 §3). Names the frustration over a dramatic
- * backdrop — an oversized fallen-king silhouette and a low ominous ember glow —
- * not a black void. Copy verbatim.
+ * S2 · Pain (kickoff §S2 + pass 2 §3 + assets v2). Names the frustration over the
+ * ominous board backdrop (bg-pain video, dark gradient overlay) plus a low ember
+ * glow — not a black void. Copy verbatim.
  */
 export function Pain() {
   return (
     <section className="relative overflow-hidden px-5 py-28">
-      {/* oversized faint king silhouette */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none font-display text-[16rem] leading-none text-text-hi/[0.035] sm:text-[26rem]"
-      >
-        ♚
-      </span>
-      {/* low ominous ember glow */}
+      <SectionBackdrop
+        video={LANDING_ASSETS.backdrops.pain.video}
+        poster={LANDING_ASSETS.backdrops.pain.poster}
+        opacity={0.38}
+      />
+      {/* low ominous ember glow over the board */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-[radial-gradient(55%_60%_at_50%_100%,rgba(193,57,43,0.13),transparent_72%)]"

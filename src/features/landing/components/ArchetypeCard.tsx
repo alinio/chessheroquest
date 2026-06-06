@@ -1,7 +1,6 @@
-import Image from "next/image";
-import { LANDING_ASSETS } from "../assets";
 import type { ArchetypeInfo } from "../exampleData";
 import { Panel } from "./Panel";
+import { AnimatedCrest } from "./AnimatedCrest";
 
 /**
  * One of the four DNA tribe cards (kickoff §6/§S3 + pass 2 §2/§5). Ornate RPG
@@ -25,12 +24,10 @@ export function ArchetypeCard({ archetype }: { archetype: ArchetypeInfo }) {
             background: `radial-gradient(circle at center, ${archetype.colorVar}40, transparent 70%)`,
           }}
         />
-        <Image
-          src={LANDING_ASSETS.crests[archetype.key]}
-          alt={`${archetype.label} crest`}
-          width={80}
-          height={80}
-          className="relative h-16 w-16 object-contain [mix-blend-mode:screen]"
+        <AnimatedCrest
+          archetype={archetype.key}
+          size={64}
+          className="relative h-16 w-16"
         />
       </div>
       <p

@@ -1,7 +1,9 @@
 import { CTAButton } from "../components/CTAButton";
 import { Microcopy } from "../components/Microcopy";
 import { Panel } from "../components/Panel";
+import { SectionBackdrop } from "../components/SectionBackdrop";
 import { Reveal } from "../components/Reveal";
+import { LANDING_ASSETS } from "../assets";
 import { FINAL } from "../copy";
 
 /**
@@ -12,6 +14,11 @@ import { FINAL } from "../copy";
 export function FinalCTA() {
   return (
     <section className="relative overflow-hidden px-5 py-28">
+      <SectionBackdrop
+        video={LANDING_ASSETS.backdrops.hall.video}
+        poster={LANDING_ASSETS.backdrops.hall.poster}
+        opacity={0.16}
+      />
       {/* faint king echo */}
       <span
         aria-hidden
