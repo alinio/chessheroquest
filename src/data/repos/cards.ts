@@ -4,9 +4,9 @@
  * engine (LAW #6) is real, not session-local. Cards are keyed by (user, node);
  * nodes are resolved by FEN (seeded by scripts/seed-openings.mjs).
  */
-import { and, eq, lte, sql as dsql } from "drizzle-orm";
+import { and, asc, eq, lte, sql as dsql } from "drizzle-orm";
 import { db } from "@/src/data/db";
-import { cards, nodes } from "@/db/schema";
+import { cards, nodes, pathTemplates } from "@/db/schema";
 import { newCard, reviewCard, type Card } from "@/src/domain/srs/fsrs";
 
 export type CardRow = typeof cards.$inferSelect;
@@ -65,6 +65,34 @@ export async function upsertCardReview(
   } else {
     await db.insert(cards).values({ userId, nodeId, ...values });
   }
+}
+
+export interface DueCard {
+  fen: string;
+  /** The move to recall from this position (SAN). */
+  expected: string;
+  /** Opening this position belongs to. */
+  opening: string;
+}
+
+/** The user's due cards (across all openings), soonest-due first — the Daily Quest. */
+export async function getDueCards(
+  userId: string,
+  now: Date,
+  limit = 10,
+): Promise<DueCard[]> {
+  const rows = await db
+    .select({ fen: nodes.fen, move: nodes.move, opening: pathTemplates.name })
+    .from(cards)
+    .innerJoin(nodes, eq(nodes.id, cards.nodeId))
+    .innerJoin(pathTemplates, eq(pathTemplates.id, nodes.pathTemplateId))
+    .where(and(eq(cards.userId, userId), lte(cards.dueAt, now)))
+    .orderBy(asc(cards.dueAt))
+    .limit(limit);
+
+  return rows
+    .filter((r) => r.move)
+    .map((r) => ({ fen: r.fen, expected: r.move!, opening: r.opening }));
 }
 
 /** Number of the user's cards due at `now` — powers the Daily Quest. */

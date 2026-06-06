@@ -49,6 +49,7 @@ export function Dashboard({
   bossSlug,
 }: DashboardProps) {
   const questHref = (type: QuestType): string => {
+    if (type === "daily_quest") return "/review";
     if (type === "weakness_battle" && weakestSlug) return `/drill/${weakestSlug}`;
     if (type === "boss_fight" && bossSlug) return `/train/${bossSlug}`;
     return "/train";
