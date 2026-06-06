@@ -29,12 +29,29 @@ export default async function TrainHubPage() {
   const session = await auth();
   const mastery = session?.user?.id ? await getOpeningMastery(session.user.id) : {};
 
+  const total = STARTER_PATHS.length;
+  const conquered = STARTER_PATHS.filter((p) => mastery[p.id]?.state === "gold").length;
+
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-5 px-4 py-6">
       <header className="text-center">
         <p className="font-display text-gold text-xs uppercase tracking-[0.3em]">Openings</p>
         <h1 className="font-display text-text-hi text-2xl font-bold">Choose a line</h1>
       </header>
+
+      {/* Opening Passport — the collection completion drive (§28.2). */}
+      <section className="bg-surface rounded-card p-4">
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-text-mid">Opening Passport</span>
+          <span className="text-gold tabular-nums">{conquered}/{total} conquered</span>
+        </div>
+        <div className="bg-raised mt-2 h-2 w-full overflow-hidden rounded-chip">
+          <div
+            className="bg-gold h-full rounded-chip"
+            style={{ width: `${total ? (conquered / total) * 100 : 0}%` }}
+          />
+        </div>
+      </section>
 
       <div className="flex flex-col gap-3">
         {STARTER_PATHS.map((p) => {
