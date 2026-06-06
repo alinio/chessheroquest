@@ -1,10 +1,19 @@
 /**
- * /dashboard — the hero's hub (build order #6, screen S4). The daily landing
- * surface: Opening IQ + Road progress + streak + the 3 daily missions.
+ * /dashboard — the hero's hub (screen S4). Server component: loads the user's
+ * REAL progression. New users (no DNA Test yet) get a prompt to take it.
  */
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { auth } from "@/src/lib/auth";
+import { getProgress } from "@/src/data/repos/progress";
 import { Dashboard } from "@/src/ui/screens/Dashboard";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const session = await auth();
+  if (!session?.user?.id) redirect("/signin");
+
+  const progress = await getProgress(session.user.id);
+
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-7 px-4 py-6">
       <header className="text-center">
@@ -13,7 +22,22 @@ export default function DashboardPage() {
         </p>
         <h1 className="font-display text-text-hi text-2xl font-bold">Your hub</h1>
       </header>
-      <Dashboard />
+
+      {progress ? (
+        <Dashboard iq={progress.iq} archetype={progress.archetype} />
+      ) : (
+        <section className="flex flex-1 flex-col items-center justify-center gap-5 text-center">
+          <p className="text-text-mid max-w-xs">
+            You haven&apos;t taken the Chess DNA Test yet — it seeds your Opening IQ.
+          </p>
+          <Link
+            href="/dna"
+            className="rounded-chip bg-gold text-abyss inline-flex min-h-[48px] items-center px-8 font-semibold"
+          >
+            Take the Chess DNA Test
+          </Link>
+        </section>
+      )}
     </main>
   );
 }

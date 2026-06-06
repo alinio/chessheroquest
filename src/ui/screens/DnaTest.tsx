@@ -24,7 +24,7 @@ function sideToMove(fen: string): "white" | "black" {
   return fen.split(" ")[1] === "b" ? "black" : "white";
 }
 
-export function DnaTest() {
+export function DnaTest({ userId }: { userId?: string }) {
   const [phase, setPhase] = useState<Phase>("intro");
   const [asked, setAsked] = useState<DnaQuestion[]>([]);
   const [answers, setAnswers] = useState<DnaAnswer[]>([]);
@@ -82,8 +82,17 @@ export function DnaTest() {
 
       window.setTimeout(() => {
         if (!next) {
-          setResult(scoreDna(asked, nextAnswers));
+          const finalResult = scoreDna(asked, nextAnswers);
+          setResult(finalResult);
           setPhase("result");
+          // Persist for signed-in users (seeds their Opening IQ). Fire-and-forget.
+          if (userId) {
+            void fetch("/api/dna-test", {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify(finalResult),
+            });
+          }
           return;
         }
         setAsked((a) => [...a, next]);
@@ -95,7 +104,7 @@ export function DnaTest() {
 
       return true;
     },
-    [current, feedback, answers, asked],
+    [current, feedback, answers, asked, userId],
   );
 
   if (phase === "intro") {
