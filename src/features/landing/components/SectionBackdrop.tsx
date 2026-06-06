@@ -78,11 +78,12 @@ export function SectionBackdrop({
           <source src={video} type="video/mp4" />
         </video>
       )}
-      {/* legibility overlay — dark enough for text, light enough to show the loop */}
+      {/* overlay — near-opaque at the top/bottom edges so the loop fades into the
+          adjacent dark sections (no hard rectangle cut), open in the middle */}
       <div
         className="absolute inset-0"
         style={{
-          background: `linear-gradient(to bottom, rgba(15,16,21,${0.68 * dim}), rgba(15,16,21,${0.2 * dim}), rgba(15,16,21,${0.78 * dim}))`,
+          background: `linear-gradient(to bottom, rgba(15,16,21,0.97) 0%, rgba(15,16,21,${0.5 * dim}) 14%, rgba(15,16,21,${0.18 * dim}) 50%, rgba(15,16,21,${0.55 * dim}) 86%, rgba(15,16,21,0.97) 100%)`,
         }}
       />
     </div>

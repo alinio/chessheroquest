@@ -36,7 +36,7 @@ export function StickyCTA() {
           : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 pb-3 pt-4">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Wordmark size="md" />
         <div
           className={`transition-all duration-300 ${

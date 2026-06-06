@@ -2,11 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 
 /**
- * The ChessHeroQuest logo — the FULL brand lockup as real art: the gold emblem
- * (crowned queen in a filigree shield) + the rendered gold "ChessHeroQuest"
- * wordmark, both cropped from the brand render. Backgrounds are crushed to pure
- * black, so `mix-blend-mode: screen` drops them over the dark UI (no coded text).
- * Used in the sticky header + footer.
+ * The ChessHeroQuest logo — the original full brand lockup (emblem + gold
+ * wordmark) as ONE image, luma-keyed to transparency and auto-trimmed so the
+ * emblem/text alignment is exactly as designed (no crop, no offset). Height-
+ * controlled. Used in the sticky header + footer.
  */
 export function Wordmark({
   size = "md",
@@ -15,35 +14,22 @@ export function Wordmark({
   size?: "md" | "lg";
   href?: string;
 }) {
-  // Emblem sits a touch taller than the wordmark cap-height (matches the brand
-  // lockup); both vertically centered so the icon and text align.
-  const emblemH = size === "lg" ? 84 : 56;
-  const textH = size === "lg" ? 50 : 34;
+  const h = size === "lg" ? 50 : 38;
 
   return (
     <Link
       href={href}
       aria-label="ChessHeroQuest home"
-      className="group inline-flex items-center gap-2 sm:gap-2.5"
+      className="group inline-flex shrink-0 items-center"
     >
       <Image
-        src="/brand/emblem-3.png"
-        alt=""
-        width={372}
-        height={386}
-        priority
-        style={{ height: emblemH, width: "auto" }}
-        className="shrink-0 object-contain transition-transform duration-300 group-hover:-translate-y-0.5"
-      />
-      <Image
-        src="/brand/wordmark-3.png"
+        src="/brand/logo.png"
         alt="ChessHeroQuest"
-        width={856}
-        height={132}
+        width={1478}
+        height={418}
         priority
-        // descender (Q tail) pads the box bottom → nudge up a hair to center on caps
-        style={{ height: textH, width: "auto", marginTop: -2 }}
-        className="shrink-0 object-contain"
+        style={{ height: h, width: "auto" }}
+        className="object-contain transition-transform duration-300 group-hover:-translate-y-0.5"
       />
     </Link>
   );

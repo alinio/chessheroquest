@@ -1,5 +1,4 @@
 import { HeroMedia } from "../components/HeroMedia";
-import { HeroDnaCard } from "../components/HeroDnaCard";
 import { CTAButton } from "../components/CTAButton";
 import { Microcopy } from "../components/Microcopy";
 import { Reveal } from "../components/Reveal";
@@ -7,19 +6,18 @@ import { HERO } from "../copy";
 import type { HeadlineCopy } from "../variants";
 
 /**
- * S1 · Hero (kickoff §S1 + pass 2 §1). Cinematic king + H1 land first; the DNA
- * Card materializes after ~0.6s over the negative space (left on desktop, top on
- * mobile), pushed low-right so the crown + embers stay visible. The board art is
- * only ambiance (kickoff §1).
+ * S1 · Hero — single full-bleed visual (Round 2 hero rebuild / Option B). ONE
+ * background layer (cinematic video + mandatory poster) and ONE content layer;
+ * no split column, no DNA card fighting the king animation. Content is left on
+ * desktop, centered on mobile. The channel-aware H1 is resolved on the server.
  */
 export function Hero({ headline }: { headline: HeadlineCopy }) {
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden pt-20">
+    <section className="relative flex min-h-[100svh] items-center overflow-hidden">
       <HeroMedia />
 
-      <div className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-10 px-5 py-16 md:grid-cols-2">
-        {/* copy column (negative space) */}
-        <div className="max-w-xl">
+      <div className="relative mx-auto w-full max-w-6xl px-5 py-24">
+        <div className="mx-auto max-w-[620px] text-center md:mx-0 md:text-left">
           <Reveal>
             <p className="font-display text-gold text-xs font-semibold uppercase tracking-[0.32em]">
               {headline.kicker}
@@ -31,22 +29,16 @@ export function Hero({ headline }: { headline: HeadlineCopy }) {
             </h1>
           </Reveal>
           <Reveal index={2}>
-            <p className="mt-5 max-w-md text-base text-text-mid sm:text-lg">
+            <p className="mx-auto mt-5 max-w-md text-base text-text-mid sm:text-lg md:mx-0">
               {headline.sub}
             </p>
           </Reveal>
           <Reveal index={3}>
-            <div className="mt-7 inline-flex flex-col items-center gap-3">
+            <div className="mt-8 inline-flex flex-col items-center gap-3 md:items-start">
               <CTAButton section="hero" label={HERO.ctaLabel} />
               <Microcopy items={["Free", "no signup to begin", "~2 minutes"]} />
             </div>
           </Reveal>
-        </div>
-
-        {/* DNA Card centerpiece — delayed reveal, floating, pushed lower-right so
-            the animated crown breathes above it (Round 2 §1). */}
-        <div className="flex justify-center md:mt-28 md:translate-x-4 md:justify-end">
-          <HeroDnaCard />
         </div>
       </div>
     </section>

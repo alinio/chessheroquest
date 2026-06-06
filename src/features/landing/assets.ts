@@ -57,8 +57,11 @@ export const LANDING_ASSETS = {
     video: `${BASE}/scene-guardian.mp4`,
     poster: `${BASE}/scene-guardian-poster.jpg`,
   },
-  // Final-CTA backdrop — the luminous king in the cathedral (static image).
-  kingHall: `${BASE}/bg-king.jpg`,
+  // Final-CTA backdrop — the luminous king in the cathedral (animated + still).
+  kingHall: {
+    video: `${BASE}/bg-king.mp4`,
+    poster: `${BASE}/bg-king.jpg`,
+  },
   // Ambient section backdrops (low-opacity video + poster/reduced-motion still).
   backdrops: {
     pain: {

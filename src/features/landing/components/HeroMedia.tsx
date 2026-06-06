@@ -73,9 +73,9 @@ export function HeroMedia() {
         </video>
       )}
 
-      {/* Legibility scrims: darken left (desktop) / top (mobile) for the copy. */}
-      <div className="absolute inset-0 bg-gradient-to-r from-abyss via-abyss/70 to-transparent md:via-abyss/40" />
-      <div className="absolute inset-0 bg-gradient-to-b from-abyss/80 via-transparent to-abyss" />
+      {/* Legibility overlay — left-weighted on desktop (copy lives left), bottom-
+          weighted on mobile (copy lives lower). Crown stays visible. */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(8,9,14,0.55),rgba(8,9,14,0.2)_45%,rgba(8,9,14,0.9))] md:bg-[linear-gradient(90deg,rgba(8,9,14,0.9)_0%,rgba(8,9,14,0.5)_45%,rgba(8,9,14,0.12)_100%)]" />
     </div>
   );
 }

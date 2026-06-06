@@ -23,6 +23,8 @@ interface PanelProps {
   glow?: string;
   interactive?: boolean;
   filigree?: boolean;
+  /** Extra-translucent glass so more of the backdrop shows through. */
+  transparent?: boolean;
   className?: string;
   innerClassName?: string;
 }
@@ -33,6 +35,7 @@ export function Panel({
   glow,
   interactive = false,
   filigree = true,
+  transparent = false,
   className = "",
   innerClassName = "",
 }: PanelProps) {
@@ -43,7 +46,9 @@ export function Panel({
 
   const surface =
     variant === "glass"
-      ? "bg-surface/70 backdrop-blur-xl"
+      ? transparent
+        ? "bg-surface/40 backdrop-blur-md"
+        : "bg-surface/70 backdrop-blur-xl"
       : "bg-gradient-to-b from-raised/90 to-surface";
 
   const borderStyle: CSSProperties = {

@@ -5,9 +5,10 @@ import { Reveal } from "../components/Reveal";
 import { HOW_IT_WORKS } from "../copy";
 
 /**
- * S4 · How it works (kickoff §S4 + Round 2 §4). Three steps, each with a coded
- * mini screen-mockup (test → result → training) so the product reads "at a
- * glance". Revealed on scroll. Anchored for the footer link.
+ * S4 · How it works (Round 2 §4 + fix). Three equal-height cards sharing ONE
+ * structure: a fixed-height mockup zone (so titles + number badges line up across
+ * all three) → number badge + title row → description. Coded mini screen-mockups
+ * (test → result → training) read as one product at the same scale.
  */
 const SCREEN_BY_STEP = ["test", "result", "train"] as const;
 
@@ -24,12 +25,21 @@ export function HowItWorks() {
           <OrnamentalDivider className="mt-8" />
         </Reveal>
 
-        <ol className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <ol className="mt-12 grid grid-cols-1 items-stretch gap-6 md:grid-cols-3">
           {HOW_IT_WORKS.steps.map((step, i) => (
-            <Reveal key={step.n} index={i} as="li">
-              <Panel variant="ornate" interactive innerClassName="h-full p-5">
-                <MiniScreen kind={SCREEN_BY_STEP[i] ?? "test"} />
-                <div className="mt-4 flex items-center gap-3">
+            <Reveal key={step.n} index={i} as="li" className="h-full">
+              <Panel
+                variant="ornate"
+                interactive
+                className="h-full"
+                innerClassName="flex h-full flex-col p-5"
+              >
+                {/* fixed mockup zone → keeps every title row on the same line */}
+                <div className="h-[244px]">
+                  <MiniScreen kind={SCREEN_BY_STEP[i] ?? "test"} />
+                </div>
+
+                <div className="mt-5 flex items-center gap-3">
                   <span className="font-display inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gold/50 text-base font-black text-gold">
                     {step.n}
                   </span>

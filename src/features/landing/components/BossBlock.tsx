@@ -9,39 +9,39 @@ import { Panel } from "./Panel";
 import { CTAButton } from "./CTAButton";
 
 /**
- * Boss section (Round 2 §6). The giant-guardian cinematic inside an ornate gold
- * frame, 16:9 contained (scales down cleanly on mobile — no crop). The clip is a
- * one-shot (the hand moving the queen), so it plays ONCE in view then holds its
- * last frame — never hard-loops. `prefers-reduced-motion` → poster only.
+ * Boss section (Round 2 boss fix) — a single centered column with the guardian
+ * cinematic as the centerpiece: eyebrow → H2 → tag → line → VIDEO (ornate frame
+ * hugging a 16:9 clip, edge-to-edge) → CTA below (never overlapping the video).
+ * The clip is a one-shot (the hand moving the queen): plays once in view then
+ * holds its last frame — no hard loop. Reduced-motion → poster only.
  */
 export function BossBlock() {
   return (
-    <Panel variant="ornate" innerClassName="grid gap-6 p-5 md:grid-cols-2 md:items-center md:p-6">
-      <div className="order-2 md:order-1">
-        <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-warrior">
-          {BOSS.kicker}
-        </p>
-        <h3 className="font-display mt-2 text-2xl font-bold text-text-hi sm:text-3xl">
-          {BOSS.h2}
-        </h3>
-        <span className="mt-3 inline-flex rounded-chip border border-warrior/50 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-warrior">
-          e.g. {BOSS.tag}
-        </span>
-        <p className="mt-3 max-w-sm text-[0.95rem] leading-relaxed text-[#E9E9EE]">
-          {BOSS.body}
-        </p>
-        <div className="mt-5">
-          <CTAButton section="kingdoms" label={BOSS.ctaLabel} />
-        </div>
-      </div>
+    <div className="mx-auto flex max-w-[1040px] flex-col items-center text-center">
+      <p className="font-display text-xs font-semibold uppercase tracking-[0.32em] text-warrior">
+        {BOSS.kicker}
+      </p>
+      <h3 className="font-display mt-3 text-3xl font-bold text-text-hi sm:text-4xl">
+        {BOSS.h2}
+      </h3>
+      <span className="mt-3 inline-flex rounded-chip border border-warrior/50 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-warrior">
+        e.g. {BOSS.tag}
+      </span>
+      <p className="mt-3 max-w-md text-[0.95rem] leading-relaxed text-[#E9E9EE]">
+        {BOSS.body}
+      </p>
 
-      {/* ornate-framed 16:9 video */}
-      <div className="order-1 md:order-2">
-        <div className="relative aspect-video overflow-hidden rounded-xl border border-gold/40 shadow-[0_0_30px_-10px_rgba(227,178,60,0.5)]">
+      {/* ornate frame hugging the 16:9 video */}
+      <Panel variant="ornate" className="mt-8 w-full" innerClassName="p-1.5">
+        <div className="relative aspect-video w-full overflow-hidden rounded-[12px]">
           <BossVideo />
         </div>
+      </Panel>
+
+      <div className="mt-8">
+        <CTAButton section="kingdoms" label={BOSS.ctaLabel} />
       </div>
-    </Panel>
+    </div>
   );
 }
 
@@ -75,7 +75,7 @@ function BossVideo() {
         src={LANDING_ASSETS.boss.poster}
         alt="A giant guardian over the chessboard"
         fill
-        sizes="(max-width: 768px) 100vw, 520px"
+        sizes="(max-width: 1080px) 100vw, 1040px"
         className="object-cover"
       />
     );
