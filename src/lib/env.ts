@@ -32,7 +32,12 @@ const EnvSchema = z.object({
   SENTRY_DSN: z.string().min(1).optional(),
 });
 
-const parsed = EnvSchema.safeParse(process.env);
+// Treat empty .env values ("KEY=") as absent so .optional() works as intended.
+const rawEnv = Object.fromEntries(
+  Object.entries(process.env).map(([k, v]) => [k, v === "" ? undefined : v]),
+);
+
+const parsed = EnvSchema.safeParse(rawEnv);
 
 if (!parsed.success) {
   const issues = parsed.error.issues

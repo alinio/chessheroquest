@@ -7,8 +7,14 @@ import type { PieceDropHandlerArgs } from "react-chessboard";
 import { Board } from "./Board";
 import type { CuratedPath } from "@/src/domain/repertoire/types";
 import { expectedMoveAt } from "@/src/domain/repertoire/line";
+import { CoachSheet } from "@/src/ui/screens/CoachSheet";
 
 type Feedback = "idle" | "correct" | "wrong";
+interface CoachState {
+  open: boolean;
+  loading: boolean;
+  text: string | null;
+}
 
 /** Standard initial position FEN — computed once, never read from a ref in render. */
 const STARTING_FEN = new Chess().fen();
@@ -25,6 +31,7 @@ export function LineTrainer({ path }: { path: CuratedPath }) {
   const [ply, setPly] = useState(0);
   const [feedback, setFeedback] = useState<Feedback>("idle");
   const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(null);
+  const [coach, setCoach] = useState<CoachState>({ open: false, loading: false, text: null });
 
   const total = path.moves.length;
   const done = ply >= total;
@@ -71,6 +78,32 @@ export function LineTrainer({ path }: { path: CuratedPath }) {
     return { [lastMove.from]: hint, [lastMove.to]: hint };
   }, [lastMove]);
 
+  // Summon the cached AI coach to explain the next move at the current position.
+  // Only verified facts are sent (LAW #2): the engine's FEN + the line's move.
+  const askCoach = useCallback(async () => {
+    setCoach({ open: true, loading: true, text: null });
+    try {
+      const res = await fetch("/api/coach", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          fen: gameRef.current.fen(),
+          bestMove: expectedMoveAt(path, ply) ?? undefined,
+          openingName: path.name,
+          eco: path.eco,
+        }),
+      });
+      const data = await res.json();
+      setCoach({
+        open: true,
+        loading: false,
+        text: res.ok ? data.explanation : (data.error ?? "Coach unavailable."),
+      });
+    } catch {
+      setCoach({ open: true, loading: false, text: "Coach unavailable." });
+    }
+  }, [path, ply]);
+
   return (
     <div className="flex w-full flex-col gap-4">
       {/* HUD — line identity + progress */}
@@ -107,14 +140,30 @@ export function LineTrainer({ path }: { path: CuratedPath }) {
             <span className="text-text-mid">À toi de jouer : trouve le bon coup.</span>
           )}
         </p>
-        <button
-          type="button"
-          onClick={reset}
-          className="rounded-chip border-hairline text-text-mid min-h-[44px] border px-4 py-2 text-sm"
-        >
-          Recommencer
-        </button>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="button"
+            onClick={askCoach}
+            className="rounded-chip bg-gold text-abyss min-h-[44px] px-4 py-2 text-sm font-semibold"
+          >
+            Coach
+          </button>
+          <button
+            type="button"
+            onClick={reset}
+            className="rounded-chip border-hairline text-text-mid min-h-[44px] border px-4 py-2 text-sm"
+          >
+            Recommencer
+          </button>
+        </div>
       </div>
+
+      <CoachSheet
+        open={coach.open}
+        loading={coach.loading}
+        text={coach.text}
+        onClose={() => setCoach((c) => ({ ...c, open: false }))}
+      />
     </div>
   );
 }
