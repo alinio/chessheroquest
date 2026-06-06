@@ -9,11 +9,11 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/src/data/db";
 import { users } from "@/db/schema";
-import { verifyPassword } from "@/src/lib/password";
+import { verifyPassword, DUMMY_PASSWORD_HASH } from "@/src/lib/password";
 
 const CredentialsSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
+  password: z.string().min(8).max(128),
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -29,8 +29,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const email = parsed.data.email.toLowerCase();
         const rows = await db.select().from(users).where(eq(users.email, email)).limit(1);
         const user = rows[0];
-        if (!user?.passwordHash) return null;
-        if (!verifyPassword(parsed.data.password, user.passwordHash)) return null;
+
+        // Constant-time: always run scrypt (against a dummy hash if the user is
+        // absent) so response time can't reveal whether the email exists.
+        const passwordHash = user?.passwordHash ?? DUMMY_PASSWORD_HASH;
+        const ok = await verifyPassword(parsed.data.password, passwordHash);
+        if (!user?.passwordHash || !ok) return null;
 
         return { id: user.id, email: user.email, name: user.displayName ?? null };
       },

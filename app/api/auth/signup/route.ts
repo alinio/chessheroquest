@@ -12,7 +12,7 @@ import { ageBandFromBirthYear } from "@/src/lib/age";
 
 const BodySchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
+  password: z.string().min(8).max(128),
   displayName: z.string().min(1).max(64).optional(),
   birthYear: z.number().int().min(1900).max(2025).optional(),
 });
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
 
   await db.insert(users).values({
     email: normalizedEmail,
-    passwordHash: hashPassword(password),
+    passwordHash: await hashPassword(password),
     displayName: displayName ?? null,
     birthYear: birthYear ?? null,
     ageBand,
