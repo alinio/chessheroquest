@@ -109,6 +109,11 @@ export const KINGDOMS: Record<string, KingdomArt> = {
     emblem: `${BASE}/kingdoms/caro-kann/emblem.png`,
     boss: `${BASE}/kingdoms/caro-kann/boss.png`,
   },
+  sicilian: {
+    banner: `${BASE}/kingdoms/sicilian/banner.webp`,
+    emblem: `${BASE}/kingdoms/sicilian/emblem.png`,
+    boss: `${BASE}/kingdoms/sicilian/boss.png`,
+  },
 };
 /** Returns the kingdom's art, or null if that opening has no kingdom art yet. */
 export function getKingdomArt(openingId: string): KingdomArt | null {
