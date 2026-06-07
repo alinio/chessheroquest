@@ -10,7 +10,7 @@ interface GameSyncState {
   summary: PlayerProfileSummary | null;
   status: Status;
   error: string | null;
-  sync: (username: string) => Promise<void>;
+  sync: (usernames: { lichess?: string; chesscom?: string }) => Promise<void>;
   disconnect: () => void;
 }
 
@@ -21,13 +21,15 @@ export const useGameSync = create<GameSyncState>()(
       summary: null,
       status: "idle",
       error: null,
-      async sync(username) {
-        const u = username.trim();
-        if (!u) return;
+      async sync(usernames) {
+        const params = new URLSearchParams();
+        if (usernames.lichess?.trim()) params.set("lichess", usernames.lichess.trim());
+        if (usernames.chesscom?.trim()) params.set("chesscom", usernames.chesscom.trim());
+        if ([...params.keys()].length === 0) return;
         set({ status: "loading", error: null });
         try {
-          const r = await fetch(`/api/lichess/sync?username=${encodeURIComponent(u)}`);
-          if (r.status === 429) { set({ status: "error", error: "Lichess is rate-limiting — try again in a minute." }); return; }
+          const r = await fetch(`/api/games/sync?${params.toString()}`);
+          if (r.status === 429) { set({ status: "error", error: "Rate-limited — try again in a minute." }); return; }
           if (!r.ok) { set({ status: "error", error: "Sync failed — please try again." }); return; }
           const summary = (await r.json()) as PlayerProfileSummary;
           set({ summary, status: "done", error: null });

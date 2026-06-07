@@ -52,6 +52,7 @@ export interface PlayerProfileSummary {
   recentForm: GameResult[]; // last ~20 results, newest first
   fetchedAt: string; // ISO
   emptyReason?: string; // set when no rated games / private / not found
+  notes?: string[]; // non-blocking notices (e.g. one source failed while another succeeded)
 }
 
 /** Pluggable per-platform fetcher. */

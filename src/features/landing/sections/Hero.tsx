@@ -1,5 +1,6 @@
 import { HeroMedia } from "../components/HeroMedia";
 import { CTAButton } from "../components/CTAButton";
+import { SocialProof } from "../components/SocialProof";
 import { Reveal } from "../components/Reveal";
 import { HERO } from "../copy";
 import type { HeadlineCopy } from "../variants";
@@ -42,6 +43,9 @@ export function Hero({ headline }: { headline: HeadlineCopy }) {
             <div className="mt-7">
               <CTAButton section="hero" label={HERO.ctaLabel} />
             </div>
+          </Reveal>
+          <Reveal index={5}>
+            <SocialProof className="mt-6 justify-center md:justify-start" />
           </Reveal>
         </div>
       </div>
