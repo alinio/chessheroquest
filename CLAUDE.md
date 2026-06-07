@@ -6,6 +6,14 @@
 - docs/in-app-architecture-spec.md — logged-in shell, navigation, section map, connective screens (post-auth/Pro)
 - docs/chess-curation-spec.md     — chess content data contract (test positions / line trees / explorer; truth = curated data + engine, NEVER an LLM)
 
+## Design system (authority: design-system-and-process.md + art-direction-bible.md)
+- Use design TOKENS only (theme.ts / tokens.css). Never hardcode hex, px, font names, or shadows.
+- Compose screens from the shared UI PRIMITIVES. If one is missing, add it to the kit (+ /preview) before using it. No one-off inline styles.
+- Use ASSETS from the inventory by path (public/art, the icon kit, public/textures). Never generate or substitute a missing asset — STOP and request it. No mixing icon libraries.
+- Cinzel = display/headings/brand/node-names/big-numbers; Inter = UI/body.
+- Active realm sets --accent; accent-driven elements read --accent.
+- Respect prefers-reduced-motion and a11y. Keep /preview current.
+- If a task would require breaking a rule above, extend the system instead of improvising.
 
 # CLAUDE.md — ChessHeroQuest.com
 
