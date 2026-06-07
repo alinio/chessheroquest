@@ -1,0 +1,60 @@
+{
+  "openingTree": {
+    "openingId": "italian-c50",
+    "openingName": "Italian Game",
+    "eco": "C50",
+    "realm": "Ember Marches",
+    "accent": "--chq-warrior",
+    "mainLine": [
+      {
+        "san": "e4",
+        "fen": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+        "explain": "// TODO",
+        "isCritical": "// TODO",
+        "explorer": "// TODO: explorer unavailable",
+        "eval": "+0.3"
+      },
+      {
+        "san": "e5",
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+        "explain": "// TODO",
+        "isCritical": "// TODO",
+        "explorer": "// TODO: explorer unavailable",
+        "eval": "+0.3"
+      },
+      {
+        "san": "Nf3",
+        "fen": "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2",
+        "explain": "// TODO",
+        "isCritical": "// TODO",
+        "explorer": "// TODO: explorer unavailable",
+        "eval": "+0.3"
+      },
+      {
+        "san": "Nc6",
+        "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+        "explain": "// TODO",
+        "isCritical": "// TODO",
+        "explorer": "// TODO: explorer unavailable",
+        "eval": "+0.3"
+      },
+      {
+        "san": "Bc4",
+        "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3",
+        "explain": "// TODO",
+        "isCritical": "// TODO",
+        "explorer": "// TODO: explorer unavailable",
+        "eval": "+0.3"
+      }
+    ],
+    "variations": [],
+    "traps": []
+  },
+  "testPositions": [],
+  "meta": {
+    "source": "Lichess explorer + Stockfish d18",
+    "snapshotDate": "2026-06-07",
+    "ratingBand": "1400-1800",
+    "verified": false
+  }
+}
