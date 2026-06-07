@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
 import { GradientDefs, LogoMark } from "@/src/ui/design-system/icons";
@@ -124,6 +125,7 @@ function QuestionView({
 }
 
 export function StyleQuizScreen() {
+  const router = useRouter();
   const mounted = useHydrated();
   const reduced = useReducedMotion();
   const index = useStyleQuiz((s) => s.index);
@@ -164,11 +166,16 @@ export function StyleQuizScreen() {
               </ul>
             )}
             <p style={{ color: "var(--chq-text-muted)", fontSize: 12, lineHeight: 1.6 }}>
-              Next: your shareable DNA Card with Opening IQ + this archetype (coming in the next module). Saved on this device.
+              See your full Chess DNA — Opening IQ, this archetype, and your Road to Elo. Saved on this device.
             </p>
-            <Button variant="primary" onClick={reset}>
-              Retake the quiz
-            </Button>
+            <div style={{ display: "flex", gap: 10, marginTop: 4, flexWrap: "wrap", justifyContent: "center" }}>
+              <Button variant="primary" onClick={() => router.push("/result")}>
+                See your Chess DNA →
+              </Button>
+              <Button variant="ghost" onClick={reset}>
+                Retake the quiz
+              </Button>
+            </div>
           </div>
         </OrnateFrame>
       </QuizShell>

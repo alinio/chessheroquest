@@ -1,28 +1,26 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { LANDING_ASSETS } from "../assets";
-import { PASSPORT } from "../copy";
-import { useReducedMotion } from "../hooks";
 import { Panel } from "./Panel";
+import { WaxSeal } from "./WaxSeal";
+import { REALMS } from "../realms";
 
 /**
- * Opening Passport section (Round 2 §7). The ornate tome illustration anchors the
- * metaphor; the coded seal grid *shows* the collecting mechanic with a
- * scroll-triggered stamp-in (empty slot → gold wax seal slams down with a flash).
- * Filled = bright gold seal; empty = dim dashed slot.
+ * Opening Passport (Round-3 rework) — fully coded trophy wall. The 20 openings
+ * are grouped by their 4 realms; each opening is a coded wax seal (gold + realm
+ * accent when earned, dim embossed slot when locked). A gold progress bar tracks
+ * "N / 20 sealed". Earned seals stamp in on scroll (reduced-motion → final
+ * state). No stock imagery.
  */
-const SEALS = [
-  { name: "Italian", done: true },
-  { name: "London", done: true },
-  { name: "Caro-Kann", done: false },
-  { name: "French", done: false },
-  { name: "Sicilian", done: false },
-];
+// Demo earned state (Italian = Ember, London = Aegis) → 2 / 20.
+const EARNED = new Set(["Italian Game", "London System"]);
+const TOTAL = REALMS.reduce((n, r) => n + r.gauntlet.openings.length, 0);
+const SEALED = REALMS.reduce(
+  (n, r) => n + r.gauntlet.openings.filter((o) => EARNED.has(o.name)).length,
+  0,
+);
 
 export function PassportBlock() {
-  const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement | null>(null);
   const [started, setStarted] = useState(false);
 
@@ -36,63 +34,86 @@ export function PassportBlock() {
           io.disconnect();
         }
       },
-      { threshold: 0.3 },
+      { threshold: 0.25 },
     );
     io.observe(el);
     return () => io.disconnect();
   }, []);
 
+  let earnedSeen = 0;
+
   return (
-    <Panel variant="ornate" innerClassName="p-5 md:p-6">
-      <div className="grid gap-6 md:grid-cols-2 md:items-center">
-        <div className="relative mx-auto aspect-square w-full max-w-[18rem] overflow-hidden rounded-xl border border-gold/30">
-          <Image
-            src={LANDING_ASSETS.passportTome}
-            alt="The Opening Passport — an ornate tome with wax seals"
-            fill
-            sizes="(max-width: 768px) 80vw, 288px"
-            className="object-cover"
-          />
+    <Panel variant="ornate" innerClassName="p-6 sm:p-8">
+      <div ref={ref}>
+        {/* header + progress */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-gold">
+              Your Opening Passport
+            </p>
+            <p className="mt-2 max-w-md text-[0.95rem] leading-relaxed text-[#E9E9EE]">
+              Master an opening, earn its seal. Collect all 20 across the four
+              realms.
+            </p>
+          </div>
+          <div className="w-full sm:w-64">
+            <div className="flex items-baseline justify-between">
+              <span className="font-display text-sm font-semibold text-gold">
+                {SEALED} / {TOTAL}
+              </span>
+              <span className="text-[0.62rem] uppercase tracking-wide text-text-low">
+                openings sealed
+              </span>
+            </div>
+            <div className="mt-1.5 h-2 w-full overflow-hidden rounded-chip border border-hairline bg-abyss">
+              <div
+                className="h-full rounded-chip bg-gradient-to-r from-gold-deep via-gold to-gold-bright transition-[width] duration-700"
+                style={{ width: `${started ? (SEALED / TOTAL) * 100 : 0}%` }}
+              />
+            </div>
+          </div>
         </div>
 
-        <div ref={ref}>
-        <p className="font-display text-xs font-semibold uppercase tracking-[0.3em] text-gold">
-          {PASSPORT.title}
-        </p>
-        <p className="mt-3 max-w-sm text-[0.95rem] leading-relaxed text-[#E9E9EE]">
-          {PASSPORT.body}
-        </p>
-        <ul className="mt-5 grid grid-cols-5 gap-2 sm:gap-3">
-          {SEALS.map((s, i) => {
-            const animate = started && s.done && !reduce;
-            return (
-              <li
-                key={s.name}
-                className="flex flex-col items-center gap-1 text-center"
+        {/* realm clusters */}
+        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+          {REALMS.map((realm) => (
+            <div
+              key={realm.key}
+              className="rounded-card border border-hairline/70 bg-abyss/40 p-4"
+            >
+              <p
+                className="font-display text-[0.62rem] font-semibold uppercase tracking-[0.18em]"
+                style={{ color: realm.accent }}
               >
-                <span
-                  style={
-                    animate
-                      ? {
-                          animation: `chq-stamp 0.6s ${0.25 + i * 0.35}s cubic-bezier(0.22,1,0.36,1) both`,
-                        }
-                      : undefined
-                  }
-                  className={`flex aspect-square w-full items-center justify-center rounded-full border text-sm ${
-                    s.done
-                      ? "border-gold bg-gold/15 text-gold shadow-[0_0_16px_-4px_rgba(227,178,60,0.7)]"
-                      : "border-dashed border-hairline text-text-low"
-                  } ${started || !s.done ? "" : "opacity-0"}`}
-                >
-                  {s.done ? "★" : "○"}
-                </span>
-                <span className="text-[0.55rem] leading-tight text-text-low">
-                  {s.name}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
+                {realm.name}
+              </p>
+              <ul className="mt-3 grid grid-cols-5 gap-2">
+                {realm.gauntlet.openings.map((o) => {
+                  const earned = EARNED.has(o.name);
+                  const delay = earned ? 0.2 + earnedSeen++ * 0.35 : 0;
+                  return (
+                    <li
+                      key={o.name}
+                      className="flex flex-col items-center gap-1 text-center"
+                    >
+                      <WaxSeal
+                        earned={earned}
+                        accent={realm.accent}
+                        animate={started && earned}
+                        delaySec={delay}
+                        size={48}
+                      />
+                      <span
+                        className={`text-[0.5rem] leading-tight ${earned ? "text-text-mid" : "text-text-low"}`}
+                      >
+                        {o.name}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
     </Panel>
