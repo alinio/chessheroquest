@@ -12,15 +12,7 @@ export function BlogHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-gold/15 bg-abyss/90 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-2 px-4 py-2.5 sm:gap-3 sm:px-6">
-        <div className="flex items-center gap-4">
-          <Wordmark size="md" />
-          <Link
-            href="/blog"
-            className="hidden font-display text-sm font-semibold uppercase tracking-[0.14em] text-gold/80 transition-colors hover:text-gold sm:inline"
-          >
-            Blog
-          </Link>
-        </div>
+        <Wordmark size="md" />
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <Link
             href="/signin"

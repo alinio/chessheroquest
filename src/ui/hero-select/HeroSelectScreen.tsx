@@ -61,38 +61,69 @@ function Shell({ children }: { children: ReactNode }) {
   );
 }
 
-/* The payoff — what mastering the game looks like (illustrative target). */
-function PromiseVisual() {
+/* The payoff illustration (right column): Lichess sync + win-rate climbing +
+   per-opening accuracy + passport — the concrete proof that mastery pays off. */
+const ACCURACY = [
+  { name: "Italian Game", pct: 94 },
+  { name: "Caro-Kann", pct: 88 },
+  { name: "Sicilian Dragon", pct: 81 },
+];
+function AnalyticsPanel() {
   return (
-    <div style={{ marginTop: 18, position: "relative", overflow: "hidden", borderRadius: "var(--chq-r-card)", border: "1px solid var(--chq-gold-4)", background: "var(--chq-raised)", padding: "18px 20px" }}>
-      <Image src="/landing/passport-tome.png" alt="" fill sizes="700px" style={{ objectFit: "cover", opacity: 0.1 }} />
+    <div style={{ position: "relative", overflow: "hidden", borderRadius: "var(--chq-r-card)", border: "1px solid var(--chq-gold-4)", background: "var(--chq-raised)", padding: "18px 20px", height: "100%" }}>
+      <Image src="/landing/passport-tome.png" alt="" fill sizes="600px" style={{ objectFit: "cover", opacity: 0.08 }} />
       <div style={{ position: "relative" }}>
-        <p style={{ ...eyebrow, color: "var(--chq-gold-3)", fontSize: 10, textAlign: "center" }}>The payoff</p>
-        <div style={{ display: "flex", gap: 5, justifyContent: "center", flexWrap: "wrap", margin: "12px 0" }}>
-          {Array.from({ length: 20 }).map((_, i) => (
-            <span key={i} className="chq-pulse" style={{ width: 14, height: 14, borderRadius: "50%", background: "var(--chq-gold-gradient)", boxShadow: "0 0 6px rgba(217,162,39,.5)", animationDelay: `${i * 70}ms` }} />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ ...eyebrow, fontSize: 10, color: "var(--chq-gold-3)" }}>The payoff</span>
+          <span style={{ fontSize: 11, color: "#2FB67A", display: "inline-flex", alignItems: "center", gap: 5 }}>● Lichess synced</span>
+        </div>
+
+        {/* win-rate area chart climbing */}
+        <p style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)", marginTop: 14 }}>Win rate · last 90 days</p>
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 14, marginTop: 4 }}>
+          <svg viewBox="0 0 220 70" width="100%" height="70" preserveAspectRatio="none" style={{ flex: 1, maxWidth: 240 }} aria-hidden="true">
+            <defs>
+              <linearGradient id="chq-wr-fill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="rgba(217,162,39,.35)" />
+                <stop offset="100%" stopColor="rgba(217,162,39,0)" />
+              </linearGradient>
+            </defs>
+            <path d="M0,58 L36,55 L72,47 L108,39 L144,27 L180,16 L220,6 L220,70 L0,70 Z" fill="url(#chq-wr-fill)" />
+            <polyline points="0,58 36,55 72,47 108,39 144,27 180,16 220,6" fill="none" stroke="url(#chq-gold)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="220" cy="6" r="4" fill="#fcebb6" />
+          </svg>
+          <div style={{ whiteSpace: "nowrap" }}>
+            <div style={{ fontSize: 22, fontWeight: 700, color: "var(--chq-text-1)", lineHeight: 1 }}>63%</div>
+            <div style={{ fontSize: 11, color: "#2FB67A", marginTop: 2 }}>▲ +16% win</div>
+          </div>
+        </div>
+
+        {/* per-opening accuracy bars */}
+        <p style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)", marginTop: 16 }}>Opening accuracy</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 6 }}>
+          {ACCURACY.map((a) => (
+            <div key={a.name} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 11, color: "var(--chq-text-2)", width: 110, flexShrink: 0 }}>{a.name}</span>
+              <div style={{ flex: 1, height: 7, borderRadius: 4, background: "var(--chq-panel)", overflow: "hidden" }}>
+                <div style={{ width: `${a.pct}%`, height: "100%", background: "var(--chq-gold-gradient)" }} />
+              </div>
+              <span style={{ fontSize: 11, color: "var(--chq-gold-2)", width: 34, textAlign: "right" }}>{a.pct}%</span>
+            </div>
           ))}
         </div>
-        <p className="chq-display chq-gold-text" style={{ fontSize: 18, fontWeight: 700, textAlign: "center", margin: 0 }}>Opening Passport — 20 / 20 sealed</p>
-        <div style={{ display: "flex", gap: 16, justifyContent: "center", alignItems: "center", marginTop: 14, flexWrap: "wrap" }}>
-          {/* Lichess win-rate analytics climbing — the real proof */}
-          <div style={{ background: "rgba(8,8,10,.55)", border: "1px solid var(--chq-line)", borderRadius: 12, padding: "10px 14px", display: "flex", flexDirection: "column", gap: 4 }}>
-            <span style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)" }}>Win rate · your Lichess games</span>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <svg viewBox="0 0 120 36" width="120" height="36" aria-hidden="true">
-                <polyline points="0,31 24,29 48,24 72,18 96,11 120,4" fill="none" stroke="url(#chq-gold)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="120" cy="4" r="3.5" fill="#fcebb6" />
-              </svg>
-              <span style={{ color: "var(--chq-text-1)", fontWeight: 700, fontSize: 15 }}><span style={{ color: "var(--chq-text-muted)" }}>47%</span> → <span style={{ color: "#2FB67A" }}>63%</span></span>
+
+        {/* passport + medal */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 16, paddingTop: 14, borderTop: "1px solid var(--chq-line)" }}>
+          <Medal tier="gold" size={34} />
+          <div>
+            <div style={{ display: "flex", gap: 3, flexWrap: "wrap", marginBottom: 5 }}>
+              {Array.from({ length: 20 }).map((_, i) => (
+                <span key={i} style={{ width: 9, height: 9, borderRadius: "50%", background: "var(--chq-gold-gradient)" }} />
+              ))}
             </div>
-          </div>
-          <div style={{ display: "flex", gap: 14, alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
-            <Medal tier="gold" size={38} />
-            <span style={{ color: "var(--chq-text-1)", fontSize: 13.5 }}>Opening IQ <b style={{ color: "var(--chq-gold-2)" }}>900+</b></span>
-            <span style={{ color: "var(--chq-text-1)", fontSize: 13.5 }}>ELO <b style={{ color: "var(--chq-gold-2)" }}>climbing</b></span>
+            <span style={{ ...eyebrow, fontSize: 9, color: "var(--chq-gold-3)" }}>Passport 20/20 · Opening IQ 900+</span>
           </div>
         </div>
-        <p style={{ color: "var(--chq-text-muted)", fontSize: 11.5, textAlign: "center", marginTop: 12 }}>Master your openings → your win rate climbs in real games. That&apos;s the whole quest.</p>
       </div>
     </div>
   );
@@ -105,46 +136,57 @@ function BenefitsBox({ tier, plan, setTier, setPlan }: { tier: Tier; plan: PlanK
   return (
     <div style={{ maxWidth: 1280, margin: "0 auto 8px", padding: "0 20px" }}>
       <OrnateFrame>
-        <div style={{ padding: "24px 24px", textAlign: "center" }}>
-          <p style={{ ...eyebrow, color: "var(--chq-gold-3)" }}>Your quest, if you accept it</p>
-          <h2 className="chq-display chq-gold-text" style={{ fontSize: 26, fontWeight: 700, margin: "6px 0 0" }}>Become the King of Openings</h2>
-          <p style={{ color: "var(--chq-text-2)", fontSize: 14, lineHeight: 1.55, margin: "8px auto 0", maxWidth: 600 }}>
-            Conquer each opening to earn its seal and fill your <b style={{ color: "var(--chq-text-1)" }}>Opening Passport</b> — all 20 across the four realms. Master them and you walk into any game ready for <b style={{ color: "var(--chq-text-1)" }}>any opponent</b>. Most players lose in the first 10 moves; you&apos;ll win there.
-          </p>
-
-          <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
-            <div className="chq-seg" role="tablist" aria-label="Free or Premium">
-              <button type="button" data-active={!premium} onClick={() => setTier("free")}>Free</button>
-              <button type="button" data-active={premium} onClick={() => setTier("premium")}>Premium</button>
+        <div style={{ padding: "24px 24px" }}>
+          <div style={{ textAlign: "center" }}>
+            <p style={{ ...eyebrow, color: "var(--chq-gold-3)" }}>Your quest, if you accept it</p>
+            <h2 className="chq-display chq-gold-text" style={{ fontSize: 26, fontWeight: 700, margin: "6px 0 0" }}>Become the King of Openings</h2>
+            <p style={{ color: "var(--chq-text-2)", fontSize: 14, lineHeight: 1.55, margin: "8px auto 0", maxWidth: 600 }}>
+              Conquer each opening to earn its seal and fill your <b style={{ color: "var(--chq-text-1)" }}>Opening Passport</b> — all 20 across the four realms. Master them and you walk into any game ready for <b style={{ color: "var(--chq-text-1)" }}>any opponent</b>. Most players lose in the first 10 moves; you&apos;ll win there.
+            </p>
+            <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
+              <div className="chq-seg" role="tablist" aria-label="Free or Premium">
+                <button type="button" data-active={!premium} onClick={() => setTier("free")}>Free</button>
+                <button type="button" data-active={premium} onClick={() => setTier("premium")}>Premium</button>
+              </div>
             </div>
           </div>
 
-          <ul style={{ listStyle: "none", padding: 0, margin: "16px auto 0", maxWidth: 480, textAlign: "left", display: "flex", flexDirection: "column", gap: 8 }}>
-            {benefits.map((b) => (
-              <li key={b} style={{ display: "flex", gap: 8, alignItems: "flex-start", color: "var(--chq-text-1)", fontSize: 14, lineHeight: 1.45 }}>
-                <span style={{ color: premium ? "var(--chq-gold-3)" : "#2FB67A", flexShrink: 0 }}>✓</span> {b}
-              </li>
-            ))}
-          </ul>
-
           {premium ? (
-            <>
-              <PromiseVisual />
-              <div style={{ display: "flex", justifyContent: "center", marginTop: 16, flexWrap: "wrap", gap: 8 }}>
-                <div className="chq-seg" role="tablist" aria-label="Billing plan">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 28, marginTop: 22, alignItems: "stretch" }}>
+              {/* LEFT — benefits + plan */}
+              <div>
+                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 10 }}>
+                  {benefits.map((b) => (
+                    <li key={b} style={{ display: "flex", gap: 8, alignItems: "flex-start", color: "var(--chq-text-1)", fontSize: 14, lineHeight: 1.45 }}>
+                      <span style={{ color: "var(--chq-gold-3)", flexShrink: 0 }}>✓</span> {b}
+                    </li>
+                  ))}
+                </ul>
+                <div className="chq-seg" role="tablist" aria-label="Billing plan" style={{ marginTop: 18, flexWrap: "wrap" }}>
                   {(Object.keys(PLANS) as PlanKey[]).map((k) => (
                     <button key={k} type="button" data-active={plan === k} onClick={() => setPlan(k)}>{PLANS[k].label} · {PLANS[k].price}</button>
                   ))}
                 </div>
+                <p style={{ ...eyebrow, fontSize: 10, color: "var(--chq-gold-3)", marginTop: 10 }}>
+                  {PLANS[plan].label}: {PLANS[plan].price} {PLANS[plan].per}{PLANS[plan].badge ? ` · ${PLANS[plan].badge}` : ""} — pick your hero below to start
+                </p>
               </div>
-              <p style={{ ...eyebrow, fontSize: 10, color: "var(--chq-gold-3)", marginTop: 8 }}>
-                {PLANS[plan].label}: {PLANS[plan].price} {PLANS[plan].per}{PLANS[plan].badge ? ` · ${PLANS[plan].badge}` : ""} — pick your hero below to start
+              {/* RIGHT — analytics illustration */}
+              <AnalyticsPanel />
+            </div>
+          ) : (
+            <>
+              <ul style={{ listStyle: "none", padding: 0, margin: "18px auto 0", maxWidth: 480, textAlign: "left", display: "flex", flexDirection: "column", gap: 10 }}>
+                {benefits.map((b) => (
+                  <li key={b} style={{ display: "flex", gap: 8, alignItems: "flex-start", color: "var(--chq-text-1)", fontSize: 14, lineHeight: 1.45 }}>
+                    <span style={{ color: "#2FB67A", flexShrink: 0 }}>✓</span> {b}
+                  </li>
+                ))}
+              </ul>
+              <p style={{ color: "var(--chq-text-muted)", fontSize: 12, marginTop: 14, textAlign: "center" }}>
+                Tap <b style={{ color: "var(--chq-gold-3)" }}>Premium</b> to see everything you unlock.
               </p>
             </>
-          ) : (
-            <p style={{ color: "var(--chq-text-muted)", fontSize: 12, marginTop: 14 }}>
-              Tap <b style={{ color: "var(--chq-gold-3)" }}>Premium</b> to see everything you unlock.
-            </p>
           )}
         </div>
       </OrnateFrame>
