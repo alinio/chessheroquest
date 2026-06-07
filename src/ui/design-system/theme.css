@@ -125,6 +125,49 @@
   cursor: default;
 }
 
+/* §2 Style-quiz option card — full-width, raised panel, gold border on hover/select. */
+.chq-options-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .chq-options-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+.chq-option {
+  width: 100%;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  padding: 0 16px;
+  border-radius: var(--chq-r-panel);
+  background: var(--chq-panel);
+  border: 1px solid var(--chq-line);
+  color: var(--chq-text-1);
+  font-family: var(--chq-font-body);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+.chq-option:hover {
+  border-color: var(--chq-gold-4);
+  transform: translateY(-2px);
+}
+.chq-option[data-selected="true"] {
+  border-color: var(--chq-gold-3);
+}
+.chq-option:disabled {
+  cursor: default;
+}
+
 /* §7 Entrance — fade + rise 12px, staggered via --chq-d. */
 @keyframes chq-rise {
   from {

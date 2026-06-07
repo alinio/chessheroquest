@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
 import { GradientDefs, LogoMark, ProgressBar } from "@/src/ui/design-system/icons";
@@ -154,6 +155,7 @@ function TestRunner({
 }
 
 export function DnaTestScreen() {
+  const router = useRouter();
   const mounted = useHydrated();
   const reduced = useReducedMotion();
 
@@ -216,10 +218,10 @@ export function DnaTestScreen() {
               Next up: the Style Quiz, then your shareable DNA Card. (Coming in the following modules.) Your result is saved on this device.
             </p>
             <div style={{ display: "flex", gap: 10, marginTop: 6, flexWrap: "wrap", justifyContent: "center" }}>
-              <Button variant="ghost" disabled style={{ opacity: 0.5 }}>
+              <Button variant="primary" onClick={() => router.push("/style-quiz")}>
                 Continue → Style Quiz
               </Button>
-              <Button variant="primary" onClick={reset}>
+              <Button variant="ghost" onClick={reset}>
                 Retake the test
               </Button>
             </div>
