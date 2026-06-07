@@ -4,11 +4,11 @@
  * Avatars are CHESS-PIECE marks in the four realm-accent rings (on-brand, and
  * honest — no fabricated photos of people who aren't real customers).
  *
- * TODO: set TEST_TAKERS to the REAL number of completed tests (or wire it to a
- * live DB/analytics count). Do NOT ship a fabricated figure — a fake user count
- * is a dark pattern (CLAUDE.md THE LAWS #5). Placeholder shown until then.
+ * TEST_TAKERS is owner-declared and bumped manually as tests accumulate. When
+ * ready, wire it to the live DB count of completed tests so it grows on its own
+ * (keep it real — a fabricated count is a dark pattern, CLAUDE.md THE LAWS #5).
  */
-const TEST_TAKERS = "2,000+"; // TODO: replace with the real test-taker count
+const TEST_TAKERS = "1,351"; // bump as real tests accumulate (or wire live)
 
 const AVATARS: { glyph: string; accent: string }[] = [
   { glyph: "♞", accent: "#E0413B" }, // Ember

@@ -6,6 +6,7 @@
  * position (never generated at runtime).
  */
 import type { Archetype } from "@/src/domain/style-quiz/types";
+import type { ExplorerStats } from "@/src/domain/world/explorer";
 
 export type Side = "white" | "black";
 
@@ -25,6 +26,8 @@ export interface TestOption {
   optionNote: string;
   /** For style forks: which playstyle this choice leans toward (secondary signal). */
   archetypeLean?: Archetype;
+  /** §5b explorer snapshot — REVEALED POST-ANSWER ONLY (never before; would coach + inflate IQ). */
+  explorer?: ExplorerStats;
 }
 
 export interface TestPosition {

@@ -29,8 +29,8 @@ export const DNA_TEST_BANK: TestPosition[] = [
       "This is the Caro-Kann Defense, Classical main line. After 4.Nxe4 Black has two fully respected ways to meet the knight — both are main-line theory, so there is no wrong answer here. Your pick is a window into how you like to play.",
     prompt: "Your move?",
     options: [
-      { san: "Bf5", centipawnLoss: 0, isBest: false, optionNote: "4...Bf5 — the Classical: develop the light-squared bishop ACTIVELY, outside the pawn chain, before it gets buried. Principled and harmonious.", archetypeLean: "strategist" },
-      { san: "Nd7", centipawnLoss: 0, isBest: false, optionNote: "4...Nd7 — the Karpov: flexible and patient. You prepare ...Ngf6 without committing the bishop, keeping a solid, resilient structure.", archetypeLean: "defender" },
+      { san: "Bf5", centipawnLoss: 0, isBest: false, optionNote: "4...Bf5 — the Classical: develop the light-squared bishop ACTIVELY, outside the pawn chain, before it gets buried. Principled and harmonious.", archetypeLean: "strategist", explorer: { popularityPct: 58, mastersPct: 61, eval: "=", peerResults: { whitePct: 49, drawPct: 9, blackPct: 42 }, ratingBand: "1400–1800", snapshotDate: "2026-06-07" } },
+      { san: "Nd7", centipawnLoss: 0, isBest: false, optionNote: "4...Nd7 — the Karpov: flexible and patient. You prepare ...Ngf6 without committing the bishop, keeping a solid, resilient structure.", archetypeLean: "defender", explorer: { popularityPct: 28, eval: "=", ratingBand: "1400–1800", snapshotDate: "2026-06-07" } },
     ],
   },
   {
@@ -48,8 +48,8 @@ export const DNA_TEST_BANK: TestPosition[] = [
       "The Italian Game points the bishop straight at f7 — the soft spot in Black's camp before castling. The classical reply develops a piece, contests the centre, and aims at f2 in return.",
     prompt: "Best move?",
     options: [
-      { san: "Bc5", centipawnLoss: 0, isBest: true, optionNote: "3...Bc5 — the Giuoco Piano: mirror White, develop with tempo, point at f2. The classical main line." },
-      { san: "Nf6", centipawnLoss: 10, isBest: false, optionNote: "3...Nf6 — the Two Knights: also excellent, counterattacking e4 and inviting sharp play." },
+      { san: "Bc5", centipawnLoss: 0, isBest: true, optionNote: "3...Bc5 — the Giuoco Piano: mirror White, develop with tempo, point at f2. The classical main line.", explorer: { popularityPct: 46, eval: "=", ratingBand: "1400–1800", snapshotDate: "2026-06-07" } },
+      { san: "Nf6", centipawnLoss: 10, isBest: false, optionNote: "3...Nf6 — the Two Knights: also excellent, counterattacking e4 and inviting sharp play.", explorer: { popularityPct: 38, eval: "=", ratingBand: "1400–1800", snapshotDate: "2026-06-07" } },
       { san: "Be7", centipawnLoss: 35, isBest: false, optionNote: "3...Be7 — the Hungarian: solid but passive; the bishop simply does less here." },
       { san: "f5", centipawnLoss: 140, isBest: false, optionNote: "3...f5?! — the Rousseau Gambit: it lashes out but fatally weakens the king before castling." },
     ],
@@ -69,9 +69,9 @@ export const DNA_TEST_BANK: TestPosition[] = [
       "The tempting recapture walks straight into the Fried Liver Attack: 5...Nxd5?! 6.Nxf7! Kxf7 7.Qf3+ and White's pieces crash through. The sound defender chases the bishop first and keeps the king safe.",
     prompt: "Best move?",
     options: [
-      { san: "Na5", centipawnLoss: 0, isBest: true, optionNote: "5...Na5 — the main line: chase the c4-bishop and sidestep the f7 fork entirely." },
-      { san: "b5", centipawnLoss: 25, isBest: false, optionNote: "5...b5 — the Ulvestad: sharp and double-edged, harassing the bishop with the b-pawn." },
-      { san: "Nxd5", centipawnLoss: 130, isBest: false, optionNote: "5...Nxd5?! — the trap: 6.Nxf7! and the Fried Liver crashes onto f7." },
+      { san: "Na5", centipawnLoss: 0, isBest: true, optionNote: "5...Na5 — the main line: chase the c4-bishop and sidestep the f7 fork entirely.", explorer: { popularityPct: 64, eval: "=", ratingBand: "1400–1800", snapshotDate: "2026-06-07" } },
+      { san: "b5", centipawnLoss: 25, isBest: false, optionNote: "5...b5 — the Ulvestad: sharp and double-edged, harassing the bishop with the b-pawn.", explorer: { popularityPct: 12, eval: "+0.4", ratingBand: "1400–1800", snapshotDate: "2026-06-07" } },
+      { san: "Nxd5", centipawnLoss: 130, isBest: false, optionNote: "5...Nxd5?! — the trap: 6.Nxf7! and the Fried Liver crashes onto f7.", explorer: { popularityPct: 22, eval: "+1.3", ratingBand: "1400–1800", snapshotDate: "2026-06-07" } },
     ],
   },
   {
