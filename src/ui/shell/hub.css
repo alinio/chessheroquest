@@ -1,0 +1,348 @@
+/* Hub shell + Today — ported faithfully from docs/mockups/mockup-today-rpg.html.
+   Scoped under .chq-hub so the mockup palette/classes don't collide with the app. */
+.chq-hub {
+  --obsidian: #0a0812;
+  --obsidian-2: #120e1c;
+  --panel: #171120;
+  --panel-2: #1e1730;
+  --gold: #cda845;
+  --gold-bright: #f1d680;
+  --gold-dim: #7a6a38;
+  --ember: #e0413b;
+  --ember-bright: #ff6a52;
+  --ember-deep: #7a1d1c;
+  --ember-deep: #7a1d1c;
+  --violet: #8a7bd8;
+  --violet-deep: #3a2f63;
+  --emerald: #4fb477;
+  --cyan: #46c7d8;
+  --parchment: #ece3cf;
+  --muted: #9c9484;
+  --faint: #6f6757;
+  --locked: #3a3550;
+  --line: rgba(205, 168, 69, 0.28);
+  --line-soft: rgba(205, 168, 69, 0.14);
+
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+  color: var(--parchment);
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(138, 123, 216, 0.16), transparent 55%),
+    radial-gradient(90% 70% at 50% 120%, rgba(205, 168, 69, 0.08), transparent 60%),
+    linear-gradient(180deg, #0c0913, #070509);
+  min-height: 100vh;
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+.chq-hub *,
+.chq-hub *::before,
+.chq-hub *::after { box-sizing: border-box; }
+.chq-hub .serif { font-family: var(--font-cinzel), "Cinzel", serif; }
+
+/* ============ APP SHELL ============ */
+.chq-hub .app {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  background: linear-gradient(180deg, var(--obsidian-2), var(--obsidian));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 40px 90px rgba(0, 0, 0, 0.6);
+}
+
+/* ---- left rail ---- */
+.chq-hub .rail {
+  width: 222px;
+  flex-shrink: 0;
+  padding: 22px 16px;
+  border-right: 1px solid var(--line-soft);
+  background: linear-gradient(180deg, rgba(138, 123, 216, 0.05), transparent 40%);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.chq-hub .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 20px; }
+.chq-hub .brand .crown { color: var(--gold-bright); font-size: 22px; display: flex; filter: drop-shadow(0 0 6px rgba(241, 214, 128, 0.5)); }
+.chq-hub .brand .wordmark {
+  font-weight: 700; font-size: 15px; letter-spacing: 0.4px;
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.chq-hub .nav-item {
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px;
+  color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500;
+  background: none; border: 0; width: 100%; cursor: pointer; text-align: left; transition: 0.15s;
+}
+.chq-hub .nav-item svg { width: 18px; height: 18px; }
+.chq-hub .nav-item:hover { background: rgba(205, 168, 69, 0.06); color: var(--parchment); }
+.chq-hub .nav-item.active {
+  color: var(--gold-bright);
+  background: linear-gradient(90deg, rgba(205, 168, 69, 0.16), rgba(205, 168, 69, 0.03));
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.chq-hub .rail-divider { height: 1px; background: var(--line-soft); margin: 14px 8px; }
+.chq-hub .nav-sub {
+  display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px;
+  color: var(--faint); text-decoration: none; font-size: 12.5px;
+  background: none; border: 0; width: 100%; cursor: pointer; text-align: left; transition: 0.15s;
+}
+.chq-hub .nav-sub svg { width: 15px; height: 15px; }
+.chq-hub .nav-sub:hover { color: var(--muted); }
+.chq-hub .rail-spacer { flex: 1; }
+
+/* ---- frame (topbar + main) ---- */
+.chq-hub .frame { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+/* ---- persistent top bar ---- */
+.chq-hub .topbar {
+  display: flex; align-items: center; gap: 14px; padding: 14px 26px;
+  border-bottom: 1px solid var(--line-soft);
+  background: linear-gradient(180deg, rgba(138, 123, 216, 0.06), transparent);
+}
+.chq-hub .realm { display: flex; align-items: center; gap: 10px; }
+.chq-hub .realm-crest {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 0 1px rgba(138, 123, 216, 0.5);
+}
+.chq-hub .realm-crest img { width: 100%; height: 100%; object-fit: contain; }
+.chq-hub .realm-name { font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--parchment); font-weight: 600; }
+.chq-hub .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.chq-hub .chip {
+  display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+  font-size: 13px; font-weight: 600; border: 1px solid var(--line-soft); background: rgba(255, 255, 255, 0.02);
+}
+.chq-hub .chip svg { width: 15px; height: 15px; }
+.chq-hub .chip.streak { color: var(--ember-bright); }
+.chq-hub .chip.iq { color: var(--gold-bright); }
+.chq-hub .hero-av {
+  width: 36px; height: 36px; border-radius: 50%; position: relative; flex-shrink: 0; overflow: visible;
+  box-shadow: 0 0 0 2px var(--gold), 0 0 10px rgba(138, 123, 216, 0.4);
+}
+.chq-hub .hero-av img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center top; }
+.chq-hub .hero-av .pro {
+  position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+  font-size: 8px; font-weight: 700; letter-spacing: 0.08em; padding: 1px 5px; border-radius: 6px;
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold)); color: #241a08;
+}
+
+/* ============ TODAY CONTENT ============ */
+.chq-hub .today { padding: 28px 30px 34px; display: flex; flex-direction: column; gap: 18px; }
+.chq-hub .greet { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 2px; }
+.chq-hub .eyebrow { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-dim); font-weight: 600; }
+.chq-hub .eyebrow.gold { color: var(--gold); }
+.chq-hub .greet h1 {
+  font-weight: 700; font-size: 30px; letter-spacing: 0.3px; margin-top: 6px;
+  background: linear-gradient(180deg, #fff, #cfc6b2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.chq-hub .muted { color: var(--muted); font-size: 14px; line-height: 1.55; }
+.chq-hub .faint { color: var(--faint); font-size: 12px; }
+
+.chq-hub .card {
+  position: relative; border: 1px solid var(--line-soft); border-radius: 16px;
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+.chq-hub .grid { display: grid; grid-template-columns: 1.45fr 1fr; gap: 16px; }
+.chq-hub .col-main, .chq-hub .col-side { display: flex; flex-direction: column; gap: 16px; }
+
+/* primary action: drills due (hero) */
+.chq-hub .hero-card { overflow: hidden; min-height: 188px; display: flex; align-items: flex-end; }
+.chq-hub .hero-bg { position: absolute; inset: 0; }
+.chq-hub .hero-bg img { width: 100%; height: 100%; object-fit: cover; }
+.chq-hub .hero-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 8, 18, 0.25) 25%, rgba(10, 8, 18, 0.9)); }
+.chq-hub .hero-inner { position: relative; padding: 24px; width: 100%; }
+.chq-hub .hero-inner h2 { font-weight: 700; font-size: 26px; margin: 6px 0 4px; color: #fff; }
+.chq-hub .btn-gold {
+  margin-top: 16px; border: 0; cursor: pointer; font-family: var(--font-inter), "Inter", sans-serif; font-weight: 700; font-size: 15px;
+  color: #2a2008; padding: 13px 26px; border-radius: 999px;
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  box-shadow: 0 6px 20px rgba(205, 168, 69, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.chq-hub .btn-gold.sm { padding: 9px 18px; font-size: 13px; margin-top: 0; }
+.chq-hub .btn-ghost {
+  cursor: pointer; font-family: var(--font-inter), "Inter", sans-serif; font-weight: 600; font-size: 13px;
+  color: var(--parchment); padding: 9px 18px; border-radius: 999px; background: transparent; border: 1px solid var(--line);
+}
+
+/* recommended next */
+.chq-hub .rec { display: flex; align-items: center; gap: 16px; padding: 18px 20px; }
+.chq-hub .rec-body { flex: 1; }
+.chq-hub .rec-body h3 { font-size: 19px; font-weight: 600; color: var(--gold-bright); margin: 3px 0; }
+.chq-hub .rec-actions { display: flex; gap: 8px; }
+
+/* opening IQ */
+.chq-hub .iq { padding: 20px; display: flex; align-items: center; gap: 18px; }
+.chq-hub .ring { position: relative; width: 104px; height: 104px; flex-shrink: 0; }
+.chq-hub .ring svg { transform: rotate(-90deg); }
+.chq-hub .ring .val { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.chq-hub .ring .val .n { font-family: "Cinzel", serif; font-weight: 700; font-size: 26px; color: var(--gold-bright); line-height: 1; }
+.chq-hub .ring .val .u { font-size: 10px; letter-spacing: 0.2em; color: var(--muted); margin-top: 3px; }
+.chq-hub .iq-meta { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+.chq-hub .goal-label { font-size: 12.5px; color: var(--parchment); font-weight: 600; }
+.chq-hub .bar { height: 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); overflow: hidden; box-shadow: inset 0 0 0 1px var(--line-soft); }
+.chq-hub .bar span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); box-shadow: 0 0 10px rgba(241, 214, 128, 0.5); }
+
+/* road to elo */
+.chq-hub .elo { display: flex; align-items: center; gap: 16px; padding: 18px 20px; }
+.chq-hub .elo-body { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.chq-hub .elo-body .tags { font-size: 12.5px; color: var(--muted); }
+.chq-hub .elo-body .tags b { color: var(--parchment); font-weight: 600; }
+
+/* medallions (détourés — fond transparent, AUCUNE boîte) */
+.chq-hub .medallion {
+  position: relative; flex-shrink: 0; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.chq-hub .medallion img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 10px rgba(205, 168, 69, 0.35)); }
+.chq-hub .medallion.sm { width: 54px; height: 54px; }
+.chq-hub .medallion.md { width: 66px; height: 66px; }
+
+/* coach nudge */
+.chq-hub .coach { display: flex; align-items: center; gap: 16px; padding: 16px 20px; }
+.chq-hub .coach-av { width: 54px; height: 54px; border-radius: 50%; flex-shrink: 0; overflow: hidden; box-shadow: 0 0 0 2px var(--gold-dim), inset 0 0 12px rgba(0, 0, 0, 0.6); }
+.chq-hub .coach-av img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+.chq-hub .coach p { font-size: 14px; line-height: 1.6; color: var(--parchment); }
+.chq-hub .coach p b { color: var(--gold-bright); }
+
+/* stats strip */
+.chq-hub .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.chq-hub .stat { border: 1px solid var(--line-soft); border-radius: 14px; padding: 18px; text-align: center; background: linear-gradient(180deg, rgba(30, 23, 48, 0.5), rgba(23, 17, 32, 0.5)); }
+.chq-hub .stat .num { display: block; font-size: 30px; font-weight: 700; color: var(--gold-bright); line-height: 1; }
+.chq-hub .stat .key { display: block; margin-top: 6px; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); }
+
+/* page-load stagger */
+.chq-hub .today > * { animation: chq-hub-rise 0.5s ease both; }
+.chq-hub .today > *:nth-child(1) { animation-delay: 0.02s; }
+.chq-hub .today > *:nth-child(2) { animation-delay: 0.08s; }
+.chq-hub .today > *:nth-child(3) { animation-delay: 0.14s; }
+.chq-hub .today > *:nth-child(4) { animation-delay: 0.2s; }
+@keyframes chq-hub-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 880px) {
+  .chq-hub { padding: 0; }
+  .chq-hub .app { border-radius: 0; border: 0; }
+  .chq-hub .rail { display: none; }
+  .chq-hub .grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chq-hub .today > * { animation: none; }
+  .chq-hub .realm-sec, .chq-hub .opening > * { animation: none; }
+}
+
+/* ============ PASSPORT (mockup-passport-rpg.html) ============ */
+.chq-hub .passport { padding: 26px 30px 34px; display: flex; flex-direction: column; gap: 24px; }
+.chq-hub .cover-hero {
+  display: flex; gap: 24px; align-items: center; border: 1px solid var(--line-soft); border-radius: 16px; padding: 22px 26px;
+  background: linear-gradient(180deg, var(--panel-2), var(--panel)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 16px 40px rgba(0, 0, 0, 0.35); position: relative;
+}
+.chq-hub .cover-img {
+  height: 184px; width: 140px; flex-shrink: 0; border-radius: 10px; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(160deg, #241c12, #0e0b14); box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(205, 168, 69, 0.3);
+}
+.chq-hub .cover-img img { width: 100%; height: 100%; object-fit: contain; }
+.chq-hub .cover-meta { flex: 1; }
+.chq-hub .cover-meta .big { font-family: var(--font-cinzel), "Cinzel", serif; font-weight: 700; font-size: 38px; color: var(--gold-bright); margin: 8px 0 14px; line-height: 1; }
+.chq-hub .cover-meta .sub { color: var(--muted); font-size: 14px; margin-top: 12px; }
+.chq-hub .pbar { height: 9px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); overflow: hidden; box-shadow: inset 0 0 0 1px var(--line-soft); max-width: 420px; }
+.chq-hub .pbar span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); box-shadow: 0 0 10px rgba(241, 214, 128, 0.5); }
+.chq-hub .realm-sec { display: flex; flex-direction: column; gap: 14px; animation: chq-hub-rise 0.5s ease both; }
+.chq-hub .realm-head { display: flex; align-items: center; gap: 12px; padding-bottom: 4px; border-bottom: 1px solid var(--line-soft); }
+.chq-hub .rh-crest {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 60%, transparent), 0 0 12px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.chq-hub .rh-crest img { width: 100%; height: 100%; object-fit: contain; }
+.chq-hub .realm-head h3 { font-family: var(--font-cinzel), "Cinzel", serif; font-weight: 600; font-size: 18px; color: var(--accent); }
+.chq-hub .rh-count { margin-left: auto; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
+.chq-hub .op-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+.chq-hub .op {
+  position: relative; border: 1px solid var(--line-soft); border-radius: 14px; padding: 18px 12px 14px; text-align: center;
+  background: linear-gradient(180deg, rgba(30, 23, 48, 0.55), rgba(23, 17, 32, 0.55));
+  display: flex; flex-direction: column; align-items: center; gap: 10px; transition: 0.15s;
+}
+.chq-hub .op.sealed { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 38%, transparent), 0 8px 22px rgba(0, 0, 0, 0.3); }
+.chq-hub .op:hover { transform: translateY(-2px); }
+.chq-hub .op-medal { width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.chq-hub .op-medal img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 10px rgba(205, 168, 69, 0.3)); }
+.chq-hub .op-name { font-size: 13px; font-weight: 600; color: var(--parchment); letter-spacing: 0.01em; }
+.chq-hub .op.locked .op-medal img { filter: grayscale(1) brightness(0.5); opacity: 0.55; }
+.chq-hub .op.locked .op-name { color: var(--faint); }
+.chq-hub .seal { position: absolute; top: 9px; right: 9px; width: 30px; height: 30px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.chq-hub .seal img { width: 100%; height: 100%; object-fit: contain; }
+.chq-hub .seal.locked img { filter: grayscale(1) brightness(0.6); opacity: 0.5; }
+@media (max-width: 980px) { .chq-hub .op-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 560px) { .chq-hub .op-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ============ OPENING DETAIL (mockup-opening-rpg.html) ============ */
+.chq-hub .opening { padding: 22px 30px 34px; display: flex; flex-direction: column; gap: 16px; }
+.chq-hub .opening > * { animation: chq-hub-rise 0.5s ease both; }
+.chq-hub .crumb { font-size: 12px; color: var(--faint); letter-spacing: 0.04em; }
+.chq-hub .crumb b { color: var(--parchment); }
+.chq-hub .crumb span { margin: 0 8px; color: var(--gold-dim); }
+.chq-hub .banner { position: relative; height: 300px; border-radius: 16px; overflow: hidden; border: 1px solid var(--line-soft); }
+.chq-hub .banner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.chq-hub .banner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 42%, rgba(10, 8, 18, 0.92)); }
+.chq-hub .op-head { display: flex; align-items: center; gap: 18px; margin-top: -52px; position: relative; z-index: 2; padding: 0 6px; }
+.chq-hub .op-crest {
+  width: 92px; height: 92px; border-radius: 50%; flex-shrink: 0; position: relative; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 0 3px rgba(205, 168, 69, 0.6), 0 0 22px rgba(205, 168, 69, 0.3);
+}
+.chq-hub .op-crest img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6)); }
+.chq-hub .op-head h1 { font-weight: 700; font-size: 34px; color: #fff; margin-top: 4px; }
+.chq-hub .lead { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 640px; }
+.chq-hub .mastery { display: flex; align-items: center; gap: 14px; max-width: 540px; }
+.chq-hub .mastery .bar { flex: 1; }
+.chq-hub .m-label { font-size: 12px; color: var(--faint); white-space: nowrap; }
+.chq-hub .actions { display: flex; gap: 12px; margin-top: 2px; }
+.chq-hub .actions .btn-gold { margin-top: 0; padding: 13px 26px; font-size: 15px; }
+.chq-hub .actions .btn-ghost { padding: 13px 24px; font-size: 15px; }
+.chq-hub .boss { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); margin-top: 8px; }
+.chq-hub .boss-bg { position: absolute; inset: 0; }
+.chq-hub .boss-bg img { width: 100%; height: 100%; object-fit: cover; }
+.chq-hub .boss-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, rgba(11, 8, 18, 0.92), rgba(21, 13, 20, 0.7) 55%, rgba(11, 8, 18, 0.5)), radial-gradient(60% 120% at 85% 50%, rgba(224, 65, 59, 0.24), transparent 60%); }
+.chq-hub .boss-inner { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px 26px; }
+.chq-hub .boss-inner h3 { font-family: var(--font-cinzel), "Cinzel", serif; font-weight: 600; font-size: 22px; color: #fff; margin: 4px 0; }
+
+/* ============ QUEST MAP (mockup-hub-rpg.html) ============ */
+.chq-hub .map-area { flex: 1; min-width: 0; padding: 22px 26px; display: flex; flex-direction: column; }
+.chq-hub .realm-banner { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+.chq-hub .realm-banner h2 { font-family: var(--font-cinzel), "Cinzel", serif; font-weight: 700; font-size: 26px; letter-spacing: 1px; background: linear-gradient(180deg, var(--gold-bright), var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.chq-hub .realm-banner .sub { font-size: 12px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+.chq-hub .qprogress { text-align: right; }
+.chq-hub .qprogress b { font-family: var(--font-cinzel), "Cinzel", serif; font-size: 18px; color: var(--gold-bright); }
+.chq-hub .qprogress span { display: block; font-size: 11px; color: var(--faint); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+.chq-hub .map { position: relative; flex: 1; min-height: 440px; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
+.chq-hub .map-bg { position: absolute; inset: 0; }
+.chq-hub .map-bg img { width: 100%; height: 100%; object-fit: cover; }
+/* LIGHT overlay only — the realm illustration, path & nodes must read clearly (no black hole) */
+.chq-hub .map-bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(85% 85% at 50% 40%, transparent 58%, rgba(8, 5, 12, 0.42)); }
+.chq-hub .map .path { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.chq-hub .qnode { position: absolute; transform: translate(-50%, -50%); text-align: center; width: 120px; z-index: 2; }
+.chq-hub .qmedal { width: 62px; height: 62px; margin: 0 auto; position: relative; display: flex; align-items: center; justify-content: center; }
+.chq-hub .qmedal .node-art { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.55)); }
+.chq-hub .qmedal .node-emblem { position: absolute; width: 54%; height: 54%; left: 50%; top: 46%; transform: translate(-50%, -50%); object-fit: contain; }
+.chq-hub .qnode.locked .qmedal .node-emblem { filter: grayscale(1) brightness(0.5); opacity: 0.5; }
+.chq-hub .qname { display: block; margin-top: 9px; font-family: var(--font-cinzel), "Cinzel", serif; font-size: 12.5px; letter-spacing: 0.5px; line-height: 1.25; color: var(--parchment); text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8); }
+.chq-hub .qnode.locked .qname { color: var(--faint); }
+.chq-hub .qnode.conquered .qname { color: var(--gold-bright); }
+.chq-hub .qmeta { display: block; font-size: 10px; color: var(--faint); letter-spacing: 0.5px; margin-top: 2px; text-transform: uppercase; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8); }
+.chq-hub .qnode.boss { width: 150px; }
+.chq-hub .qnode.boss .qmedal { width: 86px; height: 86px; }
+.chq-hub .qnode.boss .qname { color: var(--ember-bright); font-size: 14px; font-weight: 600; }
+.chq-hub .qnode.available .qmedal { animation: chq-pulse-node 2.4s ease-in-out infinite; }
+@keyframes chq-pulse-node { 0%, 100% { filter: drop-shadow(0 0 10px rgba(224, 65, 59, 0.45)); } 50% { filter: drop-shadow(0 0 22px rgba(224, 65, 59, 0.85)); } }
+@media (prefers-reduced-motion: reduce) { .chq-hub .qnode.available .qmedal { animation: none; } }
+.chq-hub .questbar { display: flex; align-items: center; gap: 16px; margin-top: 18px; flex-wrap: wrap; }
+.chq-hub .btn-quest { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-cinzel), "Cinzel", serif; font-weight: 600; font-size: 14px; letter-spacing: 0.5px; color: #1a1206; background: linear-gradient(180deg, var(--gold-bright), var(--gold)); border: none; border-radius: 10px; padding: 13px 22px; cursor: pointer; box-shadow: 0 0 22px rgba(205, 168, 69, 0.35); }
+.chq-hub .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 11px; color: var(--muted); letter-spacing: 0.5px; }
+.chq-hub .legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chq-hub .legend .dot { width: 10px; height: 10px; border-radius: 50%; }
+/* dismissible realm intro — map stays fully visible behind */
+.chq-hub .realm-intro { position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 12px; padding: 24px; background: radial-gradient(60% 60% at 50% 45%, rgba(8, 5, 12, 0.3), rgba(8, 5, 12, 0.62)); }
+.chq-hub .realm-intro h2 { font-family: var(--font-cinzel), "Cinzel", serif; font-size: 34px; background: linear-gradient(180deg, var(--gold-bright), var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.chq-hub .realm-intro p { color: var(--parchment); font-size: 14px; max-width: 360px; }

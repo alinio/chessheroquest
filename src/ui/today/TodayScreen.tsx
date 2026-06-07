@@ -1,129 +1,134 @@
-"use client";
-
 /**
- * Today / Train — the daily habit loop (in-app-architecture-spec §4.2).
- * Streak header · Opening-IQ + daily goal · Due Drills · Recommended session ·
- * Road-to-Elo (with rank insignia) · coach · quick stats. Props-driven so DEV
- * routes can feed fixtures (no store/auth needed). Asset-wired (today-hero-bg).
+ * Today / Train content — faithful reproduction of docs/mockups/mockup-today-rpg.html
+ * (the <main class="today"> block). Rendered inside <AppShell>. Asset slots per the
+ * mockup's Asset map: today-hero-bg (1), Ruy-Lopez emblem (2), rank insignia (3),
+ * coach mentor (4) — medallions are détourés on transparent containers (no box).
  */
-import type { ReactNode } from "react";
-import "@/src/ui/design-system/theme.css";
-import { inter } from "@/src/ui/design-system/fonts";
-import { GradientDefs, StreakFlame, OpeningIQGauge, ProgressBar } from "@/src/ui/design-system/icons";
-import { Button } from "@/src/ui/design-system/Button";
-import { CoachAvatar } from "@/src/ui/coach/CoachAvatar";
-import { HERO_ACCENTS } from "@/src/ui/design-system/tokens";
-import { ASSETS, getRankInsignia, getArchetypeSigil, REALM_NAMES, type Archetype, type RealmId } from "@/src/lib/assets";
+import "@/src/ui/shell/hub.css";
+import { ASSETS, getOpeningArt, getRankInsignia, PLACEHOLDER } from "@/src/lib/assets";
 import type { DemoPlayer } from "@/src/dev/fixtures";
 
-const REALM_ARCHETYPE: Record<RealmId, Archetype> = {
-  "ember-marches": "warrior",
-  "obsidian-court": "strategist",
-  "aegis-bastion": "defender",
-  "mirage-bazaar": "trickster",
-};
-const eyebrow = { fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" } as const;
+const RING_C = 2 * Math.PI * 46; // r = 46
 
-function Card({ children, accent }: { children: ReactNode; accent?: string }) {
-  return <div style={{ background: "var(--chq-panel)", border: `1px solid ${accent ?? "var(--chq-line)"}`, borderRadius: "var(--chq-r-card)", padding: 18 }}>{children}</div>;
-}
-
-export function TodayScreen({ player, onAction }: { player: DemoPlayer; onAction?: (a: string) => void }) {
-  const accent = HERO_ACCENTS[REALM_ARCHETYPE[player.realm]];
-  const go = (a: string) => onAction?.(a);
+export function TodayScreen({ player }: { player: DemoPlayer }) {
+  const recEmblem = getOpeningArt(player.recommended.id)?.emblem ?? PLACEHOLDER;
+  const rankInsignia = getRankInsignia(player.eloGoal);
+  const iqFilled = Math.max(0, Math.min(1, player.openingIq / 1000)) * RING_C;
+  const goalPct = Math.round((player.goalDone / player.goalTarget) * 100);
+  const eloPct = Math.round(Math.min(1, player.openingIq / 1000) * 100);
 
   return (
-    <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh", position: "relative" }}>
-      <GradientDefs />
-      {/* full-bleed Today backdrop */}
-      <div aria-hidden="true" style={{ position: "fixed", inset: 0, zIndex: 0 }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={ASSETS.backgrounds.today} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,10,.65), rgba(8,8,10,.9))" }} />
+    <main className="today">
+      {/* greeting */}
+      <div className="greet">
+        <div>
+          <p className="eyebrow">{realmName(player)}</p>
+          <h1 className="serif">Welcome back, {player.name}</h1>
+        </div>
+        <span className="chip streak">🔥 {player.streakDays}-day streak</span>
       </div>
 
-      <main style={{ position: "relative", zIndex: 1, maxWidth: 560, margin: "0 auto", padding: "20px 18px 56px", display: "flex", flexDirection: "column", gap: 14 }}>
-        {/* header: realm + streak */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={getArchetypeSigil(REALM_ARCHETYPE[player.realm])} alt="" style={{ width: 34, height: 34, objectFit: "contain", mixBlendMode: "screen" }} />
-            <div>
-              <p style={{ ...eyebrow, color: "var(--chq-text-muted)", fontSize: 9, margin: 0 }}>{REALM_NAMES[player.realm]}</p>
-              <p style={{ color: "var(--chq-text-1)", fontWeight: 600, fontSize: 15, margin: 0 }}>Welcome back, {player.name}</p>
+      {/* two-column core */}
+      <div className="grid">
+        {/* left column */}
+        <div className="col-main">
+          {/* PRIMARY ACTION — drills due */}
+          <section className="card hero-card">
+            <div className="hero-bg">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={ASSETS.backgrounds.today} alt="" />
             </div>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <StreakFlame size={26} />
-            <span className="chq-display" style={{ color: "var(--chq-gold-2)", fontSize: 18, fontWeight: 700 }}>{player.streakDays}</span>
-          </div>
+            <div className="hero-inner">
+              <p className="eyebrow gold">Daily training</p>
+              <h2 className="serif">{player.dueDrills} drills due</h2>
+              <p className="muted">Keep your lines automatic — clear today&apos;s review.</p>
+              <button className="btn-gold" type="button">Start drills →</button>
+            </div>
+          </section>
+
+          {/* RECOMMENDED NEXT */}
+          <section className="card rec">
+            <div className="medallion sm">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={recEmblem} alt="" />
+            </div>
+            <div className="rec-body">
+              <p className="eyebrow">Recommended next</p>
+              <h3 className="serif">{player.recommended.name}</h3>
+              <p className="muted">On your Road to Elo</p>
+            </div>
+            <div className="rec-actions">
+              <button className="btn-gold sm" type="button">Learn</button>
+              <button className="btn-ghost" type="button">Drill</button>
+            </div>
+          </section>
         </div>
 
-        {/* Opening IQ + daily goal */}
-        <Card accent={accent.border}>
-          <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
-            <OpeningIQGauge value={player.openingIq} size={96} />
-            <div style={{ flex: 1 }}>
-              <p style={{ ...eyebrow, color: "var(--chq-text-muted)", fontSize: 9 }}>Opening IQ · Top {player.topPercent}%</p>
-              <p style={{ ...eyebrow, color: "var(--chq-text-2)", fontSize: 10, marginTop: 10 }}>Today&apos;s goal · {player.goalDone}/{player.goalTarget} XP</p>
-              <div style={{ marginTop: 4 }}><ProgressBar value={player.goalDone / player.goalTarget} height={8} ariaLabel="Daily goal" /></div>
-              <p style={{ color: "var(--chq-text-muted)", fontSize: 11, marginTop: 6 }}>+{player.xpToday} XP today</p>
+        {/* right column */}
+        <div className="col-side">
+          {/* OPENING IQ */}
+          <section className="card iq">
+            <div className="ring">
+              <svg width="104" height="104" viewBox="0 0 104 104">
+                <circle cx="52" cy="52" r="46" fill="none" stroke="rgba(255,255,255,.07)" strokeWidth="9" />
+                <circle cx="52" cy="52" r="46" fill="none" stroke="url(#chq-iq-ring)" strokeWidth="9" strokeLinecap="round" strokeDasharray={`${iqFilled} ${RING_C}`} />
+                <defs>
+                  <linearGradient id="chq-iq-ring" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stopColor="#cda845" />
+                    <stop offset="1" stopColor="#f1d680" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div className="val"><span className="n">{player.openingIq}</span><span className="u">IQ</span></div>
             </div>
-          </div>
-        </Card>
+            <div className="iq-meta">
+              <p className="eyebrow gold">Opening IQ · Top {player.topPercent}%</p>
+              <p className="goal-label">Today&apos;s goal · {player.goalDone} / {player.goalTarget} XP</p>
+              <div className="bar"><span style={{ width: `${goalPct}%` }} /></div>
+              <p className="faint">+{player.xpToday} XP today</p>
+            </div>
+          </section>
 
-        {/* Due Drills — primary */}
-        <Card accent={accent.border}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-            <div>
-              <p className="chq-display" style={{ color: "var(--chq-text-1)", fontSize: 18, margin: 0 }}>{player.dueDrills} drills due</p>
-              <p style={{ color: "var(--chq-text-2)", fontSize: 13, marginTop: 2 }}>Keep the lines automatic — review what&apos;s due.</p>
+          {/* ROAD TO ELO */}
+          <section className="card elo">
+            <div className="medallion md rank">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={rankInsignia} alt="" />
             </div>
-            <Button variant="primary" onClick={() => go("drills")}>Start →</Button>
-          </div>
-        </Card>
-
-        {/* Recommended session (Road to Elo next) */}
-        <Card>
-          <p style={{ ...eyebrow, color: "var(--chq-gold-3)", fontSize: 9 }}>Recommended next</p>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, marginTop: 6 }}>
-            <div>
-              <p style={{ color: "var(--chq-text-1)", fontWeight: 600, fontSize: 16, margin: 0 }}>{player.recommended.name}</p>
-              <p style={{ color: "var(--chq-text-muted)", fontSize: 12, marginTop: 2 }}>On your Road to Elo</p>
+            <div className="elo-body">
+              <p className="eyebrow gold">Road to Elo · Goal {player.eloGoal}</p>
+              <div className="bar"><span style={{ width: `${eloPct}%` }} /></div>
+              <p className="tags"><b>Strongest</b> {player.strongest} &nbsp;·&nbsp; <b>Focus</b> {player.weakness}</p>
             </div>
-            <div style={{ display: "flex", gap: 8 }}>
-              <Button variant="ghost" onClick={() => go("learn")}>Learn</Button>
-              <Button variant="ghost" onClick={() => go("drill")}>Drill</Button>
-            </div>
-          </div>
-        </Card>
-
-        {/* Road to Elo bar + rank insignia */}
-        <Card>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={getRankInsignia(player.eloGoal)} alt="" style={{ width: 44, height: 44, objectFit: "contain" }} />
-            <div style={{ flex: 1 }}>
-              <p style={{ ...eyebrow, color: "var(--chq-gold-3)", fontSize: 9 }}>Road to Elo · goal {player.eloGoal}</p>
-              <div style={{ marginTop: 6 }}><ProgressBar value={Math.min(1, player.openingIq / 1000)} height={8} ariaLabel="Road to Elo" /></div>
-              <p style={{ color: "var(--chq-text-muted)", fontSize: 11, marginTop: 6 }}>Strongest: <b style={{ color: "var(--chq-text-2)" }}>{player.strongest}</b> · Focus: <b style={{ color: "var(--chq-text-2)" }}>{player.weakness}</b></p>
-            </div>
-          </div>
-        </Card>
-
-        {/* Coach */}
-        <CoachAvatar size={48} message={<span>Nice 7-day streak. After your drills, try one new line in <b style={{ color: "var(--chq-text-1)" }}>{player.recommended.name}</b> — it&apos;s your fastest path up the ladder.</span>} />
-
-        {/* quick stats */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
-          {[["Cards", player.cardsReviewed], ["Accuracy", `${player.accuracy}%`], ["XP today", player.xpToday]].map(([k, v]) => (
-            <div key={String(k)} style={{ background: "var(--chq-panel)", border: "1px solid var(--chq-line)", borderRadius: "var(--chq-r-panel)", padding: "12px 10px", textAlign: "center" }}>
-              <div className="chq-display" style={{ color: "var(--chq-gold-2)", fontSize: 20, fontWeight: 700 }}>{v}</div>
-              <div style={{ ...eyebrow, color: "var(--chq-text-muted)", fontSize: 8 }}>{k}</div>
-            </div>
-          ))}
+          </section>
         </div>
-      </main>
-    </div>
+      </div>
+
+      {/* COACH NUDGE */}
+      <section className="card coach">
+        <div className="coach-av">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={ASSETS.coach.mentor} alt="" />
+        </div>
+        <p>Nice {player.streakDays}-day streak. After your drills, try one new line in <b>{player.recommended.name}</b> — it&apos;s your fastest path up the ladder.</p>
+      </section>
+
+      {/* DAILY STATS */}
+      <div className="stats">
+        <div className="stat"><span className="num serif">{player.cardsReviewed}</span><span className="key">Cards</span></div>
+        <div className="stat"><span className="num serif">{player.accuracy}%</span><span className="key">Accuracy</span></div>
+        <div className="stat"><span className="num serif">{player.xpToday}</span><span className="key">XP today</span></div>
+      </div>
+    </main>
   );
 }
+
+function realmName(player: DemoPlayer): string {
+  return REALM_LABEL[player.realm];
+}
+const REALM_LABEL: Record<DemoPlayer["realm"], string> = {
+  "ember-marches": "The Ember Marches",
+  "obsidian-court": "The Obsidian Court",
+  "aegis-bastion": "The Aegis Bastion",
+  "mirage-bazaar": "The Mirage Bazaar",
+};

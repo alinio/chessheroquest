@@ -1,0 +1,81 @@
+/* DNA Results (reveal S2) — immersive, no shell. Ported from
+   docs/mockups/mockup-dna-results-rpg.html. Scoped under .chq-dna. --accent set per
+   archetype by the component (the only archetype-coloured screen). */
+.chq-dna {
+  --gold: #cda845;
+  --gold-bright: #f1d680;
+  --parchment: #ece3cf;
+  --muted: #b3a692;
+  --faint: #857a68;
+  --line: rgba(205, 168, 69, 0.28);
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+  color: var(--parchment);
+  background: #070509;
+  min-height: 100dvh;
+}
+.chq-dna *, .chq-dna *::before, .chq-dna *::after { box-sizing: border-box; }
+.chq-dna .serif { font-family: var(--font-cinzel), "Cinzel", serif; }
+
+.chq-dna .stage {
+  position: relative; width: 100%; min-height: 100dvh; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 24px 44px;
+}
+.chq-dna .bg { position: absolute; inset: 0; }
+.chq-dna .bg img { width: 100%; height: 100%; object-fit: cover; }
+.chq-dna .bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 70% at 50% 45%, transparent 40%, rgba(8, 5, 12, 0.66)); }
+
+.chq-dna .topleft { position: absolute; top: 22px; left: 24px; z-index: 3; display: flex; align-items: center; gap: 9px; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.chq-dna .topleft svg { width: 18px; height: 18px; color: var(--gold-bright); }
+.chq-dna .sample { position: relative; z-index: 2; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; text-align: center; }
+
+/* DNA card */
+.chq-dna .card {
+  position: relative; z-index: 2; width: 460px; max-width: 92vw; border-radius: 18px; padding: 34px 30px 30px; text-align: center;
+  background: linear-gradient(180deg, rgba(23, 17, 32, 0.94), rgba(12, 9, 18, 0.96));
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: 0 0 44px color-mix(in srgb, var(--accent) 22%, transparent), 0 30px 70px rgba(0, 0, 0, 0.6);
+}
+.chq-dna .frame-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; pointer-events: none; opacity: 0.9; mix-blend-mode: screen; }
+.chq-dna .corner { position: absolute; width: 20px; height: 20px; border: 2px solid var(--gold); z-index: 1; }
+.chq-dna .corner.tl { top: 9px; left: 9px; border-right: 0; border-bottom: 0; }
+.chq-dna .corner.tr { top: 9px; right: 9px; border-left: 0; border-bottom: 0; }
+.chq-dna .corner.bl { bottom: 9px; left: 9px; border-right: 0; border-top: 0; }
+.chq-dna .corner.br { bottom: 9px; right: 9px; border-left: 0; border-top: 0; }
+
+.chq-dna .dna-medal {
+  width: 84px; height: 84px; border-radius: 50%; margin: 0 auto 12px; position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 60%, transparent), 0 0 24px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.chq-dna .dna-medal img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6)); }
+.chq-dna .arch-name { font-family: var(--font-cinzel), "Cinzel", serif; font-weight: 700; font-size: 30px; letter-spacing: 0.04em; margin-bottom: 18px; color: var(--accent); position: relative; z-index: 1; }
+
+.chq-dna .ring { position: relative; width: 128px; height: 128px; margin: 0 auto 14px; z-index: 1; }
+.chq-dna .ring svg { transform: rotate(-90deg); }
+.chq-dna .ring .val { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.chq-dna .ring .val .n { font-family: var(--font-cinzel), "Cinzel", serif; font-weight: 700; font-size: 38px; color: var(--gold-bright); line-height: 1; }
+.chq-dna .ring .val .u { font-size: 11px; letter-spacing: 0.2em; color: var(--muted); margin-top: 4px; }
+
+.chq-dna .match { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 16px; position: relative; z-index: 1; }
+.chq-dna .traits { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; position: relative; z-index: 1; }
+.chq-dna .trait { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14.5px; color: var(--parchment); }
+.chq-dna .trait::before { content: "◆"; color: var(--accent); font-size: 11px; }
+
+.chq-dna .kv { display: flex; gap: 12px; position: relative; z-index: 1; }
+.chq-dna .kv .box { flex: 1; border: 1px solid rgba(205, 168, 69, 0.16); border-radius: 12px; padding: 14px 12px; background: rgba(255, 255, 255, 0.02); }
+.chq-dna .kv .k { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); margin-bottom: 6px; }
+.chq-dna .kv .v { font-size: 15px; font-weight: 600; color: var(--parchment); }
+
+.chq-dna .cta { position: relative; z-index: 2; display: flex; gap: 14px; margin-top: 24px; }
+.chq-dna .btn-gold { border: 0; cursor: pointer; font-family: var(--font-inter), "Inter", sans-serif; font-weight: 700; font-size: 15px; color: #2a2008; padding: 13px 30px; border-radius: 999px; background: linear-gradient(180deg, var(--gold-bright), var(--gold)); box-shadow: 0 6px 20px rgba(205, 168, 69, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4); }
+.chq-dna .btn-ghost { cursor: pointer; font-family: var(--font-inter), "Inter", sans-serif; font-weight: 600; font-size: 15px; color: var(--parchment); padding: 13px 26px; border-radius: 999px; background: transparent; border: 1px solid var(--line); }
+
+.chq-dna .save { position: relative; z-index: 2; margin-top: 22px; text-align: center; border: 1px solid rgba(205, 168, 69, 0.16); border-radius: 14px; padding: 16px 24px; background: rgba(15, 11, 22, 0.6); max-width: 460px; }
+.chq-dna .save h4 { font-family: var(--font-cinzel), "Cinzel", serif; font-size: 14px; letter-spacing: 0.06em; color: var(--gold-bright); margin-bottom: 4px; }
+.chq-dna .save p { font-size: 12.5px; color: var(--muted); }
+
+.chq-dna .card, .chq-dna .cta, .chq-dna .save { animation: chq-dna-rise 0.55s ease both; }
+.chq-dna .cta { animation-delay: 0.08s; }
+.chq-dna .save { animation-delay: 0.14s; }
+@keyframes chq-dna-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .chq-dna .card, .chq-dna .cta, .chq-dna .save { animation: none; } }

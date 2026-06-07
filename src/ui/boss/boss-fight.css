@@ -1,0 +1,72 @@
+/* Boss Fight — immersive, no shell. Ported from docs/mockups/mockup-boss-fight-rpg.html.
+   Scoped under .chq-boss. Accent (--accent/--accent-bright) is set per realm by the component. */
+.chq-boss {
+  --gold: #cda845;
+  --gold-bright: #f1d680;
+  --parchment: #ece3cf;
+  --muted: #b3a692;
+  --faint: #8a7e6c;
+  --line: rgba(205, 168, 69, 0.28);
+  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+  color: var(--parchment);
+  background: #070509;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chq-boss *, .chq-boss *::before, .chq-boss *::after { box-sizing: border-box; }
+.chq-boss .serif { font-family: var(--font-cinzel), "Cinzel", serif; }
+
+.chq-boss .stage { position: relative; width: 100%; height: 100dvh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+
+.chq-boss .bg { position: absolute; inset: 0; }
+.chq-boss .bg img { width: 100%; height: 100%; object-fit: cover; }
+/* vignette + soft centred scrim — NO hard rectangle behind the text */
+.chq-boss .bg::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(58% 80% at 50% 50%, rgba(8, 5, 10, 0.5), transparent 70%),
+    radial-gradient(120% 100% at 50% 120%, rgba(0, 0, 0, 0.72), transparent 55%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.5), transparent 25%, transparent 75%, rgba(0, 0, 0, 0.5));
+}
+/* soft realm-accent glow */
+.chq-boss .glow { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(60% 70% at 50% 38%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 62%); }
+
+.chq-boss .topleft { position: absolute; top: 22px; left: 24px; z-index: 3; display: flex; align-items: center; gap: 9px; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.chq-boss .topleft svg { width: 18px; height: 18px; color: var(--gold-bright); }
+
+.chq-boss .center { position: relative; z-index: 2; text-align: center; max-width: 580px; padding: 0 24px; }
+.chq-boss .eyebrow { font-size: 12px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.chq-boss .name {
+  font-weight: 700; font-size: 64px; letter-spacing: 0.02em; line-height: 1; margin: 14px 0 6px; text-transform: uppercase;
+  background: linear-gradient(180deg, var(--accent-bright), var(--accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 24px color-mix(in srgb, var(--accent) 35%, transparent));
+}
+.chq-boss .subtitle { font-size: 13px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--faint); margin-bottom: 18px; }
+.chq-boss .desc { font-size: 16px; line-height: 1.6; color: var(--parchment); margin-bottom: 16px; }
+.chq-boss .taunt { font-style: italic; font-size: 15px; color: var(--accent-bright); margin-bottom: 26px; text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6); }
+
+.chq-boss .diff { display: flex; gap: 12px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap; }
+.chq-boss .pill {
+  cursor: pointer; font-family: var(--font-inter), "Inter", sans-serif; font-weight: 600; font-size: 15px; color: var(--parchment);
+  padding: 11px 24px; border-radius: 999px; background: rgba(10, 8, 14, 0.55); border: 1px solid rgba(255, 255, 255, 0.14);
+  transition: 0.15s; display: inline-flex; align-items: center; gap: 6px;
+}
+.chq-boss .pill:hover { border-color: var(--line); }
+.chq-boss .pill.sel { border-color: var(--accent); color: #fff; box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 30%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent); }
+.chq-boss .pill.locked { color: var(--faint); opacity: 0.7; cursor: not-allowed; }
+.chq-boss .pill svg { width: 14px; height: 14px; }
+.chq-boss .helper { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); margin-bottom: 26px; }
+
+.chq-boss .btn-gold {
+  border: 0; cursor: pointer; font-family: var(--font-inter), "Inter", sans-serif; font-weight: 700; font-size: 17px; color: #2a2008;
+  padding: 16px 44px; border-radius: 999px; background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  box-shadow: 0 8px 26px rgba(205, 168, 69, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.chq-boss .retreat { display: block; margin: 18px auto 0; color: var(--muted); font-size: 14px; text-decoration: none; background: none; border: 0; cursor: pointer; }
+.chq-boss .retreat:hover { color: var(--parchment); }
+
+.chq-boss .center > * { animation: chq-boss-rise 0.55s ease both; }
+@keyframes chq-boss-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .chq-boss .center > * { animation: none; } }
