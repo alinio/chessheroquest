@@ -1,4 +1,4 @@
-import { TestDemo } from "../components/TestDemo";
+import { ProductDemoS3 } from "../components/ProductDemoS3";
 import { ArchetypeCard } from "../components/ArchetypeCard";
 import { OrnamentalDivider } from "../components/OrnamentalDivider";
 import { SectionBackdrop } from "../components/SectionBackdrop";
@@ -39,9 +39,9 @@ export function WhatYouGet() {
           </Reveal>
         </div>
 
-        {/* coded test demo: test → score → reveal */}
+        {/* coded 15s product demo: test → score → DNA → road to elo */}
         <Reveal className="mt-12">
-          <TestDemo />
+          <ProductDemoS3 />
         </Reveal>
 
         {/* archetype intro */}

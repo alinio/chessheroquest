@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { SrsCard } from "@/src/domain/world/types";
+import { reviewCard } from "@/src/domain/world/srs";
 
 /**
  * SRS card store, persisted (account sync = M9). 6b seeds the initial cards on
@@ -11,6 +12,8 @@ import type { SrsCard } from "@/src/domain/world/types";
 interface SrsState {
   cards: Record<string, SrsCard[]>; // openingId → cards
   seedOpening: (openingId: string, refs: string[]) => void;
+  /** Apply one SM-2 review to a card (6c). */
+  review: (openingId: string, ref: string, correct: boolean) => void;
   setCards: (openingId: string, cards: SrsCard[]) => void;
   reset: () => void;
 }
@@ -29,6 +32,12 @@ export const useSrs = create<SrsState>()(
             .map((ref) => ({ id: `${openingId}:${ref}`, openingId, ref, due: now, interval: 0, ease: 2.5, reps: 0, lapses: 0 }));
           if (added.length === 0) return {};
           return { cards: { ...s.cards, [openingId]: [...existing, ...added] } };
+        }),
+      review: (openingId, ref, correct) =>
+        set((s) => {
+          const list = s.cards[openingId] ?? [];
+          const now = Date.now();
+          return { cards: { ...s.cards, [openingId]: list.map((c) => (c.ref === ref ? reviewCard(c, correct, now) : c)) } };
         }),
       setCards: (openingId, cards) => set((s) => ({ cards: { ...s.cards, [openingId]: cards } })),
       reset: () => set({ cards: {} }),
