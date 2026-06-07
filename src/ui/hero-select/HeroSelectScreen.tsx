@@ -29,8 +29,8 @@ function Shell({ children }: { children: ReactNode }) {
     <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
       <GradientDefs />
       <AccountBoot />
-      <header style={{ height: 64, flexShrink: 0, display: "flex", alignItems: "center", gap: 10, padding: "0 20px", borderBottom: "1px solid var(--chq-line)" }}>
-        <Image src={BRAND_LOGO} alt="ChessHeroQuest" width={1478} height={418} priority style={{ height: 34, width: "auto" }} />
+      <header style={{ height: 72, flexShrink: 0, display: "flex", alignItems: "center", gap: 10, padding: "0 24px", borderBottom: "1px solid var(--chq-line)" }}>
+        <Image src={BRAND_LOGO} alt="ChessHeroQuest" width={1478} height={418} priority style={{ height: 48, width: "auto" }} />
       </header>
       <main style={{ flex: 1, width: "100%", padding: "20px 0 48px" }}>{children}</main>
     </div>
@@ -60,7 +60,7 @@ function HeroCard({
     <OrnateFrame variant="hero" hero={archetype} corners={false} style={{ width: 300, flexShrink: 0, scrollSnapAlign: "center" }}>
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
         {/* Hero illustration + crest + ribbon */}
-        <div style={{ position: "relative", aspectRatio: "4 / 5", width: "100%", overflow: "hidden" }}>
+        <div style={{ position: "relative", aspectRatio: "1 / 1", width: "100%", overflow: "hidden" }}>
           <Image src={HERO_ART[archetype]} alt={`The ${accent.label}`} fill sizes="300px" style={{ objectFit: "cover" }} />
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, var(--chq-panel) 4%, rgba(13,13,16,.2) 45%, transparent)" }} />
           <div style={{ position: "absolute", left: 12, top: 12, width: 44, height: 44, borderRadius: "50%", border: `1px solid ${accent.border}`, background: "rgba(8,8,10,.7)", display: "grid", placeItems: "center", backdropFilter: "blur(4px)" }}>
@@ -145,14 +145,17 @@ export function HeroSelectScreen() {
 
   return (
     <Shell>
-      <div style={{ padding: "0 20px", textAlign: "center", marginBottom: 6 }}>
-        <h1 className="chq-display chq-gold-text" style={{ fontSize: 26, fontWeight: 700, margin: 0 }}>Choose your Hero</h1>
-        <p style={{ ...eyebrow, color: "var(--chq-text-muted)", marginTop: 6 }}>
-          {recommended ? "Your Chess DNA points one way — but the choice is yours. Any hero is free to start." : "Pick any hero — the first opening is free."}
+      <div style={{ padding: "8px 20px 0", textAlign: "center", marginBottom: 10, maxWidth: 680, marginInline: "auto" }}>
+        <h1 className="chq-display chq-gold-text" style={{ fontSize: 30, fontWeight: 700, margin: 0 }}>Choose your Hero</h1>
+        <p className="chq-display" style={{ fontSize: 17, color: "var(--chq-text-1)", marginTop: 10, lineHeight: 1.35 }}>
+          Stop losing in the opening. Master a battle-tested repertoire, conquer its Guardians, and climb.
+        </p>
+        <p style={{ ...eyebrow, color: "var(--chq-text-muted)", marginTop: 8 }}>
+          {recommended ? "Your Chess DNA points one way — but the choice is yours. Every hero is free to start." : "Pick any hero — the first opening is free."}
         </p>
       </div>
 
-      <div style={{ display: "flex", gap: 16, overflowX: "auto", padding: "12px 20px 16px", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", alignItems: "stretch" }}>
+      <div style={{ display: "flex", gap: 16, overflowX: "auto", padding: "12px 20px 16px", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", alignItems: "stretch", justifyContent: "center" }}>
         {ordered.map((a) => (
           <HeroCard
             key={a}
@@ -166,9 +169,33 @@ export function HeroSelectScreen() {
         ))}
       </div>
 
-      <p style={{ color: "var(--chq-text-muted)", fontSize: 12, textAlign: "center", padding: "12px 20px 0" }}>
-        Start free with any hero&apos;s first opening. <button type="button" onClick={() => router.push("/paywall")} style={{ background: "transparent", border: 0, color: "var(--chq-gold-3)", fontSize: 12, cursor: "pointer", textDecoration: "underline" }}>Go Pro</button> to unlock every opening, all four worlds &amp; Hard mode.
-      </p>
+      {/* Pro pricing band — make the plans visible right here */}
+      {!isPro && (
+        <div style={{ maxWidth: 560, margin: "20px auto 0", padding: "0 20px" }}>
+          <OrnateFrame>
+            <div style={{ padding: "18px 20px", textAlign: "center" }}>
+              <p className="chq-display chq-gold-text" style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>Unlock everything with Pro</p>
+              <p style={{ color: "var(--chq-text-2)", fontSize: 12.5, margin: "6px 0 12px" }}>
+                All four heroes · every opening · Hard mode · unlimited drills · Lichess · analytics
+              </p>
+              <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginBottom: 14 }}>
+                {[
+                  { label: "Monthly", price: "$9.99", per: "/mo" },
+                  { label: "Yearly", price: "$79", per: "/yr", badge: "Save 34%" },
+                  { label: "Lifetime", price: "$129", per: "once", badge: "Best value" },
+                ].map((p) => (
+                  <div key={p.label} style={{ background: "var(--chq-raised)", border: `1px solid ${p.badge === "Best value" ? "var(--chq-gold-3)" : "var(--chq-line)"}`, borderRadius: "var(--chq-r-panel)", padding: "8px 12px", minWidth: 92 }}>
+                    <div style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)" }}>{p.label}</div>
+                    <div style={{ color: "var(--chq-text-1)", fontWeight: 700, fontSize: 15 }}>{p.price}<span style={{ color: "var(--chq-text-muted)", fontSize: 11, fontWeight: 400 }}> {p.per}</span></div>
+                    {p.badge && <div style={{ color: "var(--chq-gold-3)", fontSize: 9, fontWeight: 600, marginTop: 2 }}>{p.badge}</div>}
+                  </div>
+                ))}
+              </div>
+              <Button variant="primary" onClick={() => router.push("/paywall")}>Go Pro →</Button>
+            </div>
+          </OrnateFrame>
+        </div>
+      )}
     </Shell>
   );
 }
