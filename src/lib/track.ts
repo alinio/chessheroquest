@@ -13,6 +13,7 @@ export type AppEvent =
   | "drill_started"
   | "opening_conquered"
   | "progress_saved"
+  | "checkout_opened"
   | "pro_unlocked";
 
 export function track(event: AppEvent, props?: Record<string, string | number | boolean>): void {

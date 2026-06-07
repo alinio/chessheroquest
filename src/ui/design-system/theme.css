@@ -215,20 +215,23 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 48px;
-  padding: 0 24px;
-  border: 1px solid var(--chq-gold-4);
+  min-height: 50px;
+  padding: 0 26px;
+  border: 1px solid var(--chq-gold-1);
   border-radius: var(--chq-r-pill);
   background: var(--chq-gold-gradient);
-  color: #1a1206;
-  font-family: var(--chq-font-body);
+  color: #2a1c05;
+  font-family: var(--chq-font-display);
   font-weight: 700;
-  font-size: 15px;
-  letter-spacing: 0.01em;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
+  /* embossed gold metal: bright top rim + inner bottom bevel + warm outer glow */
   box-shadow:
-    0 6px 18px rgba(217, 162, 39, 0.26),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -3px 6px rgba(120, 80, 12, 0.45),
+    0 6px 18px rgba(217, 162, 39, 0.3);
   transition:
     transform 0.12s ease,
     box-shadow 0.12s ease,
@@ -236,16 +239,17 @@
 }
 .chq-cta:hover {
   transform: translateY(-1px);
-  filter: brightness(1.04);
+  filter: brightness(1.05);
   box-shadow:
-    0 10px 26px rgba(217, 162, 39, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -3px 6px rgba(120, 80, 12, 0.45),
+    0 10px 26px rgba(217, 162, 39, 0.46);
 }
 .chq-cta:active {
-  transform: translateY(0);
+  transform: translateY(1px);
   box-shadow:
-    0 4px 12px rgba(217, 162, 39, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    inset 0 2px 5px rgba(120, 80, 12, 0.5),
+    0 3px 10px rgba(217, 162, 39, 0.3);
 }
 .chq-cta::after {
   content: "";
@@ -324,6 +328,9 @@
   gap: 16px;
   width: max-content;
   animation: chq-marquee 60s linear infinite;
+}
+.chq-marquee-track.rev {
+  animation-direction: reverse;
 }
 .chq-marquee:hover .chq-marquee-track {
   animation-play-state: paused;

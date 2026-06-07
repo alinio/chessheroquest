@@ -14,17 +14,20 @@ import { ARCHETYPES, type Archetype } from "@/src/domain/style-quiz/types";
 import { useStyleQuiz } from "@/src/ui/style-quiz/useStyleQuiz";
 import { useEntitlement } from "@/src/ui/entitlement/useEntitlement";
 import { AccountBoot } from "@/src/ui/account/AccountBoot";
+import { fetchAccount, syncEntitlement } from "@/src/ui/account/useAccount";
+import { openCheckout, type ProPlan } from "@/src/ui/paywall/paddle";
 import { track } from "@/src/lib/track";
 import { useHeroSelect } from "./useHeroSelect";
 
 type Tier = "free" | "premium";
 type PlanKey = "monthly" | "yearly" | "lifetime";
 
-const PLANS: Record<PlanKey, { label: string; price: string; per: string; short: string; badge?: string }> = {
-  monthly: { label: "Monthly", price: "$9.99", per: "/mo", short: "$9.99/mo" },
-  yearly: { label: "Yearly", price: "$79", per: "/yr", short: "$79/yr", badge: "Save 34%" },
-  lifetime: { label: "Lifetime", price: "$129", per: "once", short: "$129", badge: "Best value" },
+const PLANS: Record<PlanKey, { label: string; price: string; per: string; badge?: string }> = {
+  monthly: { label: "Monthly", price: "$9.99", per: "/mo" },
+  yearly: { label: "Yearly", price: "$79", per: "/yr", badge: "Save 34%" },
+  lifetime: { label: "Lifetime", price: "$129", per: "once", badge: "Best value" },
 };
+const toProPlan = (p: PlanKey): ProPlan => (p === "yearly" ? "annual" : p);
 
 const FREE_BENEFITS = [
   "Your hero's first opening — full Learn, Drill & the Opening Guardian",
@@ -71,33 +74,44 @@ function PromiseVisual() {
           ))}
         </div>
         <p className="chq-display chq-gold-text" style={{ fontSize: 18, fontWeight: 700, textAlign: "center", margin: 0 }}>Opening Passport — 20 / 20 sealed</p>
-        <div style={{ display: "flex", gap: 16, justifyContent: "center", alignItems: "center", marginTop: 12, flexWrap: "wrap" }}>
-          <Medal tier="gold" size={38} />
-          <span style={{ color: "var(--chq-text-1)", fontSize: 13.5 }}>Opening IQ <b style={{ color: "var(--chq-gold-2)" }}>900+</b></span>
-          <span style={{ color: "var(--chq-text-1)", fontSize: 13.5 }}>Win rate <b style={{ color: "#2FB67A" }}>↑↑</b></span>
-          <span style={{ color: "var(--chq-text-1)", fontSize: 13.5 }}>ELO <b style={{ color: "var(--chq-gold-2)" }}>climbing</b></span>
+        <div style={{ display: "flex", gap: 16, justifyContent: "center", alignItems: "center", marginTop: 14, flexWrap: "wrap" }}>
+          {/* Lichess win-rate analytics climbing — the real proof */}
+          <div style={{ background: "rgba(8,8,10,.55)", border: "1px solid var(--chq-line)", borderRadius: 12, padding: "10px 14px", display: "flex", flexDirection: "column", gap: 4 }}>
+            <span style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)" }}>Win rate · your Lichess games</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <svg viewBox="0 0 120 36" width="120" height="36" aria-hidden="true">
+                <polyline points="0,31 24,29 48,24 72,18 96,11 120,4" fill="none" stroke="url(#chq-gold)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="120" cy="4" r="3.5" fill="#fcebb6" />
+              </svg>
+              <span style={{ color: "var(--chq-text-1)", fontWeight: 700, fontSize: 15 }}><span style={{ color: "var(--chq-text-muted)" }}>47%</span> → <span style={{ color: "#2FB67A" }}>63%</span></span>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 14, alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
+            <Medal tier="gold" size={38} />
+            <span style={{ color: "var(--chq-text-1)", fontSize: 13.5 }}>Opening IQ <b style={{ color: "var(--chq-gold-2)" }}>900+</b></span>
+            <span style={{ color: "var(--chq-text-1)", fontSize: 13.5 }}>ELO <b style={{ color: "var(--chq-gold-2)" }}>climbing</b></span>
+          </div>
         </div>
-        <p style={{ color: "var(--chq-text-muted)", fontSize: 11.5, textAlign: "center", marginTop: 12 }}>This is where the quest leads — every seal a mastered opening, ready for any opponent.</p>
+        <p style={{ color: "var(--chq-text-muted)", fontSize: 11.5, textAlign: "center", marginTop: 12 }}>Master your openings → your win rate climbs in real games. That&apos;s the whole quest.</p>
       </div>
     </div>
   );
 }
 
 /* Commercial value-prop box above the hero chooser. */
-function BenefitsBox({ tier, plan, setTier, setPlan, onGoPremium }: { tier: Tier; plan: PlanKey; setTier: (t: Tier) => void; setPlan: (p: PlanKey) => void; onGoPremium: () => void }) {
+function BenefitsBox({ tier, plan, setTier, setPlan }: { tier: Tier; plan: PlanKey; setTier: (t: Tier) => void; setPlan: (p: PlanKey) => void }) {
   const premium = tier === "premium";
   const benefits = premium ? PREMIUM_BENEFITS : FREE_BENEFITS;
   return (
-    <div style={{ maxWidth: 720, margin: "0 auto 8px", padding: "0 20px" }}>
+    <div style={{ maxWidth: 1280, margin: "0 auto 8px", padding: "0 20px" }}>
       <OrnateFrame>
-        <div style={{ padding: "22px 24px", textAlign: "center" }}>
-          <p style={{ ...eyebrow, color: "var(--chq-gold-3)" }}>Your quest</p>
-          <h2 className="chq-display chq-gold-text" style={{ fontSize: 24, fontWeight: 700, margin: "6px 0 0" }}>Become the King of Openings</h2>
-          <p style={{ color: "var(--chq-text-2)", fontSize: 14, lineHeight: 1.55, margin: "8px auto 0", maxWidth: 560 }}>
+        <div style={{ padding: "24px 24px", textAlign: "center" }}>
+          <p style={{ ...eyebrow, color: "var(--chq-gold-3)" }}>Your quest, if you accept it</p>
+          <h2 className="chq-display chq-gold-text" style={{ fontSize: 26, fontWeight: 700, margin: "6px 0 0" }}>Become the King of Openings</h2>
+          <p style={{ color: "var(--chq-text-2)", fontSize: 14, lineHeight: 1.55, margin: "8px auto 0", maxWidth: 600 }}>
             Conquer each opening to earn its seal and fill your <b style={{ color: "var(--chq-text-1)" }}>Opening Passport</b> — all 20 across the four realms. Master them and you walk into any game ready for <b style={{ color: "var(--chq-text-1)" }}>any opponent</b>. Most players lose in the first 10 moves; you&apos;ll win there.
           </p>
 
-          {/* Free / Premium toggle */}
           <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
             <div className="chq-seg" role="tablist" aria-label="Free or Premium">
               <button type="button" data-active={!premium} onClick={() => setTier("free")}>Free</button>
@@ -105,16 +119,15 @@ function BenefitsBox({ tier, plan, setTier, setPlan, onGoPremium }: { tier: Tier
             </div>
           </div>
 
-          {/* benefit list for the selected tier */}
-          <ul style={{ listStyle: "none", padding: 0, margin: "16px auto 0", maxWidth: 460, textAlign: "left", display: "flex", flexDirection: "column", gap: 7 }}>
+          <ul style={{ listStyle: "none", padding: 0, margin: "16px auto 0", maxWidth: 480, textAlign: "left", display: "flex", flexDirection: "column", gap: 8 }}>
             {benefits.map((b) => (
-              <li key={b} style={{ display: "flex", gap: 8, alignItems: "flex-start", color: "var(--chq-text-1)", fontSize: 13.5, lineHeight: 1.45 }}>
-                <span style={{ color: premium ? "var(--chq-gold-3)" : "var(--chq-defender, #2FB67A)", flexShrink: 0 }}>✓</span> {b}
+              <li key={b} style={{ display: "flex", gap: 8, alignItems: "flex-start", color: "var(--chq-text-1)", fontSize: 14, lineHeight: 1.45 }}>
+                <span style={{ color: premium ? "var(--chq-gold-3)" : "#2FB67A", flexShrink: 0 }}>✓</span> {b}
               </li>
             ))}
           </ul>
 
-          {premium && (
+          {premium ? (
             <>
               <PromiseVisual />
               <div style={{ display: "flex", justifyContent: "center", marginTop: 16, flexWrap: "wrap", gap: 8 }}>
@@ -125,14 +138,10 @@ function BenefitsBox({ tier, plan, setTier, setPlan, onGoPremium }: { tier: Tier
                 </div>
               </div>
               <p style={{ ...eyebrow, fontSize: 10, color: "var(--chq-gold-3)", marginTop: 8 }}>
-                {PLANS[plan].label}: {PLANS[plan].price} {PLANS[plan].per}{PLANS[plan].badge ? ` · ${PLANS[plan].badge}` : ""}
+                {PLANS[plan].label}: {PLANS[plan].price} {PLANS[plan].per}{PLANS[plan].badge ? ` · ${PLANS[plan].badge}` : ""} — pick your hero below to start
               </p>
-              <button type="button" className="chq-cta" onClick={onGoPremium} style={{ marginTop: 14 }}>
-                Go Premium · {PLANS[plan].short} →
-              </button>
             </>
-          )}
-          {!premium && (
+          ) : (
             <p style={{ color: "var(--chq-text-muted)", fontSize: 12, marginTop: 14 }}>
               Tap <b style={{ color: "var(--chq-gold-3)" }}>Premium</b> to see everything you unlock.
             </p>
@@ -150,57 +159,68 @@ function HeroCard({ archetype, recommended, matchPercent, tier, onEnter, onGoPre
   const totalVar = world.openings.reduce((s, o) => s + o.variations, 0);
 
   return (
-    <OrnateFrame variant="hero" hero={archetype} corners={false} style={{ width: 300, flexShrink: 0, scrollSnapAlign: "center" }}>
-      <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-        <div style={{ position: "relative", aspectRatio: "1 / 1", width: "100%", overflow: "hidden" }}>
-          <Image src={HERO_ART[archetype]} alt={`The ${cleanLabel(archetype)}`} fill sizes="300px" style={{ objectFit: "cover" }} />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, var(--chq-panel) 4%, rgba(13,13,16,.15) 45%, transparent)" }} />
-          <div style={{ position: "absolute", left: 12, top: 12, width: 44, height: 44, borderRadius: "50%", border: `1px solid ${accent.border}`, background: "rgba(8,8,10,.7)", display: "grid", placeItems: "center", backdropFilter: "blur(4px)" }}>
-            <Image src={CREST_ART[archetype]} alt="" width={40} height={40} style={{ height: 30, width: 30, objectFit: "contain", mixBlendMode: "screen" }} />
-          </div>
-          {recommended && (
-            <span style={{ position: "absolute", right: 12, top: 12, ...eyebrow, fontSize: 9, background: "var(--chq-gold-gradient)", color: "#08080A", padding: "5px 9px", borderRadius: "var(--chq-r-pill)", fontWeight: 700 }}>★ Recommended</span>
-          )}
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 5, padding: "0 16px 16px", flex: 1 }}>
-          <h2 className="chq-display" style={{ fontSize: 22, color: accent.base, textTransform: "uppercase", margin: 0 }}>The {cleanLabel(archetype)}</h2>
-          <p style={{ ...eyebrow, color: "var(--chq-text-2)", fontSize: 10 }}>{world.name}</p>
-          <p style={{ color: "var(--chq-text-2)", fontSize: 13, fontStyle: "italic", margin: 0 }}>{world.tagline}</p>
-          {recommended && matchPercent != null && (
-            <p style={{ color: "var(--chq-gold-3)", fontSize: 13, fontWeight: 600, margin: 0 }}>{matchPercent}% match with your Chess DNA</p>
-          )}
-
-          <p style={{ ...eyebrow, color: "var(--chq-text-muted)", fontSize: 9, marginTop: 6 }}>5 openings · {totalVar} variations</p>
-          <ul style={{ listStyle: "none", padding: 0, margin: "2px 0 0", display: "flex", flexDirection: "column", gap: 5, flex: 1 }}>
-            {world.openings.map((o, i) => {
-              const unlocked = premium || i === 0;
-              return (
-                <li key={o.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 6, fontSize: 12.5 }}>
-                  <span style={{ display: "flex", alignItems: "center", gap: 6, color: unlocked ? "var(--chq-text-1)" : "var(--chq-text-muted)" }}>
-                    {unlocked ? <span style={{ color: accent.base }}>✓</span> : <LockIcon size={12} />}
-                    {o.name}
-                  </span>
-                  <span style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)", whiteSpace: "nowrap" }}>{o.variations} var</span>
-                </li>
-              );
-            })}
-          </ul>
-
-          {!premium && (
-            <p style={{ color: "var(--chq-text-muted)", fontSize: 11, marginTop: 8, lineHeight: 1.4 }}>
-              <LockIcon size={11} /> Premium unlocks all {totalVar} variations + Hard mode, Lichess &amp; analytics.
-            </p>
-          )}
-
-          {premium ? (
-            <button type="button" className="chq-cta" onClick={onGoPremium} style={{ marginTop: 12, width: "100%" }}>Master all openings →</button>
-          ) : (
-            <button type="button" className="chq-cta" onClick={onEnter} style={{ marginTop: 12, width: "100%" }}>Start your quest — free →</button>
-          )}
-        </div>
+    <div style={{ width: 300, flexShrink: 0, scrollSnapAlign: "center", display: "flex", flexDirection: "column", alignItems: "stretch" }}>
+      {/* banner slot (reserved on every card so frames stay aligned) */}
+      <div style={{ height: 34, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8 }}>
+        {recommended && (
+          <span style={{ ...eyebrow, fontSize: 10, fontWeight: 700, color: "#08080A", background: "var(--chq-gold-gradient)", padding: "7px 14px", borderRadius: "var(--chq-r-pill)", boxShadow: "0 0 18px rgba(217,162,39,.5)" }}>
+            ★ Recommended{matchPercent != null ? ` · ${matchPercent}% match` : ""}
+          </span>
+        )}
       </div>
-    </OrnateFrame>
+
+      <OrnateFrame
+        variant="hero"
+        hero={archetype}
+        corners={false}
+        style={{ flex: 1, display: "flex", flexDirection: "column", ...(recommended ? { boxShadow: `0 0 0 2px ${accent.base}, 0 0 34px ${accent.glow}` } : {}) }}
+      >
+        <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+          <div style={{ position: "relative", aspectRatio: "1 / 1", width: "100%", overflow: "hidden" }}>
+            <Image src={HERO_ART[archetype]} alt={`The ${cleanLabel(archetype)}`} fill sizes="300px" style={{ objectFit: "cover" }} />
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, var(--chq-panel) 4%, rgba(13,13,16,.15) 45%, transparent)" }} />
+            <div style={{ position: "absolute", left: 12, top: 12, width: 44, height: 44, borderRadius: "50%", border: `1px solid ${accent.border}`, background: "rgba(8,8,10,.7)", display: "grid", placeItems: "center", backdropFilter: "blur(4px)" }}>
+              <Image src={CREST_ART[archetype]} alt="" width={40} height={40} style={{ height: 30, width: 30, objectFit: "contain", mixBlendMode: "screen" }} />
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 5, padding: "0 16px 16px", flex: 1 }}>
+            <h2 className="chq-display" style={{ fontSize: 22, color: accent.base, textTransform: "uppercase", margin: "10px 0 0" }}>The {cleanLabel(archetype)}</h2>
+            <p style={{ ...eyebrow, color: "var(--chq-text-2)", fontSize: 10 }}>{world.name}</p>
+            <p style={{ color: "var(--chq-text-2)", fontSize: 13, fontStyle: "italic", margin: 0 }}>{world.tagline}</p>
+
+            <p style={{ ...eyebrow, color: "var(--chq-text-muted)", fontSize: 9, marginTop: 6 }}>5 openings · {totalVar} variations</p>
+            <ul style={{ listStyle: "none", padding: 0, margin: "2px 0 0", display: "flex", flexDirection: "column", gap: 5, flex: 1 }}>
+              {world.openings.map((o, i) => {
+                const unlocked = premium || i === 0;
+                return (
+                  <li key={o.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 6, fontSize: 12.5 }}>
+                    <span style={{ display: "flex", alignItems: "center", gap: 6, color: unlocked ? "var(--chq-text-1)" : "var(--chq-text-muted)" }}>
+                      {unlocked ? <span style={{ color: accent.base }}>✓</span> : <LockIcon size={12} />}
+                      {o.name}
+                    </span>
+                    <span style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)", whiteSpace: "nowrap" }}>{o.variations} var</span>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {!premium && (
+              <p style={{ color: "var(--chq-text-muted)", fontSize: 11, marginTop: 8, lineHeight: 1.4, display: "flex", gap: 6, alignItems: "flex-start" }}>
+                <LockIcon size={12} />
+                <span>{`Premium unlocks all ${totalVar} variations + Hard mode, Lichess & analytics.`}</span>
+              </p>
+            )}
+
+            {premium ? (
+              <button type="button" className="chq-cta" onClick={onGoPremium} style={{ marginTop: 12, width: "100%" }}>Start Now →</button>
+            ) : (
+              <button type="button" className="chq-cta" onClick={onEnter} style={{ marginTop: 12, width: "100%" }}>Start free →</button>
+            )}
+          </div>
+        </div>
+      </OrnateFrame>
+    </div>
   );
 }
 
@@ -227,8 +247,26 @@ const FAQ = [
   { q: "Can I cancel?", a: "Yes, cancel anytime. Lifetime is a one-time payment with no renewals." },
 ];
 
+function ReviewCard({ t }: { t: (typeof TESTIMONIALS)[number] }) {
+  return (
+    <article style={{ width: 360, flexShrink: 0, background: "var(--chq-panel)", border: "1px solid var(--chq-line)", borderRadius: "var(--chq-r-card)", padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+      <header style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={t.photo} alt="" width={48} height={48} loading="lazy" style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", border: "1px solid var(--chq-gold-4)" }} />
+        <div>
+          <p style={{ color: "var(--chq-text-1)", fontWeight: 600, fontSize: 15, margin: 0 }}>{t.name}</p>
+          <p style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)", margin: "2px 0 0" }}>{t.role}</p>
+        </div>
+        <span style={{ marginLeft: "auto", color: "var(--chq-gold-3)", fontSize: 13, letterSpacing: 1 }}>★★★★★</span>
+      </header>
+      <p style={{ color: "var(--chq-text-2)", fontSize: 14, lineHeight: 1.6, margin: 0 }}>“{t.quote}”</p>
+    </article>
+  );
+}
+
 function Testimonials() {
-  const loop = [...TESTIMONIALS, ...TESTIMONIALS]; // duplicated for a seamless marquee
+  const rowA = TESTIMONIALS.slice(0, 5);
+  const rowB = TESTIMONIALS.slice(5);
   return (
     <section style={{ margin: "80px auto 0", maxWidth: 1320 }}>
       <div style={{ textAlign: "center", marginBottom: 24, padding: "0 20px" }}>
@@ -237,20 +275,12 @@ function Testimonials() {
       </div>
       <div className="chq-marquee">
         <div className="chq-marquee-track" style={{ padding: "4px 20px" }}>
-          {loop.map((t, i) => (
-            <article key={i} style={{ width: 360, flexShrink: 0, background: "var(--chq-panel)", border: "1px solid var(--chq-line)", borderRadius: "var(--chq-r-card)", padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
-              <header style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={t.photo} alt="" width={48} height={48} loading="lazy" style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", border: "1px solid var(--chq-gold-4)" }} />
-                <div>
-                  <p style={{ color: "var(--chq-text-1)", fontWeight: 600, fontSize: 15, margin: 0 }}>{t.name}</p>
-                  <p style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)", margin: "2px 0 0" }}>{t.role}</p>
-                </div>
-                <span style={{ marginLeft: "auto", color: "var(--chq-gold-3)", fontSize: 13, letterSpacing: 1 }}>★★★★★</span>
-              </header>
-              <p style={{ color: "var(--chq-text-2)", fontSize: 14, lineHeight: 1.6, margin: 0 }}>“{t.quote}”</p>
-            </article>
-          ))}
+          {[...rowA, ...rowA].map((t, i) => <ReviewCard key={i} t={t} />)}
+        </div>
+      </div>
+      <div className="chq-marquee" style={{ marginTop: 16 }}>
+        <div className="chq-marquee-track rev" style={{ padding: "4px 20px" }}>
+          {[...rowB, ...rowB].map((t, i) => <ReviewCard key={i} t={t} />)}
         </div>
       </div>
     </section>
@@ -276,14 +306,14 @@ function Faq() {
   );
 }
 
-/* Illustrated "inside the app" feature tour (real art assets). */
+/* Illustrated "inside the app" tour — concrete, with real examples. */
 const FEATURES = [
-  { img: "/landing/archetype-strategist.png", title: "Discover your Chess DNA", copy: "A 2-minute test reveals your playstyle and a provisional Opening IQ." },
-  { img: "/landing/kingdom-italian.png", title: "Learn every line", copy: "Walk each opening move by move — with the idea behind every move." },
-  { img: "/landing/kingdom-caro-kann.png", title: "Drill to mastery", copy: "Spaced-repetition drills lock the lines into memory for good." },
-  { img: "/landing/scene-guardian-poster.jpg", title: "Beat the Opening Guardians", copy: "A boss for every opening — survive the theory to conquer it." },
-  { img: "/art/worlds/world-warrior-map.png", title: "Climb each realm", copy: "Light up the map opening by opening, across four worlds." },
-  { img: "/landing/passport-tome.png", title: "Earn your Passport", copy: "Collect all 20 seals and become the King of Openings." },
+  { img: "/landing/archetype-strategist.png", title: "Discover your Chess DNA", copy: "20 real positions, ~2 minutes. We score how close your moves are to the engine and map you to one of four archetypes with a 0–1000 Opening IQ. (Pick 3…Bc5 in the Italian → you lean classical attacker.)" },
+  { img: "/landing/kingdom-italian.png", title: "Learn every line", copy: "Walk the main line and its branches move by move — e.g. the Italian 1.e4 e5 2.Nf3 Nc6 3.Bc4 — with the plan behind each move (here: pressure on f7). Tap any move to see why it's played." },
+  { img: "/landing/kingdom-caro-kann.png", title: "Drill to mastery", copy: "Spaced repetition resurfaces each line right before you'd forget it. Miss the Fried Liver defence 5…Na5? It returns tomorrow; nail it and the gap grows. It's Anki, built for openings." },
+  { img: "/landing/scene-guardian-poster.jpg", title: "Beat the Opening Guardians", copy: "Every opening ends with a themed boss — e.g. Aldovrandi, the Roman Edge, guards the Italian. Survive the critical line under pressure to seal your mastery and unlock the next gate." },
+  { img: "/art/worlds/world-warrior-map.png", title: "Climb each realm", copy: "Four worlds, 20 openings: the Ember Marches (attack), Obsidian Court (strategy), Aegis Bastion (defence) and Mirage Bazaar (traps). Light up each map node by node." },
+  { img: "/landing/passport-tome.png", title: "Earn your Passport", copy: "Each conquest stamps a wax seal in your Opening Passport. Collect all 20, push your Opening IQ past 900, and you're the King of Openings — ready for any opponent." },
 ];
 
 function WhatYouUnlock() {
@@ -295,14 +325,14 @@ function WhatYouUnlock() {
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
         {FEATURES.map((f) => (
-          <div key={f.title} style={{ background: "var(--chq-panel)", border: "1px solid var(--chq-line)", borderRadius: "var(--chq-r-card)", overflow: "hidden" }}>
-            <div style={{ position: "relative", aspectRatio: "16 / 10", width: "100%" }}>
-              <Image src={f.img} alt={f.title} fill sizes="(max-width: 640px) 100vw, 340px" style={{ objectFit: "cover" }} />
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, var(--chq-panel), transparent 60%)" }} />
+          <div key={f.title} style={{ background: "var(--chq-panel)", border: "1px solid var(--chq-line)", borderRadius: "var(--chq-r-card)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+            <div style={{ position: "relative", aspectRatio: "4 / 3", width: "100%" }}>
+              <Image src={f.img} alt={f.title} fill sizes="(max-width: 640px) 100vw, 340px" style={{ objectFit: "cover", objectPosition: "center 28%" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, var(--chq-panel), transparent 55%)" }} />
             </div>
-            <div style={{ padding: "14px 16px 18px" }}>
+            <div style={{ padding: "14px 18px 20px", flex: 1 }}>
               <h3 className="chq-display" style={{ fontSize: 16, color: "var(--chq-text-1)", margin: 0 }}>{f.title}</h3>
-              <p style={{ color: "var(--chq-text-2)", fontSize: 13, lineHeight: 1.5, margin: "6px 0 0" }}>{f.copy}</p>
+              <p style={{ color: "var(--chq-text-2)", fontSize: 13, lineHeight: 1.55, margin: "8px 0 0" }}>{f.copy}</p>
             </div>
           </div>
         ))}
@@ -317,7 +347,7 @@ export function HeroSelectScreen() {
   const quiz = useStyleQuiz((s) => s.result);
   const isPro = useEntitlement((s) => s.isPro);
   const selectHero = useHeroSelect((s) => s.selectHero);
-  const [tier, setTier] = useState<Tier>("free");
+  const [tier, setTier] = useState<Tier>("premium");
   const [plan, setPlan] = useState<PlanKey>("yearly");
 
   if (!mounted) {
@@ -335,9 +365,21 @@ export function HeroSelectScreen() {
     router.push("/world");
   };
 
+  // Premium: open Paddle directly for the selected plan (falls back to /paywall).
+  const goPremium = async (a: Archetype) => {
+    track("checkout_opened", { hero: a, plan });
+    const acct = await fetchAccount();
+    const ok = await openCheckout(toProPlan(plan), acct.email ?? null, async () => {
+      await syncEntitlement();
+      selectHero(a);
+      router.push("/world?welcome=1");
+    });
+    if (!ok) router.push(`/paywall?hero=${a}&plan=${plan}`);
+  };
+
   return (
     <Shell>
-      <BenefitsBox tier={tier} plan={plan} setTier={setTier} setPlan={setPlan} onGoPremium={() => router.push(`/paywall?plan=${plan}`)} />
+      <BenefitsBox tier={tier} plan={plan} setTier={setTier} setPlan={setPlan} />
 
       <div style={{ padding: "56px 20px 0", textAlign: "center", maxWidth: 680, marginInline: "auto" }}>
         <h1 className="chq-display chq-gold-text" style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Choose your Hero</h1>
@@ -346,7 +388,7 @@ export function HeroSelectScreen() {
         </p>
       </div>
 
-      <div style={{ display: "flex", gap: 16, overflowX: "auto", padding: "16px 20px", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", alignItems: "stretch", justifyContent: "center" }}>
+      <div style={{ display: "flex", gap: 16, overflowX: "auto", padding: "16px 20px 24px", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", alignItems: "stretch", justifyContent: "center" }}>
         {ordered.map((a) => (
           <HeroCard
             key={a}
@@ -355,7 +397,7 @@ export function HeroSelectScreen() {
             matchPercent={a === recommended ? matchPercent : null}
             tier={effectiveTier}
             onEnter={() => enter(a)}
-            onGoPremium={() => router.push(`/paywall?hero=${a}&plan=${plan}`)}
+            onGoPremium={() => goPremium(a)}
           />
         ))}
       </div>
