@@ -9,6 +9,7 @@ import { GradientDefs, ProgressBar } from "@/src/ui/design-system/icons";
 import { OrnateFrame } from "@/src/ui/design-system/OrnateFrame";
 import { Button } from "@/src/ui/design-system/Button";
 import { TestBoard } from "@/src/ui/design-system/TestBoard";
+import { MoveExplorerList, type ExplorerRow } from "@/src/ui/world/MoveExplorerList";
 import { BRAND_LOGO } from "@/src/ui/design-system/art";
 import { HERO_ACCENTS, type HeroKey } from "@/src/ui/design-system/tokens";
 import { DNA_TEST_BANK, TEST_LENGTH } from "@/src/domain/dna-test/bank";
@@ -56,14 +57,14 @@ function TestShell({ children }: { children: ReactNode }) {
       <div aria-hidden="true" style={{ position: "fixed", inset: 0, zIndex: 0, overflow: "hidden" }}>
         {reduced ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src="/landing/hero-desktop-poster.png" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.18 }} />
+          <img src="/landing/hero-desktop-poster.png" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.5 }} />
         ) : (
-          <video src="/landing/hero-desktop.mp4" poster="/landing/hero-desktop-poster.png" autoPlay muted loop playsInline style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.18 }} />
+          <video src="/landing/hero-desktop.mp4" poster="/landing/hero-desktop-poster.png" autoPlay muted loop playsInline preload="auto" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.5 }} />
         )}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,10,.84), rgba(8,8,10,.93))" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,10,.55), rgba(8,8,10,.72) 55%, rgba(8,8,10,.82))" }} />
       </div>
-      <header style={{ position: "relative", zIndex: 1, height: 76, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 20px", borderBottom: "1px solid var(--chq-line)" }}>
-        <Image src={BRAND_LOGO} alt="ChessHeroQuest" width={1478} height={418} priority style={{ height: 46, width: "auto" }} />
+      <header style={{ position: "relative", zIndex: 1, minHeight: 100, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: "12px 20px", borderBottom: "1px solid var(--chq-line)" }}>
+        <Image src={BRAND_LOGO} alt="ChessHeroQuest" width={1478} height={418} priority style={{ height: 72, width: "auto" }} />
       </header>
       <main style={{ position: "relative", zIndex: 1, flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%", padding: "24px 20px" }}>
         {children}
@@ -145,6 +146,25 @@ function TestRunner({ position, index, reduced, onAnswer }: { position: TestPosi
   const chosenIdx = typeof chosen === "number" ? chosen : null;
   const isSkill = position.questionType === "skill";
 
+  // POST-ANSWER explorer enrichment (§5b) — built here, rendered only when answered.
+  const explorerRows: ExplorerRow[] = position.options.map((o, i) => ({
+    san: o.san,
+    name: isSkill ? (o.isBest ? "Best move" : "Alternative") : o.archetypeLean ? HERO_ACCENTS[o.archetypeLean as HeroKey].label : "Main line",
+    explorer: o.explorer,
+    highlight: isSkill ? o.isBest : chosenIdx === i,
+    tag: isSkill
+      ? o.isBest
+        ? { label: "best", tone: "good" }
+        : chosenIdx === i
+          ? { label: "your pick", tone: "bad" }
+          : undefined
+      : chosenIdx === i
+        ? { label: "your pick", tone: "gold" }
+        : undefined,
+  }));
+  const hasExplorer = position.options.some((o) => o.explorer);
+  const band = position.options.find((o) => o.explorer)?.explorer?.ratingBand;
+
   const pick = (c: number | "skip") => {
     if (answered) return;
     setChosen(c);
@@ -153,15 +173,14 @@ function TestRunner({ position, index, reduced, onAnswer }: { position: TestPosi
 
   return (
     <div style={{ width: "100%", maxWidth: 880, display: "flex", flexDirection: "column", gap: 14 }}>
+      <p style={{ textAlign: "center", color: "var(--chq-text-2)", fontSize: 14, lineHeight: 1.5, margin: "0 auto 6px", maxWidth: 520 }}>
+        Answer all {TEST_LENGTH} positions to reveal your <span style={{ color: "var(--chq-gold-3)", fontWeight: 600 }}>Chess DNA</span>.
+      </p>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <span style={{ ...eyebrow, color: "var(--chq-text-2)" }}>Position {index + 1} / {TEST_LENGTH}</span>
         <span style={{ fontSize: 12, color: "var(--chq-text-muted)", fontVariantNumeric: "tabular-nums" }}>⏱ {fmt(elapsedSec)}</span>
       </div>
       <ProgressBar value={index / TEST_LENGTH} height={4} ariaLabel={`Position ${index + 1} of ${TEST_LENGTH}`} />
-
-      <p style={{ textAlign: "center", color: "var(--chq-text-2)", fontSize: 14, lineHeight: 1.5, margin: "12px auto 2px", maxWidth: 520 }}>
-        Answer all {TEST_LENGTH} positions to reveal your <span style={{ color: "var(--chq-gold-3)", fontWeight: 600 }}>Chess DNA</span>.
-      </p>
 
       {/* board + RPG context panel (side-by-side desktop, stacked mobile via wrap) */}
       <div style={{ display: "flex", gap: 18, flexWrap: "wrap", justifyContent: "center", alignItems: "flex-start" }}>
@@ -193,6 +212,15 @@ function TestRunner({ position, index, reduced, onAnswer }: { position: TestPosi
           );
         })}
       </div>
+
+      {answered && hasExplorer && (
+        <div className="chq-rise" style={{ maxWidth: 520, margin: "0 auto", width: "100%" }}>
+          <p style={{ ...eyebrow, color: "var(--chq-text-muted)", fontSize: 9, margin: "0 0 8px" }}>
+            How players choose here{band ? ` · ~${band} rated` : ""}
+          </p>
+          <MoveExplorerList rows={explorerRows} compact ariaLabel="Move popularity and engine eval" />
+        </div>
+      )}
 
       {answered && (
         <Button variant="primary" onClick={cont} style={{ margin: "2px auto 0", minWidth: 200 }}>
