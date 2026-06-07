@@ -13,6 +13,8 @@ export const PLACEHOLDER = `${BASE}/_placeholder.svg`;
 export type Archetype = "warrior" | "strategist" | "defender" | "trickster";
 /** Quest-map medallion states. */
 export type NodeState = "active" | "completed" | "locked" | "boss";
+/** Rank insignia tiers (Road-to-Elo milestones). */
+export type RankTier = 1000 | 1200 | 1500 | 1800;
 
 export const ASSETS = {
   brand: {
@@ -58,10 +60,12 @@ export const ASSETS = {
     mentor: `${BASE}/coach/mentor.png`,
   },
   badges: {
-    rank1000: `${BASE}/badges/rank-1000.png`,
-    rank1200: `${BASE}/badges/rank-1200.png`,
-    rank1500: `${BASE}/badges/rank-1500.png`,
-    rank1800: `${BASE}/badges/rank-1800.png`,
+    ranks: {
+      1000: `${BASE}/badges/rank-1000.png`,
+      1200: `${BASE}/badges/rank-1200.png`,
+      1500: `${BASE}/badges/rank-1500.png`,
+      1800: `${BASE}/badges/rank-1800.png`,
+    } as Record<RankTier, string>,
     masterySeal: `${BASE}/badges/mastery-seal.png`,
   },
   passport: {
@@ -76,8 +80,37 @@ export function getNodeArt(state: NodeState): string {
   return ASSETS.nodes[state];
 }
 
-/** Per-opening kingdom art (generated only when the opening is curated). */
-export function getKingdomArt(openingId: string, kind: "banner" | "emblem" | "boss"): string {
-  const ext = kind === "banner" ? "webp" : "png";
-  return `${BASE}/kingdoms/${openingId}/${kind}.${ext}`;
+/** Archetype portrait (DNA Results, Profile, DNA Card). */
+export function getArchetypeArt(id: Archetype): string {
+  return ASSETS.archetypes.portrait[id];
+}
+
+/** Archetype sigil/medallion badge (nav, cards, small). */
+export function getArchetypeSigil(id: Archetype): string {
+  return ASSETS.archetypes.sigil[id];
+}
+
+/** Rank insignia for an Elo / Road-to-Elo goal (nearest tier ≤ value). */
+export function getRankInsignia(elo: number): string {
+  const tier: RankTier = elo >= 1800 ? 1800 : elo >= 1500 ? 1500 : elo >= 1200 ? 1200 : 1000;
+  return ASSETS.badges.ranks[tier];
+}
+
+/** Kingdom art per opening id. Add a kingdom: drop banner/emblem/boss in
+ *  public/assets/kingdoms/<id>/ + add one entry here. Nothing else. */
+export interface KingdomArt {
+  banner: string;
+  emblem: string;
+  boss: string;
+}
+export const KINGDOMS: Record<string, KingdomArt> = {
+  "caro-kann": {
+    banner: `${BASE}/kingdoms/caro-kann/banner.webp`,
+    emblem: `${BASE}/kingdoms/caro-kann/emblem.png`,
+    boss: `${BASE}/kingdoms/caro-kann/boss.png`,
+  },
+};
+/** Returns the kingdom's art, or null if that opening has no kingdom art yet. */
+export function getKingdomArt(openingId: string): KingdomArt | null {
+  return KINGDOMS[openingId] ?? null;
 }
