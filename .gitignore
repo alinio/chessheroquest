@@ -43,3 +43,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# corrupt .git backup (failing-disk objects) — do not track
+.git-corrupt-bak/
