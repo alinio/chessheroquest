@@ -168,6 +168,25 @@
   cursor: default;
 }
 
+/* §6.5 Passport wax-seal stamp — slams down on conquest, settles. */
+@keyframes chq-seal-stamp {
+  0% {
+    opacity: 0;
+    transform: scale(2.2) rotate(-12deg);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(0.9) rotate(3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+.chq-seal-stamp {
+  animation: chq-seal-stamp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
 /* §7 Entrance — fade + rise 12px, staggered via --chq-d. */
 @keyframes chq-rise {
   from {
