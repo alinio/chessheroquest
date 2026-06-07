@@ -46,7 +46,7 @@ export function BossBlock() {
       </p>
 
       <Panel variant="ornate" className="mt-6 w-full" innerClassName="p-1.5">
-        <div className="relative aspect-[2.4/1] w-full overflow-hidden rounded-[12px]">
+        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[12px] sm:aspect-video">
           <ArenaCinematic />
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent p-4 text-center">
             <p className="text-[0.78rem] font-medium text-text-hi">
@@ -140,22 +140,20 @@ export function BossBlock() {
         className="mt-6 w-full"
         innerClassName="p-1.5"
       >
-        <div className="grid overflow-hidden rounded-[12px] md:grid-cols-2 md:items-center">
-          {/* boss cinematic — fixed 16:9 so every boss video is the same size */}
-          <div className="bg-abyss/40 p-3">
-            <div className="relative aspect-video w-full overflow-hidden rounded-md">
-              <BossCinematic key={realm.key} realm={realm} />
-              <span
-                className="absolute left-2.5 top-2.5 rounded-chip border px-2 py-0.5 text-[0.55rem] font-semibold uppercase tracking-wide backdrop-blur-sm"
-                style={{
-                  color: accent,
-                  borderColor: `${accent}88`,
-                  backgroundColor: "rgba(8,9,14,0.6)",
-                }}
-              >
-                Kingdom Boss
-              </span>
-            </div>
+        <div className="grid overflow-hidden rounded-[12px] md:grid-cols-2 md:items-stretch">
+          {/* boss cinematic — fills the column (16:9 on mobile, full-height on desktop) */}
+          <div className="relative aspect-video overflow-hidden md:aspect-auto md:min-h-full">
+            <BossCinematic key={realm.key} realm={realm} />
+            <span
+              className="absolute left-3 top-3 z-10 rounded-chip border px-2 py-0.5 text-[0.55rem] font-semibold uppercase tracking-wide backdrop-blur-sm"
+              style={{
+                color: accent,
+                borderColor: `${accent}88`,
+                backgroundColor: "rgba(8,9,14,0.6)",
+              }}
+            >
+              Kingdom Boss
+            </span>
           </div>
 
           {/* dossier: name plate + gauntlet */}
@@ -276,7 +274,13 @@ function Cinematic({
           preload="metadata"
           poster={poster}
           onPlaying={() => setPlaying(true)}
+          onLoadedMetadata={(e) => {
+            // React's `muted` attr is unreliable — set the property so iOS/Android
+            // allow muted autoplay.
+            e.currentTarget.muted = true;
+          }}
           onCanPlay={(e) => {
+            e.currentTarget.muted = true;
             void e.currentTarget.play().catch(() => {});
           }}
           className="absolute inset-0 h-full w-full object-cover"
@@ -308,10 +312,13 @@ function useStillOnly(ref: React.RefObject<HTMLVideoElement | null>) {
     if (stillOnly) return;
     const v = ref.current;
     if (!v || typeof IntersectionObserver === "undefined") return;
+    v.muted = true; // ensure the property (not just the attr) for mobile autoplay
     const io = new IntersectionObserver(
       ([e]) => {
-        if (e?.isIntersecting) v.play().catch(() => {});
-        else v.pause();
+        if (e?.isIntersecting) {
+          v.muted = true;
+          v.play().catch(() => {});
+        } else v.pause();
       },
       { threshold: 0.3 },
     );

@@ -1,6 +1,5 @@
 import { HeroMedia } from "../components/HeroMedia";
 import { CTAButton } from "../components/CTAButton";
-import { Microcopy } from "../components/Microcopy";
 import { Reveal } from "../components/Reveal";
 import { HERO } from "../copy";
 import type { HeadlineCopy } from "../variants";
@@ -40,9 +39,8 @@ export function Hero({ headline }: { headline: HeadlineCopy }) {
             </p>
           </Reveal>
           <Reveal index={4}>
-            <div className="mt-7 inline-flex flex-col items-center gap-3">
+            <div className="mt-7">
               <CTAButton section="hero" label={HERO.ctaLabel} />
-              <Microcopy items={["Free", "no signup to begin", "~2 minutes"]} />
             </div>
           </Reveal>
         </div>

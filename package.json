@@ -21,6 +21,7 @@
     "@neondatabase/serverless": "^1.1.0",
     "@paddle/paddle-js": "^1.6.4",
     "@paddle/paddle-node-sdk": "^3.8.0",
+    "@sentry/nextjs": "^10.56.0",
     "chess.js": "^1.4.0",
     "drizzle-orm": "^0.45.2",
     "html-to-image": "^1.11.13",
