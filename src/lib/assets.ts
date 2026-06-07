@@ -2,10 +2,14 @@
  * ChessHeroQuest asset registry (docs/visual-assets.md). The SINGLE source of
  * every asset path — components import from here, NEVER hard-code "/assets/…".
  *
- * Until a real file is dropped at a path, render PLACEHOLDER (gray) as a fallback
- * (e.g. <img onError>). We never generate the artwork here.
+ * Model: 4 REALMS (one boss each) + 20 OPENINGS (banner + emblem, each belongs to
+ * a realm). A realm's Boss Fight uses getRealmBoss(getOpeningRealm(opening)).
+ * Until a real file is dropped at a path, render PLACEHOLDER (gray) as a fallback.
+ * We never generate the artwork here.
  */
 const BASE = "/assets";
+const O = `${BASE}/openings`;
+const R = `${BASE}/realms`;
 
 /** Gray stand-in shown until a real asset file is placed. */
 export const PLACEHOLDER = `${BASE}/_placeholder.svg`;
@@ -15,6 +19,8 @@ export type Archetype = "warrior" | "strategist" | "defender" | "trickster";
 export type NodeState = "active" | "completed" | "locked" | "boss";
 /** Rank insignia tiers (Road-to-Elo milestones). */
 export type RankTier = 1000 | 1200 | 1500 | 1800;
+/** The four realms (archetype territories). */
+export type RealmId = "ember-marches" | "obsidian-court" | "aegis-bastion" | "mirage-bazaar";
 
 export const ASSETS = {
   brand: {
@@ -66,14 +72,52 @@ export const ASSETS = {
       1500: `${BASE}/badges/rank-1500.png`,
       1800: `${BASE}/badges/rank-1800.png`,
     } as Record<RankTier, string>,
-    masterySeal: `${BASE}/badges/mastery-seal.png`,
+    masterySeal: `${BASE}/passport/stamp-mastered.png`, // mastery seal = the mastered stamp
   },
   passport: {
     cover: `${BASE}/passport/cover.webp`,
     stampMastered: `${BASE}/passport/stamp-mastered.png`,
     stampLocked: `${BASE}/passport/stamp-locked.png`,
   },
+  realms: {
+    "ember-marches": { boss: `${R}/ember-marches/boss.png` },
+    "obsidian-court": { boss: `${R}/obsidian-court/boss.png` },
+    "aegis-bastion": { boss: `${R}/aegis-bastion/boss.png` },
+    "mirage-bazaar": { boss: `${R}/mirage-bazaar/boss.png` },
+  } as Record<RealmId, { boss: string }>,
+  // 20 openings (5 per realm). Sicilian Dragon's art lives in the `sicilian` folder.
+  openings: {
+    italian: { banner: `${O}/italian/banner.webp`, emblem: `${O}/italian/emblem.png`, realm: "ember-marches" },
+    "kings-gambit": { banner: `${O}/kings-gambit/banner.webp`, emblem: `${O}/kings-gambit/emblem.png`, realm: "ember-marches" },
+    scotch: { banner: `${O}/scotch/banner.webp`, emblem: `${O}/scotch/emblem.png`, realm: "ember-marches" },
+    "smith-morra": { banner: `${O}/smith-morra/banner.webp`, emblem: `${O}/smith-morra/emblem.png`, realm: "ember-marches" },
+    "sicilian-dragon": { banner: `${O}/sicilian/banner.webp`, emblem: `${O}/sicilian/emblem.png`, realm: "ember-marches" },
+    "ruy-lopez": { banner: `${O}/ruy-lopez/banner.webp`, emblem: `${O}/ruy-lopez/emblem.png`, realm: "obsidian-court" },
+    "queens-gambit": { banner: `${O}/queens-gambit/banner.webp`, emblem: `${O}/queens-gambit/emblem.png`, realm: "obsidian-court" },
+    "nimzo-indian": { banner: `${O}/nimzo-indian/banner.webp`, emblem: `${O}/nimzo-indian/emblem.png`, realm: "obsidian-court" },
+    catalan: { banner: `${O}/catalan/banner.webp`, emblem: `${O}/catalan/emblem.png`, realm: "obsidian-court" },
+    english: { banner: `${O}/english/banner.webp`, emblem: `${O}/english/emblem.png`, realm: "obsidian-court" },
+    london: { banner: `${O}/london/banner.webp`, emblem: `${O}/london/emblem.png`, realm: "aegis-bastion" },
+    french: { banner: `${O}/french/banner.webp`, emblem: `${O}/french/emblem.png`, realm: "aegis-bastion" },
+    slav: { banner: `${O}/slav/banner.webp`, emblem: `${O}/slav/emblem.png`, realm: "aegis-bastion" },
+    petroff: { banner: `${O}/petroff/banner.webp`, emblem: `${O}/petroff/emblem.png`, realm: "aegis-bastion" },
+    "caro-kann": { banner: `${O}/caro-kann/banner.webp`, emblem: `${O}/caro-kann/emblem.png`, realm: "aegis-bastion" },
+    scandinavian: { banner: `${O}/scandinavian/banner.webp`, emblem: `${O}/scandinavian/emblem.png`, realm: "mirage-bazaar" },
+    budapest: { banner: `${O}/budapest/banner.webp`, emblem: `${O}/budapest/emblem.png`, realm: "mirage-bazaar" },
+    stafford: { banner: `${O}/stafford/banner.webp`, emblem: `${O}/stafford/emblem.png`, realm: "mirage-bazaar" },
+    "blackmar-diemer": { banner: `${O}/blackmar-diemer/banner.webp`, emblem: `${O}/blackmar-diemer/emblem.png`, realm: "mirage-bazaar" },
+    englund: { banner: `${O}/englund/banner.webp`, emblem: `${O}/englund/emblem.png`, realm: "mirage-bazaar" },
+  } satisfies Record<string, { banner: string; emblem: string; realm: RealmId }>,
 } as const;
+
+export type OpeningId = keyof typeof ASSETS.openings;
+
+export const REALM_NAMES: Record<RealmId, string> = {
+  "ember-marches": "The Ember Marches",
+  "obsidian-court": "The Obsidian Court",
+  "aegis-bastion": "The Aegis Bastion",
+  "mirage-bazaar": "The Mirage Bazaar",
+};
 
 /** Quest-map medallion for a node state. */
 export function getNodeArt(state: NodeState): string {
@@ -84,8 +128,7 @@ export function getNodeArt(state: NodeState): string {
 export function getArchetypeArt(id: Archetype): string {
   return ASSETS.archetypes.portrait[id];
 }
-
-/** Archetype sigil/medallion badge (nav, cards, small). */
+/** Archetype sigil/medallion badge. */
 export function getArchetypeSigil(id: Archetype): string {
   return ASSETS.archetypes.sigil[id];
 }
@@ -96,126 +139,18 @@ export function getRankInsignia(elo: number): string {
   return ASSETS.badges.ranks[tier];
 }
 
-/** Kingdom art per opening id. Add a kingdom: drop banner/emblem/boss in
- *  public/assets/kingdoms/<id>/ + add one entry here. Nothing else. */
-export interface KingdomArt {
-  banner: string;
-  emblem: string;
-  boss: string;
+/** Opening banner + emblem (Opening detail S7, Quest Map node). */
+export function getOpeningArt(id: OpeningId): { banner: string; emblem: string } | null {
+  const o = ASSETS.openings[id];
+  return o ? { banner: o.banner, emblem: o.emblem } : null;
 }
-export const KINGDOMS: Record<string, KingdomArt> = {
-  "caro-kann": {
-    banner: `${BASE}/kingdoms/caro-kann/banner.webp`,
-    emblem: `${BASE}/kingdoms/caro-kann/emblem.png`,
-    boss: `${BASE}/kingdoms/caro-kann/boss.png`,
-  },
-  sicilian: {
-    banner: `${BASE}/kingdoms/sicilian/banner.webp`,
-    emblem: `${BASE}/kingdoms/sicilian/emblem.png`,
-    boss: `${BASE}/kingdoms/sicilian/boss.png`,
-  },
-  french: {
-    banner: `${BASE}/kingdoms/french/banner.webp`,
-    emblem: `${BASE}/kingdoms/french/emblem.png`,
-    boss: `${BASE}/kingdoms/french/boss.png`,
-  },
-  italian: {
-    banner: `${BASE}/kingdoms/italian/banner.webp`,
-    emblem: `${BASE}/kingdoms/italian/emblem.png`,
-    boss: `${BASE}/kingdoms/italian/boss.png`,
-  },
-  "ruy-lopez": {
-    banner: `${BASE}/kingdoms/ruy-lopez/banner.webp`,
-    emblem: `${BASE}/kingdoms/ruy-lopez/emblem.png`,
-    boss: `${BASE}/kingdoms/ruy-lopez/boss.png`,
-  },
-  "queens-gambit": {
-    banner: `${BASE}/kingdoms/queens-gambit/banner.webp`,
-    emblem: `${BASE}/kingdoms/queens-gambit/emblem.png`,
-    boss: `${BASE}/kingdoms/queens-gambit/boss.png`,
-  },
-  scandinavian: {
-    banner: `${BASE}/kingdoms/scandinavian/banner.webp`,
-    emblem: `${BASE}/kingdoms/scandinavian/emblem.png`,
-    boss: `${BASE}/kingdoms/scandinavian/boss.png`,
-  },
-  "kings-indian": {
-    banner: `${BASE}/kingdoms/kings-indian/banner.webp`,
-    emblem: `${BASE}/kingdoms/kings-indian/emblem.png`,
-    boss: `${BASE}/kingdoms/kings-indian/boss.png`,
-  },
-  english: {
-    banner: `${BASE}/kingdoms/english/banner.webp`,
-    emblem: `${BASE}/kingdoms/english/emblem.png`,
-    boss: `${BASE}/kingdoms/english/boss.png`,
-  },
-  london: {
-    banner: `${BASE}/kingdoms/london/banner.webp`,
-    emblem: `${BASE}/kingdoms/london/emblem.png`,
-    boss: `${BASE}/kingdoms/london/boss.png`,
-  },
-  dutch: {
-    banner: `${BASE}/kingdoms/dutch/banner.webp`,
-    emblem: `${BASE}/kingdoms/dutch/emblem.png`,
-    boss: `${BASE}/kingdoms/dutch/boss.png`,
-  },
-  "nimzo-indian": {
-    banner: `${BASE}/kingdoms/nimzo-indian/banner.webp`,
-    emblem: `${BASE}/kingdoms/nimzo-indian/emblem.png`,
-    boss: `${BASE}/kingdoms/nimzo-indian/boss.png`,
-  },
-  "kings-gambit": {
-    banner: `${BASE}/kingdoms/kings-gambit/banner.webp`,
-    emblem: `${BASE}/kingdoms/kings-gambit/emblem.png`,
-    boss: `${BASE}/kingdoms/kings-gambit/boss.png`,
-  },
-  scotch: {
-    banner: `${BASE}/kingdoms/scotch/banner.webp`,
-    emblem: `${BASE}/kingdoms/scotch/emblem.png`,
-    boss: `${BASE}/kingdoms/scotch/boss.png`,
-  },
-  "smith-morra": {
-    banner: `${BASE}/kingdoms/smith-morra/banner.webp`,
-    emblem: `${BASE}/kingdoms/smith-morra/emblem.png`,
-    boss: `${BASE}/kingdoms/smith-morra/boss.png`,
-  },
-  catalan: {
-    banner: `${BASE}/kingdoms/catalan/banner.webp`,
-    emblem: `${BASE}/kingdoms/catalan/emblem.png`,
-    boss: `${BASE}/kingdoms/catalan/boss.png`,
-  },
-  slav: {
-    banner: `${BASE}/kingdoms/slav/banner.webp`,
-    emblem: `${BASE}/kingdoms/slav/emblem.png`,
-    boss: `${BASE}/kingdoms/slav/boss.png`,
-  },
-  petroff: {
-    banner: `${BASE}/kingdoms/petroff/banner.webp`,
-    emblem: `${BASE}/kingdoms/petroff/emblem.png`,
-    boss: `${BASE}/kingdoms/petroff/boss.png`,
-  },
-  budapest: {
-    banner: `${BASE}/kingdoms/budapest/banner.webp`,
-    emblem: `${BASE}/kingdoms/budapest/emblem.png`,
-    boss: `${BASE}/kingdoms/budapest/boss.png`,
-  },
-  stafford: {
-    banner: `${BASE}/kingdoms/stafford/banner.webp`,
-    emblem: `${BASE}/kingdoms/stafford/emblem.png`,
-    boss: `${BASE}/kingdoms/stafford/boss.png`,
-  },
-  "blackmar-diemer": {
-    banner: `${BASE}/kingdoms/blackmar-diemer/banner.webp`,
-    emblem: `${BASE}/kingdoms/blackmar-diemer/emblem.png`,
-    boss: `${BASE}/kingdoms/blackmar-diemer/boss.png`,
-  },
-  englund: {
-    banner: `${BASE}/kingdoms/englund/banner.webp`,
-    emblem: `${BASE}/kingdoms/englund/emblem.png`,
-    boss: `${BASE}/kingdoms/englund/boss.png`,
-  },
-};
-/** Returns the kingdom's art, or null if that opening has no kingdom art yet. */
-export function getKingdomArt(openingId: string): KingdomArt | null {
-  return KINGDOMS[openingId] ?? null;
+
+/** Which realm an opening belongs to. */
+export function getOpeningRealm(id: OpeningId): RealmId | null {
+  return ASSETS.openings[id]?.realm ?? null;
+}
+
+/** The boss art for a realm (the Boss Fight of any opening in that realm). */
+export function getRealmBoss(realmId: RealmId): string {
+  return ASSETS.realms[realmId].boss;
 }
