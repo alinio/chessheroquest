@@ -80,21 +80,31 @@ function AnalyticsPanel() {
 
         {/* win-rate area chart climbing */}
         <p style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)", marginTop: 14 }}>Win rate · last 90 days</p>
-        <div style={{ display: "flex", alignItems: "flex-end", gap: 14, marginTop: 4 }}>
-          <svg viewBox="0 0 220 70" width="100%" height="70" preserveAspectRatio="none" style={{ flex: 1, maxWidth: 240 }} aria-hidden="true">
-            <defs>
-              <linearGradient id="chq-wr-fill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="rgba(217,162,39,.35)" />
-                <stop offset="100%" stopColor="rgba(217,162,39,0)" />
-              </linearGradient>
-            </defs>
-            <path d="M0,58 L36,55 L72,47 L108,39 L144,27 L180,16 L220,6 L220,70 L0,70 Z" fill="url(#chq-wr-fill)" />
-            <polyline points="0,58 36,55 72,47 108,39 144,27 180,16 220,6" fill="none" stroke="url(#chq-gold)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx="220" cy="6" r="4" fill="#fcebb6" />
-          </svg>
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 16, marginTop: 8 }}>
+          <div style={{ flex: 1, position: "relative", height: 78, display: "flex", alignItems: "flex-end", gap: 6 }}>
+            {[0, 1, 2].map((g) => (
+              <div key={g} aria-hidden="true" style={{ position: "absolute", left: 0, right: 0, bottom: g * 38 + 1, height: 1, background: "rgba(255,255,255,.05)" }} />
+            ))}
+            {[42, 50, 54, 63, 70, 82, 91, 100].map((h, i, arr) => {
+              const last = i === arr.length - 1;
+              return (
+                <div
+                  key={i}
+                  style={{
+                    flex: 1,
+                    height: `${h}%`,
+                    borderRadius: "4px 4px 0 0",
+                    background: last ? "var(--chq-gold-gradient)" : "linear-gradient(180deg, rgba(243,207,119,.55), rgba(169,120,26,.15))",
+                    boxShadow: last ? "0 0 12px rgba(217,162,39,.55)" : "none",
+                  }}
+                />
+              );
+            })}
+          </div>
           <div style={{ whiteSpace: "nowrap" }}>
-            <div style={{ fontSize: 22, fontWeight: 700, color: "var(--chq-text-1)", lineHeight: 1 }}>63%</div>
-            <div style={{ fontSize: 11, color: "#2FB67A", marginTop: 2 }}>▲ +16% win</div>
+            <div style={{ fontSize: 26, fontWeight: 700, color: "var(--chq-text-1)", lineHeight: 1 }}>63%</div>
+            <div style={{ fontSize: 12, color: "#2FB67A", marginTop: 3, fontWeight: 600 }}>▲ +16% win rate</div>
+            <div style={{ ...eyebrow, fontSize: 8, color: "var(--chq-text-muted)", marginTop: 3 }}>vs 47% before</div>
           </div>
         </div>
 
