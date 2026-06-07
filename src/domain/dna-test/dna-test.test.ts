@@ -115,7 +115,7 @@ describe("adaptive engine", () => {
   });
 
   it("makeAnswer: best → quality 1; skip → blunder/quality 0", () => {
-    const p = DNA_TEST_BANK[0]!;
+    const p = DNA_TEST_BANK.find((q) => q.questionType === "skill" && q.options.some((o) => o.isBest))!;
     const bestIdx = p.options.findIndex((o) => o.isBest);
     expect(makeAnswer(p, bestIdx).quality).toBe(1);
     const skip = makeAnswer(p, null);

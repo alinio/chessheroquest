@@ -156,7 +156,7 @@ export const DNA_TEST_BANK: TestPosition[] = [
   },
   {
     id: "kings-gambit-c30",
-    fen: "rnbqkbnr/pppp1ppp/8/4p3/4PP2/8/PPPP2PP/RNBQKBNR b KQkq f3 0 2",
+    fen: "rnbqkbnr/pppp1ppp/8/4p3/4PP2/8/PPPP2PP/RNBQKBNR b KQkq - 0 2",
     sideToMove: "black",
     openingName: "King's Gambit",
     openingFamily: "King's Gambit",

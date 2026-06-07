@@ -64,7 +64,8 @@ export const useDnaTest = create<DnaTestState>()(
 
         const nextAnswers = [...answers, makeAnswer(pos, chosen, latencyMs)];
         const last = nextAnswers[nextAnswers.length - 1]!;
-        const nextTarget = nextTargetDifficulty(target, last.quality);
+        // Style forks have no right answer → they don't move the difficulty dial.
+        const nextTarget = pos.questionType === "style" ? target : nextTargetDifficulty(target, last.quality);
 
         const finish = () => {
           set({
