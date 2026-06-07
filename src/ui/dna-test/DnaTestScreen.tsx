@@ -8,6 +8,7 @@ import { GradientDefs, LogoMark, ProgressBar } from "@/src/ui/design-system/icon
 import { OrnateFrame } from "@/src/ui/design-system/OrnateFrame";
 import { Button } from "@/src/ui/design-system/Button";
 import { TestBoard } from "@/src/ui/design-system/TestBoard";
+import { track } from "@/src/lib/track";
 import { DNA_TEST_BANK, TEST_LENGTH } from "@/src/domain/dna-test/bank";
 import type { TestPosition } from "@/src/domain/dna-test/types";
 import { useDnaTest } from "./useDnaTest";
@@ -190,7 +191,7 @@ export function DnaTestScreen() {
             <p style={{ color: "var(--chq-text-2)", fontSize: 15, lineHeight: 1.6 }}>
               {TEST_LENGTH} positions · ~2 minutes · no signup. Pick the best move — the difficulty adapts to you.
             </p>
-            <Button onClick={start} style={{ marginTop: 4 }}>
+            <Button onClick={() => { track("dna_test_started"); start(); }} style={{ marginTop: 4 }}>
               Begin the test
             </Button>
           </div>

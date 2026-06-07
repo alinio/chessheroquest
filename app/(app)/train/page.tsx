@@ -11,7 +11,7 @@ import type { MasteryState } from "@/src/domain/mastery";
 import { getOpeningMastery } from "@/src/data/repos/openings";
 
 const ARCHETYPE_LABEL: Record<Archetype, string> = {
-  warrior: "Aggressive Warrior",
+  warrior: "Warrior",
   strategist: "Strategist",
   defender: "Defender",
   trickster: "Trickster",

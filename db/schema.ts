@@ -277,6 +277,10 @@ export const accountStates = pgTable("account_states", {
   tokenHash: varchar("token_hash", { length: 128 }),
   tokenExpires: timestamp("token_expires", { withTimezone: true }),
   state: jsonb("state"),
+  // Server-verified Pro entitlement (M9b) — set ONLY by the verified Paddle webhook.
+  isPro: boolean("is_pro").notNull().default(false),
+  plan: varchar("plan", { length: 16 }).notNull().default("free"),
+  paddleCustomerId: varchar("paddle_customer_id", { length: 64 }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

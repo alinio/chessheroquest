@@ -41,7 +41,7 @@ export interface ArchetypeInfo {
 export const ARCHETYPES: ArchetypeInfo[] = [
   {
     key: "warrior",
-    label: "Aggressive Warrior",
+    label: "Warrior",
     tagline: "Attack relentlessly",
     blurb: "You strike early and hunt the king before they're ready.",
     realm: "Ember Marches",

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/src/ui/design-system/Button";
+import { track } from "@/src/lib/track";
 import { requestMagicLink, fetchAccount } from "./useAccount";
 
 /**
@@ -36,6 +37,7 @@ export function SaveProgress() {
     if (!email.trim()) return;
     setStatus("sending");
     const ok = await requestMagicLink(email.trim());
+    if (ok) track("progress_saved");
     setStatus(ok ? "sent" : "error");
   };
 

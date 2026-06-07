@@ -14,16 +14,18 @@ import { useReducedMotion } from "../hooks";
  *
  * Timeline (the stepper advances each stage):
  *   0:00–0:03  TEST   — board from a FEN, "Best move?", select Bc5 → next position
- *   0:03–0:07  SCORE  — OpeningIQGauge sweeps + counts to 428, "Top 38%"
- *   0:07–0:11  DNA    — gauge compacts to a corner; Strategist + strongest/weakness
- *   0:11–0:15  ROAD   — "Train next" openings + a kingdoms-map glimpse; HOLD here
+ *   0:03–0:06  QUIZ   — a style-quiz question (level + play style), select an answer
+ *   0:06–0:09  SCORE  — OpeningIQGauge sweeps + counts to 428, "Top 38%"
+ *   0:09–0:12  DNA    — gauge compacts to a corner; Strategist + strongest/weakness
+ *   0:12–end   ROAD   — "Train next" openings + a kingdoms-map glimpse; HOLD here
  *
- * Autoplays once in view, holds the final frame, offers a subtle replay.
- * prefers-reduced-motion → jump straight to the composed final frame.
+ * The TEST (level) and QUIZ (style) are the two assessment inputs (GDD) — the
+ * quiz is what explains the "Strategist" archetype. Autoplays once in view, holds
+ * the final frame, offers a replay. prefers-reduced-motion → composed final frame.
  *
- * TODO: demo data, not live (428 · Strategist · Top 38% · strongest/weakest · train-next).
+ * TODO: demo data, not live (428 · Strategist · Top 38% · quiz Q&A · strongest/weakest · train-next).
  */
-const STAGE_MS = [3000, 4000, 4000] as const; // TEST→SCORE, SCORE→DNA, DNA→ROAD
+const STAGE_MS = [3000, 3000, 3000, 3000] as const; // TEST→QUIZ→SCORE→DNA→ROAD
 
 // Position 7/20 — Italian Game after 1.e4 e5 2.Nf3 Nc6 3.Bc4 (Black to move).
 const POS7: MiniPosition = {
@@ -62,15 +64,21 @@ const MAP = [
   { name: "Sicilian" },
 ];
 
-const STEPS = ["Test", "Score", "DNA", "Road to Elo"] as const;
+// Style-quiz sample (QUESTION 5 / 16). TODO: demo data, not live.
+const QUIZ_QUESTION = "You reach a winning position. You…";
+const QUIZ_OPTIONS = ["Go for the kill", "Convert slowly", "Set one last trap"];
+const QUIZ_PICK = 1; // "Convert slowly" → hints the Strategist archetype
+
+const STEPS = ["Test", "Quiz", "Score", "DNA", "Road to Elo"] as const;
 
 export function ProductDemoS3() {
   const ref = useRef<HTMLDivElement | null>(null);
   const reduce = useReducedMotion();
   const [inView, setInView] = useState(false);
   const [runId, setRunId] = useState(0);
-  const [stage, setStage] = useState(0); // 0 TEST · 1 SCORE · 2 DNA · 3 ROAD
+  const [stage, setStage] = useState(0); // 0 TEST·1 QUIZ·2 SCORE·3 DNA·4 ROAD
   const [testStep, setTestStep] = useState(0); // 0 idle · 1 select · 2 confirm · 3 advance
+  const [quizPicked, setQuizPicked] = useState(false);
 
   // Toggle inView (don't latch) so the clip restarts each time it re-enters view
   // — the visitor reliably catches the animation from the top, not the held end
@@ -95,19 +103,26 @@ export function ProductDemoS3() {
     if (!inView) return;
     if (reduce) {
       const t = setTimeout(() => {
-        setStage(3);
+        setStage(4);
         setTestStep(3);
+        setQuizPicked(true);
       }, 0);
       return () => clearTimeout(t);
     }
+    const t1 = STAGE_MS[0];
+    const t2 = t1 + STAGE_MS[1];
+    const t3 = t2 + STAGE_MS[2];
+    const t4 = t3 + STAGE_MS[3];
     const timers = [
       setTimeout(() => {
         setStage(0);
         setTestStep(0);
+        setQuizPicked(false);
       }, 0),
-      setTimeout(() => setStage(1), STAGE_MS[0]),
-      setTimeout(() => setStage(2), STAGE_MS[0] + STAGE_MS[1]),
-      setTimeout(() => setStage(3), STAGE_MS[0] + STAGE_MS[1] + STAGE_MS[2]),
+      setTimeout(() => setStage(1), t1),
+      setTimeout(() => setStage(2), t2),
+      setTimeout(() => setStage(3), t3),
+      setTimeout(() => setStage(4), t4),
     ];
     return () => timers.forEach(clearTimeout);
   }, [inView, reduce, runId]);
@@ -123,7 +138,14 @@ export function ProductDemoS3() {
     return () => timers.forEach(clearTimeout);
   }, [inView, reduce, stage, runId]);
 
-  const compact = stage >= 2;
+  // QUIZ sub-beat: tap an answer.
+  useEffect(() => {
+    if (!inView || reduce || stage !== 1) return;
+    const t = setTimeout(() => setQuizPicked(true), 1100);
+    return () => clearTimeout(t);
+  }, [inView, reduce, stage, runId]);
+
+  const compact = stage >= 3;
   const advanced = testStep >= 3;
 
   return (
@@ -156,8 +178,39 @@ export function ProductDemoS3() {
             </div>
           </Layer>
 
+          {/* ---- QUIZ (style + level) ---- */}
+          <Layer show={stage === 1}>
+            <p className="max-w-[20rem] text-[0.62rem] text-text-low">
+              A few quick questions on your level and how you play
+            </p>
+            <p className="mt-2 text-[0.6rem] uppercase tracking-[0.2em] text-text-low">
+              Question 5 / 16
+            </p>
+            <p className="mt-1 font-display text-base font-bold text-text-hi">
+              {QUIZ_QUESTION}
+            </p>
+            <div className="mt-3 flex w-full max-w-[18rem] flex-col gap-2">
+              {QUIZ_OPTIONS.map((o, i) => {
+                const sel = quizPicked && i === QUIZ_PICK;
+                return (
+                  <span
+                    key={o}
+                    className={`inline-flex items-center justify-between rounded-chip border px-3 py-1.5 text-[0.72rem] font-medium transition-colors duration-300 ${
+                      sel
+                        ? "border-gold bg-gold/15 text-gold shadow-[0_0_14px_-4px_rgba(227,178,60,0.8)]"
+                        : "border-hairline text-text-mid"
+                    }`}
+                  >
+                    {o}
+                    {sel && <span aria-hidden>✓</span>}
+                  </span>
+                );
+              })}
+            </div>
+          </Layer>
+
           {/* ---- GAUGE (persists SCORE → ROAD; travels + compacts) ---- */}
-          {stage >= 1 && (
+          {stage >= 2 && (
             <div
               className="absolute z-10 transition-all duration-700 ease-out"
               style={{
@@ -172,7 +225,7 @@ export function ProductDemoS3() {
           {/* SCORE caption */}
           <div
             className="pointer-events-none absolute inset-x-0 top-[74%] text-center transition-opacity duration-500"
-            style={{ opacity: stage === 1 ? 1 : 0 }}
+            style={{ opacity: stage === 2 ? 1 : 0 }}
           >
             <span className="rounded-chip border border-gold/40 bg-gold/10 px-2.5 py-0.5 text-[0.66rem] font-semibold text-gold">
               Top 38%
@@ -180,7 +233,7 @@ export function ProductDemoS3() {
           </div>
 
           {/* ---- DNA ---- */}
-          <Layer show={stage === 2}>
+          <Layer show={stage === 3}>
             <div className="relative flex h-20 w-20 items-center justify-center">
               <span
                 aria-hidden
@@ -209,7 +262,7 @@ export function ProductDemoS3() {
           </Layer>
 
           {/* ---- ROAD TO ELO (final frame) ---- */}
-          <Layer show={stage === 3}>
+          <Layer show={stage === 4}>
             <div className="flex items-center gap-1.5">
               <Image
                 src={LANDING_ASSETS.crests.strategist}
@@ -233,7 +286,7 @@ export function ProductDemoS3() {
                   key={name}
                   className="flex items-center gap-1.5 rounded-chip border border-gold/40 bg-gold/10 px-2.5 py-1 text-[0.7rem] font-medium text-gold"
                   style={
-                    stage === 3
+                    stage === 4
                       ? { animation: `chq-node 0.45s ${0.15 + i * 0.25}s both` }
                       : undefined
                   }
@@ -267,13 +320,13 @@ export function ProductDemoS3() {
         </div>
 
         {/* stepper + replay */}
-        <div className="mt-4 flex items-center justify-center gap-3">
+        <div className="mt-4 flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-3">
           <Stepper stage={stage} />
           <button
             type="button"
             onClick={() => setRunId((r) => r + 1)}
             className={`inline-flex items-center gap-1 rounded-chip border border-gold/45 bg-gold/10 px-2.5 py-1 text-[0.6rem] font-semibold uppercase tracking-wide text-gold transition-all duration-300 hover:bg-gold/20 ${
-              stage === 3 && !reduce
+              stage === 4 && !reduce
                 ? "opacity-100"
                 : "pointer-events-none opacity-0"
             }`}
@@ -353,7 +406,7 @@ function StatRow({
 
 function Stepper({ stage }: { stage: number }) {
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
       {STEPS.map((label, i) => (
         <div key={label} className="flex items-center gap-1.5">
           {i > 0 && <span className="h-px w-3 bg-hairline" aria-hidden />}

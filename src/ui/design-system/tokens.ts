@@ -6,7 +6,7 @@
 
 export const HERO_ACCENTS = {
   warrior: {
-    label: "Aggressive Warrior",
+    label: "Warrior",
     base: "#E0413B",
     glow: "rgba(224,65,59,.45)",
     border: "rgba(224,65,59,.6)",

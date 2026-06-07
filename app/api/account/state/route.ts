@@ -16,7 +16,18 @@ async function sessionEmail(): Promise<string | null> {
 
 export async function GET() {
   const email = await sessionEmail();
-  if (!email) return NextResponse.json({ signedIn: false });
-  const rows = await db.select({ state: accountStates.state }).from(accountStates).where(eq(accountStates.email, email)).limit(1);
-  return NextResponse.json({ signedIn: true, email, state: rows[0]?.state ?? null });
+  if (!email) return NextResponse.json({ signedIn: false, isPro: false, plan: "free" });
+  const rows = await db
+    .select({ state: accountStates.state, isPro: accountStates.isPro, plan: accountStates.plan })
+    .from(accountStates)
+    .where(eq(accountStates.email, email))
+    .limit(1);
+  const row = rows[0];
+  return NextResponse.json({
+    signedIn: true,
+    email,
+    state: row?.state ?? null,
+    isPro: row?.isPro ?? false, // server-verified (M9b) — the entitlement source of truth
+    plan: row?.plan ?? "free",
+  });
 }

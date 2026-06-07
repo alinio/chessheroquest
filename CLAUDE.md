@@ -76,3 +76,9 @@ Specialized subagents in `.claude/agents/`. Delegate by domain; each owns its ar
 8. Auth + Paddle (Free / Pro monthly+annual / Lifetime launch).
 
 Deferred: World Map, bosses, Sparring, Passport, Weekly Report (V1); profiles, leagues, leaderboards, seasonal, Hall of Fame, clans (V2/V3).
+
+## Terminology (canonical — use verbatim)
+- **Archetypes** (single word, no adjectives): **Warrior · Strategist · Defender · Trickster**. (Never "Aggressive Warrior".)
+- **Realms** (one per archetype): **Ember Marches** (Warrior) · **Obsidian Court** (Strategist) · **Aegis Bastion** (Defender) · **Mirage Bazaar** (Trickster).
+- **Opening Guardian** = the boss of a SINGLE opening (one per opening). **Kingdom Boss** = the end boss of a WHOLE realm (the Gauntlet). Total **24 = 20 Opening Guardians + 4 Kingdom Bosses**. Never use a bare "boss" for a specific tier.
+- **Opening IQ** = the 0–1000 skill score. **Opening Passport** = the seal collection (one seal per mastered opening). **Road to Elo** = the recommended-openings-to-train-next plan.

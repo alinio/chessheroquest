@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
@@ -8,6 +8,9 @@ import { GradientDefs, LogoMark } from "@/src/ui/design-system/icons";
 import { Button } from "@/src/ui/design-system/Button";
 import { HERO_ACCENTS, type HeroKey } from "@/src/ui/design-system/tokens";
 import { useEntitlement } from "@/src/ui/entitlement/useEntitlement";
+import { fetchAccount, syncEntitlement } from "@/src/ui/account/useAccount";
+import { track } from "@/src/lib/track";
+import { SaveProgress } from "@/src/ui/account/SaveProgress";
 import { openCheckout, paddleConfigured, type ProPlan } from "./paddle";
 
 function useHydrated() {
@@ -49,10 +52,23 @@ export function PaywallScreen() {
   const router = useRouter();
   const mounted = useHydrated();
   const isPro = useEntitlement((s) => s.isPro);
-  const setPro = useEntitlement((s) => s.setPro);
   const [busy, setBusy] = useState<ProPlan | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const [email, setEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const acct = await fetchAccount();
+      if (cancelled) return;
+      setEmail(acct.email ?? null);
+      await syncEntitlement(); // reflect server-verified Pro on load
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   if (!mounted) return <Shell><p style={{ color: "var(--chq-text-muted)" }}>Loading…</p></Shell>;
 
@@ -79,15 +95,28 @@ export function PaywallScreen() {
 
   const choose = async (plan: ProPlan) => {
     setError(null);
+    if (!email) {
+      setError("Save your progress (sign in) first — Pro is tied to your account.");
+      return;
+    }
     if (!paddleConfigured(plan)) {
       setError("Checkout needs Paddle sandbox credentials (NEXT_PUBLIC_PADDLE_* env). The plan is configured; add sandbox keys to test the flow.");
       return;
     }
     setBusy(plan);
-    const opened = await openCheckout(plan, () => {
-      setPro(plan);
-      setDone(true);
+    const opened = await openCheckout(plan, email, async () => {
+      // Server-verified: poll the webhook-updated entitlement (no client-trust).
+      for (let i = 0; i < 6; i++) {
+        if (await syncEntitlement()) {
+          track("pro_unlocked", { plan });
+          setDone(true);
+          setBusy(null);
+          return;
+        }
+        await new Promise((r) => setTimeout(r, 1500));
+      }
       setBusy(null);
+      setError("Payment received — finalizing your Pro access. Refresh in a moment.");
     });
     if (!opened) {
       setBusy(null);
@@ -140,6 +169,12 @@ export function PaywallScreen() {
           </div>
         ))}
       </div>
+
+      {!email && (
+        <div style={{ maxWidth: 360, margin: "16px auto 0" }}>
+          <SaveProgress />
+        </div>
+      )}
 
       {error && <p style={{ color: "var(--chq-state-leak, #d1495b)", fontSize: 12, textAlign: "center", marginTop: 14, maxWidth: 360, marginInline: "auto" }}>{error}</p>}
 

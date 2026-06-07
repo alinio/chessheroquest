@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useEntitlement } from "@/src/ui/entitlement/useEntitlement";
 import { bootMigrate, fetchAccount, pushSnapshot } from "./useAccount";
 
 /**
@@ -22,12 +23,13 @@ export function AccountBoot() {
           window.location.replace("/world"); // rehydrate stores from restored localStorage
           return;
         }
-        signedIn.current = result !== "none";
         window.history.replaceState(null, "", "/world");
-      } else {
-        const acct = await fetchAccount();
-        if (!cancelled) signedIn.current = acct.signedIn;
       }
+      // Always reconcile entitlement from the server (overrides any local cache).
+      const acct = await fetchAccount();
+      if (cancelled) return;
+      signedIn.current = acct.signedIn;
+      useEntitlement.getState().hydrate(Boolean(acct.isPro), acct.plan ?? "free");
     })();
 
     const onHide = () => {

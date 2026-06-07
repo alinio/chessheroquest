@@ -17,6 +17,8 @@ import { useWorldProgress, progressFor } from "./useWorldProgress";
 import { usePlayer } from "@/src/ui/player/usePlayer";
 import { useEntitlement } from "@/src/ui/entitlement/useEntitlement";
 import { SaveProgress } from "@/src/ui/account/SaveProgress";
+import { AccountBoot } from "@/src/ui/account/AccountBoot";
+import { track } from "@/src/lib/track";
 
 const ACCENT = HERO_ACCENTS.warrior.base; // seed Guardian is in the Warrior world
 const eyebrow = { fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" } as const;
@@ -59,6 +61,7 @@ export function BossScreen() {
       const tier = TIER_RANK[earned] > TIER_RANK[current] ? earned : current;
       updateProgress(openingId, { conquered: true, masteryTier: tier });
       addXp(difficulty === "hard" ? 150 : 100);
+      track("opening_conquered", { opening: openingId, difficulty });
       // TODO: nudge SRS intervals on conquest (success extends spacing).
     } else {
       const tier = TIER_RANK.bronze > TIER_RANK[current] ? "bronze" : current;
@@ -294,6 +297,7 @@ function BossFrame({ children, dim }: { children: React.ReactNode; dim?: boolean
   return (
     <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh", position: "relative", display: "flex", flexDirection: "column" }}>
       <GradientDefs />
+      <AccountBoot />
       {/* dimmed Guardian art backdrop */}
       <div aria-hidden="true" style={{ position: "fixed", inset: 0, zIndex: 0, overflow: "hidden" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}

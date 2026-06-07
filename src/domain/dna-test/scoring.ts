@@ -17,12 +17,14 @@ export function qualityFromCpLoss(centipawnLoss: number): number {
   return clamp01(1 - Math.max(0, centipawnLoss) / BLUNDER_CP);
 }
 
-/** Difficulty-weighted aggregate accuracy in [0,1] (harder positions count more). */
+/** Difficulty-weighted aggregate accuracy in [0,1] over SKILL answers only
+ *  (style forks have no right answer and must never affect Opening IQ). */
 export function aggregateAccuracy(answers: readonly Answer[]): number {
-  if (answers.length === 0) return 0;
+  const scored = answers.filter((a) => a.questionType === "skill");
+  if (scored.length === 0) return 0;
   let weighted = 0;
   let weight = 0;
-  for (const a of answers) {
+  for (const a of scored) {
     const w = Math.max(1, a.difficulty);
     weighted += w * a.quality;
     weight += w;
@@ -52,6 +54,7 @@ export function provisionalOpeningIq(rawAccuracy: number, difficultyReached: num
 export function familyPerformance(answers: readonly Answer[]): FamilyPerformance[] {
   const map = new Map<string, { sum: number; n: number }>();
   for (const a of answers) {
+    if (a.questionType !== "skill") continue; // style answers don't reflect skill
     const e = map.get(a.openingFamily) ?? { sum: 0, n: 0 };
     e.sum += a.quality;
     e.n += 1;
@@ -65,7 +68,9 @@ export function familyPerformance(answers: readonly Answer[]): FamilyPerformance
 /** Assemble the full result from the recorded answers. Pure (no Date). */
 export function buildResult(answers: readonly Answer[]): TestResult {
   const rawAccuracy = aggregateAccuracy(answers);
-  const difficultyReached = answers.reduce((m, a) => Math.max(m, a.difficulty), 0);
+  const difficultyReached = answers
+    .filter((a) => a.questionType === "skill")
+    .reduce((m, a) => Math.max(m, a.difficulty), 0);
   const byFamily = familyPerformance(answers);
   return {
     answers: [...answers],

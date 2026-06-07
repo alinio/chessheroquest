@@ -11,6 +11,7 @@ import { GradientDefs, LogoMark } from "@/src/ui/design-system/icons";
 import { Button } from "@/src/ui/design-system/Button";
 import { TestBoard } from "@/src/ui/design-system/TestBoard";
 import { LINE_TREES, mainLine, playerPlies } from "@/src/domain/world/italian";
+import { track } from "@/src/lib/track";
 import { useWorldProgress } from "./useWorldProgress";
 import { useSrs, dueCount } from "./useSrs";
 
@@ -83,6 +84,7 @@ export function DrillScreen() {
   const mastered = cards.filter((c) => c.reps >= 2).length;
 
   const start = () => {
+    track("drill_started");
     // Seed if the player drills before learning (runnable standalone), then read
     // the fresh store state (zustand set is synchronous).
     if (cards.length === 0) seedOpening(openingId, playerPlies(tree).map(String));

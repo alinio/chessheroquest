@@ -44,14 +44,20 @@ function ensurePaddle(): Promise<Paddle | undefined> {
   return paddlePromise;
 }
 
-/** Open Paddle checkout for a plan. Returns false if Paddle isn't configured. */
-export async function openCheckout(plan: ProPlan, onSuccess: () => void): Promise<boolean> {
+/**
+ * Open Paddle checkout for a plan. `email` ties the purchase to the account so the
+ * verified webhook can grant server-side Pro (M9b). Returns false if not configured.
+ */
+export async function openCheckout(plan: ProPlan, email: string | null, onSuccess: () => void): Promise<boolean> {
   const priceId = PRICE_IDS[plan];
   const token = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
   if (!token || !priceId) return false;
   onComplete = onSuccess;
   const paddle = await ensurePaddle();
   if (!paddle) return false;
-  paddle.Checkout.open({ items: [{ priceId, quantity: 1 }] });
+  paddle.Checkout.open({
+    items: [{ priceId, quantity: 1 }],
+    ...(email ? { customData: { chqEmail: email }, customer: { email } } : {}),
+  });
   return true;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { snapshotLocal, restoreLocal, snapshotIsEmpty, type Snapshot } from "@/src/lib/account-snapshot";
+import { useEntitlement, type Plan } from "@/src/ui/entitlement/useEntitlement";
 
 /** Request a passwordless magic link (dev: logged to the server console). */
 export async function requestMagicLink(email: string): Promise<boolean> {
@@ -20,6 +21,17 @@ export interface AccountInfo {
   signedIn: boolean;
   email?: string;
   state?: Snapshot | null;
+  /** Server-verified Pro (M9b). */
+  isPro?: boolean;
+  plan?: Plan;
+}
+
+/** Hydrate the entitlement store from server-verified state (the source of truth). */
+export async function syncEntitlement(): Promise<boolean> {
+  const acct = await fetchAccount();
+  const isPro = Boolean(acct.isPro);
+  useEntitlement.getState().hydrate(isPro, acct.plan ?? "free");
+  return isPro;
 }
 
 export async function fetchAccount(): Promise<AccountInfo> {

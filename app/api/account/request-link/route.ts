@@ -28,8 +28,36 @@ export async function POST(request: Request) {
 
   const origin = new URL(request.url).origin;
   const link = `${origin}/api/account/verify?email=${encodeURIComponent(email)}&token=${token}`;
-  // Dev console-link (M9a) — replaced by an email provider before testers.
-  console.log(`\n🔗 ChessHeroQuest magic link for ${email}:\n${link}\n`);
+  await sendMagicLink(email, link);
 
   return NextResponse.json({ ok: true });
+}
+
+/**
+ * Email the magic link via Resend when configured; otherwise fall back to the dev
+ * console-link. To onboard real testers: set RESEND_API_KEY + RESEND_FROM (a
+ * verified-domain sender). No new dependency — plain REST call.
+ */
+async function sendMagicLink(to: string, link: string): Promise<void> {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    console.log(`\n🔗 ChessHeroQuest magic link for ${to}:\n${link}\n`);
+    return;
+  }
+  const from = process.env.RESEND_FROM ?? "ChessHeroQuest <onboarding@resend.dev>";
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
+      body: JSON.stringify({
+        from,
+        to,
+        subject: "Your ChessHeroQuest sign-in link",
+        html: `<p>Sign in to ChessHeroQuest:</p><p><a href="${link}">${link}</a></p><p>This link expires in 15 minutes. If you didn't request it, ignore this email.</p>`,
+      }),
+    });
+    if (!res.ok) console.log(`Resend send failed (${res.status}); link for ${to}: ${link}`);
+  } catch {
+    console.log(`Resend send error; link for ${to}: ${link}`);
+  }
 }

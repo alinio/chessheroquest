@@ -243,10 +243,11 @@ function BossCinematic({ realm }: { realm: Realm }) {
 }
 
 /**
- * Poster-behind-video: the poster shows instantly and the video fades in only
- * once it actually has frames — so a large clip buffering (preload=none + play)
- * never leaves a black gap, including when switching realms. reduced-motion /
- * SSR → poster still only.
+ * Poster-over-video: the video stays opacity:1 (so Safari/Chrome will actually
+ * autoplay it — an opacity:0 video is treated as not-visible and never starts),
+ * with the poster image layered ON TOP and faded out once the clip is really
+ * playing. No black gap on load or realm-switch; reduced-motion / SSR → poster
+ * still only.
  */
 function Cinematic({
   video,
@@ -261,27 +262,38 @@ function Cinematic({
 }) {
   const ref = useRef<HTMLVideoElement | null>(null);
   const stillOnly = useStillOnly(ref);
-  const [ready, setReady] = useState(false);
+  const [playing, setPlaying] = useState(false);
 
   return (
     <>
-      <Image src={poster} alt={alt} fill sizes={sizes} className="object-cover" />
       {!stillOnly && (
         <video
           ref={ref}
+          autoPlay
           muted
           loop
           playsInline
-          preload="none"
+          preload="metadata"
           poster={poster}
-          onLoadedData={() => setReady(true)}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
-            ready ? "opacity-100" : "opacity-0"
-          }`}
+          onPlaying={() => setPlaying(true)}
+          onCanPlay={(e) => {
+            void e.currentTarget.play().catch(() => {});
+          }}
+          className="absolute inset-0 h-full w-full object-cover"
         >
           <source src={video} type="video/mp4" />
         </video>
       )}
+      {/* poster on top until the video is genuinely playing */}
+      <Image
+        src={poster}
+        alt={alt}
+        fill
+        sizes={sizes}
+        className={`object-cover transition-opacity duration-500 ${
+          playing && !stillOnly ? "opacity-0" : "opacity-100"
+        }`}
+      />
     </>
   );
 }

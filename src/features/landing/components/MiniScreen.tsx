@@ -1,20 +1,26 @@
 import Image from "next/image";
 import { LANDING_ASSETS } from "../assets";
 import { MiniBoard, type MiniPosition } from "./MiniBoard";
-import { OpeningIQGauge } from "./OpeningIQGauge";
+import { WaxSeal } from "./WaxSeal";
 
 /**
- * Coded mini screen-mockups for the three steps (Round 2 §4 + fix). Each fills a
- * shared, equal-height frame (same padding / radius / border / bg) so the three
- * read as ONE product at the SAME scale. Content is vertically centered.
+ * Coded mini screen-mockups for the three journey steps AFTER the reveal:
+ * DISCOVER → TRAIN → CONQUER. (The Opening IQ / archetype / Road-to-Elo reveal
+ * lives in S3 and is intentionally NOT duplicated here.) Each fills the shared,
+ * equal-height frame so the three read as one product at the same scale.
+ * All sample data is illustrative. // TODO: demo data, not live.
  */
-export function MiniScreen({ kind }: { kind: "test" | "result" | "train" }) {
-  if (kind === "test") return <TestScreen />;
-  if (kind === "result") return <ResultScreen />;
-  return <TrainScreen />;
+export function MiniScreen({
+  kind,
+}: {
+  kind: "discover" | "train" | "conquer";
+}) {
+  if (kind === "discover") return <DiscoverScreen />;
+  if (kind === "train") return <TrainScreen />;
+  return <ConquerScreen />;
 }
 
-// Italian Game after 1.e4 e5 2.Nf3 Nc6 3.Bc4 — an early, readable opening.
+// Italian Game after 1.e4 e5 2.Nf3 Nc6 3.Bc4 — a readable test position.
 const ITALIAN: MiniPosition = {
   ranks: [
     "r.bqkbnr",
@@ -26,7 +32,6 @@ const ITALIAN: MiniPosition = {
     "PPPP.PPP",
     "RNBQK..R",
   ],
-  highlight: [3, 2], // c5 — the answer square (…Bc5)
 };
 
 /** Shared screen frame — identical across all three mockups. */
@@ -38,103 +43,55 @@ function Screen({ children }: { children: React.ReactNode }) {
   );
 }
 
-function TestScreen() {
+/** DISCOVER — the free test (board thumbnail + a light badge). No reveal here. */
+function DiscoverScreen() {
   return (
     <Screen>
-      <p className="mb-1.5 text-[0.58rem] uppercase tracking-wide text-text-low">
-        Position 7 / 20
-      </p>
       <div className="flex justify-center">
-        <MiniBoard position={ITALIAN} size={120} />
+        <MiniBoard position={ITALIAN} size={124} />
       </div>
-      <p className="mt-1.5 text-center text-[0.68rem] font-medium text-text-hi">
+      <p className="mt-3 text-center text-[0.7rem] font-medium text-text-hi">
         Best move?
       </p>
-      <div className="mt-1.5 grid grid-cols-2 gap-2">
-        <span className="inline-flex items-center justify-center gap-1 rounded-chip border border-gold bg-gold/15 py-1 text-center text-[0.68rem] font-semibold text-gold shadow-[0_0_14px_-4px_rgba(227,178,60,0.8)]">
-          Bc5 <span aria-hidden>✓</span>
-        </span>
-        <span className="rounded-chip border border-hairline py-1 text-center text-[0.68rem] text-text-mid">
-          Nf6
+      <div className="mt-2 flex justify-center">
+        <span className="rounded-chip border border-gold/40 bg-gold/10 px-3 py-1 text-[0.62rem] font-semibold text-gold">
+          20 positions · ~2 min · no signup
         </span>
       </div>
     </Screen>
   );
 }
 
-function ResultScreen() {
-  return (
-    <Screen>
-      <div className="flex flex-col items-center">
-        <OpeningIQGauge value={428} size={92} />
-        <div className="mt-1 flex items-center gap-1.5">
-          <Image
-            src={LANDING_ASSETS.crests.strategist}
-            alt=""
-            width={20}
-            height={20}
-            className="h-[18px] w-[18px] object-contain [mix-blend-mode:screen]"
-          />
-          <span className="font-display text-sm font-bold text-strategist">
-            Strategist
-          </span>
-          <span className="text-[0.62rem] text-text-low">· Top 38%</span>
-        </div>
-      </div>
-
-      {/* what the report shows you */}
-      <div className="mt-3 space-y-1.5">
-        <StatRow label="Strongest" value="Italian Game" color="#2FB67A" />
-        <StatRow label="Weakness" value="Sicilian Dragon" color="#E0413B" />
-        <div className="pt-0.5">
-          <div className="flex items-center justify-between text-[0.55rem] uppercase tracking-wide text-text-low">
-            <span>Road to Elo</span>
-            <span>1400 → 1600</span>
-          </div>
-          <div className="mt-1 h-1.5 overflow-hidden rounded-chip border border-hairline bg-abyss">
-            <div className="h-full w-2/5 rounded-chip bg-gradient-to-r from-gold-deep via-gold to-gold-bright" />
-          </div>
-        </div>
-      </div>
-    </Screen>
-  );
-}
-
-function StatRow({
-  label,
-  value,
-  color,
-}: {
-  label: string;
-  value: string;
-  color: string;
-}) {
-  return (
-    <div className="flex items-center justify-between rounded-md border border-hairline/70 bg-surface/60 px-2 py-1">
-      <span className="flex items-center gap-1.5 text-[0.6rem] uppercase tracking-wide text-text-low">
-        <span
-          className="h-1.5 w-1.5 rounded-full"
-          style={{ backgroundColor: color }}
-        />
-        {label}
-      </span>
-      <span className="text-[0.7rem] font-medium text-text-hi">{value}</span>
-    </div>
-  );
-}
-
+/** TRAIN — pick your hero + opening, keep the daily streak. */
 function TrainScreen() {
   const quests = [
     { label: "Daily Quest", done: true },
-    { label: "Fix a weak line", done: true },
-    { label: "Beat the Italian boss", done: false },
+    { label: "Learn your opening", done: true },
+    { label: "Fix a weak line", done: false },
   ];
   return (
     <Screen>
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-[0.6rem] uppercase tracking-wide text-text-low">
-          Day streak
-        </span>
+        <div className="flex items-center gap-1.5">
+          <Image
+            src={LANDING_ASSETS.crests.strategist}
+            alt=""
+            width={28}
+            height={28}
+            className="h-7 w-7 object-contain [mix-blend-mode:screen]"
+          />
+          <span className="text-text-low">+</span>
+          <span className="relative block h-7 w-7 overflow-hidden rounded-md border border-gold/30">
+            {/* opening tile — reuse existing art (public/art/tiles) */}
+            <Image
+              src="/art/tiles/tile-ruylopez.png"
+              alt=""
+              fill
+              sizes="28px"
+              className="object-cover"
+            />
+          </span>
+        </div>
         <span className="inline-flex items-center gap-1 text-sm font-bold text-gold">
           <span className="animate-[chq-crest-pulse_2s_ease-in-out_infinite]">
             🔥
@@ -165,6 +122,34 @@ function TrainScreen() {
           </li>
         ))}
       </ul>
+    </Screen>
+  );
+}
+
+/** CONQUER — beat the Guardians/Kingdom Bosses, earn the seals. */
+function ConquerScreen() {
+  // earned vs locked seals (illustrative) tinted with the realm accent.
+  const seals = [true, true, false, false];
+  return (
+    <Screen>
+      <div className="mx-auto h-[150px] w-[116px] overflow-hidden rounded-lg border border-gold/30">
+        {/* boss still — reuse existing art (public/art/bosses) */}
+        <Image
+          src="/art/bosses/boss-strategist-ruylopez.png"
+          alt="An Opening Guardian"
+          width={232}
+          height={300}
+          className="h-full w-full object-cover"
+        />
+      </div>
+      <div className="mt-3 flex items-center justify-center gap-2">
+        {seals.map((earned, i) => (
+          <WaxSeal key={i} earned={earned} accent="#8B6CFF" size={34} />
+        ))}
+      </div>
+      <p className="mt-2 text-center text-[0.6rem] uppercase tracking-wide text-text-low">
+        Seals earned
+      </p>
     </Screen>
   );
 }

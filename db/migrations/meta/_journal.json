@@ -57,6 +57,13 @@
       "when": 1780801476703,
       "tag": "0007_deep_obadiah_stane",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1780803243807,
+      "tag": "0008_magical_gravity",
+      "breakpoints": true
     }
   ]
 }

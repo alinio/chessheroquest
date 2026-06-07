@@ -12,7 +12,7 @@ interface ArchetypeMeta {
 
 /** Display metadata for each DNA tribe (master-vision §9 / DESIGN.md archetype colors). */
 export const ARCHETYPE_META: Record<Archetype, ArchetypeMeta> = {
-  warrior: { label: "Aggressive Warrior", tagline: "Attack relentlessly", colorVar: "var(--color-warrior)" },
+  warrior: { label: "Warrior", tagline: "Attack relentlessly", colorVar: "var(--color-warrior)" },
   strategist: { label: "Strategist", tagline: "Outmaneuver, then crush", colorVar: "var(--color-strategist)" },
   defender: { label: "Defender", tagline: "Unbreakable and patient", colorVar: "var(--color-defender)" },
   trickster: { label: "Trickster", tagline: "Surprise and bewilder", colorVar: "var(--color-trickster)" },

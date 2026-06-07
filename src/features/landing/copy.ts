@@ -54,25 +54,28 @@ export const HOW_IT_WORKS = {
   steps: [
     {
       n: 1,
+      phase: "Discover",
       title: "Take the free Chess DNA Test",
-      body: "20 positions. Around 2 minutes. No signup to begin.",
+      body: "Get your Opening IQ and your Chess DNA — 20 positions, about 2 minutes, no signup to begin.",
     },
     {
       n: 2,
-      title: "Get your Opening IQ",
-      body: "see your style, your strongest opening, your biggest weakness, and your Road to Elo.",
+      phase: "Train",
+      title: "Train 5 minutes a day",
+      body: "Pick your hero, learn your openings, fix weak lines, and keep your streak alive.",
     },
     {
       n: 3,
-      title: "Train 5 minutes a day",
-      body: "complete daily quests, fix weak lines, and build openings you'll actually remember.",
+      phase: "Conquer",
+      title: "Beat the bosses, earn the seals",
+      body: "Outplay the Opening Guardians and Kingdom Bosses, earn each opening's seal, and fill your Opening Passport.",
     },
   ],
 } as const;
 
 export const KINGDOMS = {
   h2: "Then the real game begins.",
-  body: "Every opening becomes a kingdom to conquer. Train it, beat its boss, and add it to your Opening Passport.",
+  body: "Every opening becomes a kingdom to conquer. Train it, beat its Opening Guardian, and add it to your Opening Passport.",
   ctaLabel: CTA_LABEL_START,
 } as const;
 

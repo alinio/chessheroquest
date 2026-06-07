@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { toPng } from "html-to-image";
+import { track } from "@/src/lib/track";
 import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
 import { GradientDefs, LogoMark, OpeningIQGauge } from "@/src/ui/design-system/icons";
@@ -60,6 +61,10 @@ export function ResultScreen() {
   const quiz = useStyleQuiz((s) => s.result);
   const cardRef = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    track("result_viewed");
+  }, []);
 
   if (!mounted) {
     return (

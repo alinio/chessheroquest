@@ -31,6 +31,7 @@ export function makeAnswer(
     positionId: position.id,
     openingFamily: position.openingFamily,
     difficulty: position.difficulty,
+    questionType: position.questionType,
     chosen,
     centipawnLoss,
     isBest,

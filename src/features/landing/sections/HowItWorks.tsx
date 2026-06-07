@@ -5,12 +5,12 @@ import { Reveal } from "../components/Reveal";
 import { HOW_IT_WORKS } from "../copy";
 
 /**
- * S4 · How it works (Round 2 §4 + fix). Three equal-height cards sharing ONE
- * structure: a fixed-height mockup zone (so titles + number badges line up across
- * all three) → number badge + title row → description. Coded mini screen-mockups
- * (test → result → training) read as one product at the same scale.
+ * S4 · How it works. Three equal-height cards = the journey AFTER the reveal:
+ * DISCOVER → TRAIN → CONQUER. (The Opening IQ / archetype / Road-to-Elo reveal is
+ * owned by S3 "See the game behind your games" — not duplicated here.) Each card:
+ * fixed-height mockup zone → phase eyebrow + number badge + title → description.
  */
-const SCREEN_BY_STEP = ["test", "result", "train"] as const;
+const SCREEN_BY_STEP = ["discover", "train", "conquer"] as const;
 
 export function HowItWorks() {
   return (
@@ -36,16 +36,21 @@ export function HowItWorks() {
               >
                 {/* fixed mockup zone → keeps every title row on the same line */}
                 <div className="h-[244px]">
-                  <MiniScreen kind={SCREEN_BY_STEP[i] ?? "test"} />
+                  <MiniScreen kind={SCREEN_BY_STEP[i] ?? "discover"} />
                 </div>
 
                 <div className="mt-5 flex items-center gap-3">
                   <span className="font-display inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gold/50 text-base font-black text-gold">
                     {step.n}
                   </span>
-                  <h3 className="font-display text-base font-bold leading-tight text-text-hi">
-                    {step.title}
-                  </h3>
+                  <div>
+                    <p className="font-display text-[0.6rem] font-semibold uppercase tracking-[0.22em] text-gold">
+                      {step.phase}
+                    </p>
+                    <h3 className="font-display text-base font-bold leading-tight text-text-hi">
+                      {step.title}
+                    </h3>
+                  </div>
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-[#E9E9EE]">
                   {step.body}

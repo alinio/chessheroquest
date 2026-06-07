@@ -28,18 +28,27 @@ describe("DNA test bank (chess truth — no fabricated FENs/moves)", () => {
       // difficulty in range
       expect(p.difficulty).toBeGreaterThanOrEqual(1);
       expect(p.difficulty).toBeLessThanOrEqual(5);
-      // 2–4 options, exactly one best at 0 cp loss
+      // 2–4 options
       expect(p.options.length).toBeGreaterThanOrEqual(2);
       expect(p.options.length).toBeLessThanOrEqual(4);
+      // skill = exactly one best at 0cp; style = no best (no right answer)
       const best = p.options.filter((o) => o.isBest);
-      expect(best).toHaveLength(1);
-      expect(best[0]!.centipawnLoss).toBe(0);
+      if (p.questionType === "skill") {
+        expect(best).toHaveLength(1);
+        expect(best[0]!.centipawnLoss).toBe(0);
+      } else {
+        expect(best).toHaveLength(0);
+      }
       // every option is a legal move from the position
       for (const o of p.options) {
         const probe = new Chess(p.fen);
         expect(() => probe.move(o.san)).not.toThrow();
         expect(o.centipawnLoss).toBeGreaterThanOrEqual(0);
       }
+      // lineSan is real: replaying it from the start reaches this FEN
+      const lineGame = new Chess();
+      for (const san of p.lineSan) expect(() => lineGame.move(san)).not.toThrow();
+      expect(lineGame.fen()).toBe(p.fen);
     }
   });
 
@@ -57,8 +66,8 @@ describe("scoring", () => {
   });
 
   it("aggregateAccuracy weights harder positions more", () => {
-    const easyWrong: Answer = { positionId: "e", openingFamily: "X", difficulty: 1, chosen: 0, centipawnLoss: BLUNDER_CP, isBest: false, quality: 0 };
-    const hardRight: Answer = { positionId: "h", openingFamily: "Y", difficulty: 5, chosen: 0, centipawnLoss: 0, isBest: true, quality: 1 };
+    const easyWrong: Answer = { positionId: "e", openingFamily: "X", difficulty: 1, questionType: "skill", chosen: 0, centipawnLoss: BLUNDER_CP, isBest: false, quality: 0 };
+    const hardRight: Answer = { positionId: "h", openingFamily: "Y", difficulty: 5, questionType: "skill", chosen: 0, centipawnLoss: 0, isBest: true, quality: 1 };
     // weighted: (1*0 + 5*1) / (1+5) = 5/6
     expect(aggregateAccuracy([easyWrong, hardRight])).toBeCloseTo(5 / 6);
     expect(aggregateAccuracy([])).toBe(0);
@@ -75,8 +84,8 @@ describe("scoring", () => {
 
   it("familyPerformance ranks strongest first", () => {
     const answers: Answer[] = [
-      { positionId: "1", openingFamily: "Strong", difficulty: 2, chosen: 0, centipawnLoss: 0, isBest: true, quality: 1 },
-      { positionId: "2", openingFamily: "Weak", difficulty: 2, chosen: 1, centipawnLoss: BLUNDER_CP, isBest: false, quality: 0 },
+      { positionId: "1", openingFamily: "Strong", difficulty: 2, questionType: "skill", chosen: 0, centipawnLoss: 0, isBest: true, quality: 1 },
+      { positionId: "2", openingFamily: "Weak", difficulty: 2, questionType: "skill", chosen: 1, centipawnLoss: BLUNDER_CP, isBest: false, quality: 0 },
     ];
     const fams = familyPerformance(answers);
     expect(fams[0]!.family).toBe("Strong");
@@ -85,8 +94,8 @@ describe("scoring", () => {
 
   it("buildResult surfaces strongest/weakest families", () => {
     const answers: Answer[] = [
-      { positionId: "1", openingFamily: "Italian Game", difficulty: 2, chosen: 0, centipawnLoss: 0, isBest: true, quality: 1 },
-      { positionId: "2", openingFamily: "Sicilian Defense", difficulty: 3, chosen: 0, centipawnLoss: BLUNDER_CP, isBest: false, quality: 0 },
+      { positionId: "1", openingFamily: "Italian Game", difficulty: 2, questionType: "skill", chosen: 0, centipawnLoss: 0, isBest: true, quality: 1 },
+      { positionId: "2", openingFamily: "Sicilian Defense", difficulty: 3, questionType: "skill", chosen: 0, centipawnLoss: BLUNDER_CP, isBest: false, quality: 0 },
     ];
     const r = buildResult(answers);
     expect(r.strongestFamily).toBe("Italian Game");
