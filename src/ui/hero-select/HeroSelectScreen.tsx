@@ -247,6 +247,41 @@ function Faq() {
   );
 }
 
+/* Illustrated "inside the app" feature tour (real art assets). */
+const FEATURES = [
+  { img: "/landing/archetype-strategist.png", title: "Discover your Chess DNA", copy: "A 2-minute test reveals your playstyle and a provisional Opening IQ." },
+  { img: "/landing/kingdom-italian.png", title: "Learn every line", copy: "Walk each opening move by move — with the idea behind every move." },
+  { img: "/landing/kingdom-caro-kann.png", title: "Drill to mastery", copy: "Spaced-repetition drills lock the lines into memory for good." },
+  { img: "/landing/scene-guardian-poster.jpg", title: "Beat the Opening Guardians", copy: "A boss for every opening — survive the theory to conquer it." },
+  { img: "/art/worlds/world-warrior-map.png", title: "Climb each realm", copy: "Light up the map opening by opening, across four worlds." },
+  { img: "/landing/passport-tome.png", title: "Earn your Passport", copy: "Collect all 20 seals and become the King of Openings." },
+];
+
+function WhatYouUnlock() {
+  return (
+    <section style={{ maxWidth: 1040, margin: "44px auto 0", padding: "0 20px" }}>
+      <div style={{ textAlign: "center", marginBottom: 18 }}>
+        <p style={{ ...eyebrow, color: "var(--chq-gold-3)" }}>Inside ChessHeroQuest</p>
+        <h2 className="chq-display chq-gold-text" style={{ fontSize: 24, fontWeight: 700, margin: "6px 0 0" }}>What you&apos;ll get</h2>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
+        {FEATURES.map((f) => (
+          <div key={f.title} style={{ background: "var(--chq-panel)", border: "1px solid var(--chq-line)", borderRadius: "var(--chq-r-card)", overflow: "hidden" }}>
+            <div style={{ position: "relative", aspectRatio: "16 / 10", width: "100%" }}>
+              <Image src={f.img} alt={f.title} fill sizes="(max-width: 640px) 100vw, 340px" style={{ objectFit: "cover" }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, var(--chq-panel), transparent 60%)" }} />
+            </div>
+            <div style={{ padding: "14px 16px 18px" }}>
+              <h3 className="chq-display" style={{ fontSize: 16, color: "var(--chq-text-1)", margin: 0 }}>{f.title}</h3>
+              <p style={{ color: "var(--chq-text-2)", fontSize: 13, lineHeight: 1.5, margin: "6px 0 0" }}>{f.copy}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function HeroSelectScreen() {
   const router = useRouter();
   const mounted = useHydrated();
@@ -296,6 +331,7 @@ export function HeroSelectScreen() {
         ))}
       </div>
 
+      <WhatYouUnlock />
       <Testimonials />
       <Faq />
     </Shell>
