@@ -1,5 +1,6 @@
 import { BlogHeader } from "@/src/features/blog/components/BlogHeader";
 import { Footer } from "@/src/features/landing/sections/Footer";
+import { ExitIntentModal } from "@/src/features/marketing/ExitIntentModal";
 
 /** Shared chrome for every blog page (heroic header + the landing footer). */
 export default function BlogLayout({
@@ -12,6 +13,7 @@ export default function BlogLayout({
       <BlogHeader />
       <main className="relative flex-1">{children}</main>
       <Footer />
+      <ExitIntentModal />
     </div>
   );
 }

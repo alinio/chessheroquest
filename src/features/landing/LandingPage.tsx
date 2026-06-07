@@ -9,6 +9,7 @@ import { Kingdoms } from "./sections/Kingdoms";
 import { FinalCTA } from "./sections/FinalCTA";
 import { Footer } from "./sections/Footer";
 import { JsonLd } from "./components/JsonLd";
+import { ExitIntentModal } from "@/src/features/marketing/ExitIntentModal";
 import { HEADLINES, type HeadlineVariant } from "./variants";
 
 /**
@@ -38,6 +39,7 @@ export function LandingPage({ variant }: { variant: HeadlineVariant }) {
         <FinalCTA />
       </main>
       <Footer />
+      <ExitIntentModal />
     </>
   );
 }

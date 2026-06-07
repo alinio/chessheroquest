@@ -6,6 +6,7 @@ import Image from "next/image";
 import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
 import { GradientDefs, LockIcon, Medal } from "@/src/ui/design-system/icons";
+import { Dna, BookOpen, Repeat, Swords, Map as MapIcon, Stamp } from "lucide-react";
 import { OrnateFrame } from "@/src/ui/design-system/OrnateFrame";
 import { HERO_ACCENTS } from "@/src/ui/design-system/tokens";
 import { BRAND_LOGO, HERO_ART, CREST_ART } from "@/src/ui/design-system/art";
@@ -63,10 +64,10 @@ function Shell({ children }: { children: ReactNode }) {
 
 /* The payoff illustration (right column): Lichess sync + win-rate climbing +
    per-opening accuracy + passport — the concrete proof that mastery pays off. */
-const ACCURACY = [
+const ACCURACY: { name: string; pct: number; weak?: boolean }[] = [
   { name: "Italian Game", pct: 94 },
   { name: "Caro-Kann", pct: 88 },
-  { name: "Sicilian Dragon", pct: 81 },
+  { name: "Sicilian Dragon", pct: 71, weak: true },
 ];
 function AnalyticsPanel() {
   return (
@@ -109,15 +110,18 @@ function AnalyticsPanel() {
         </div>
 
         {/* per-opening accuracy bars */}
-        <p style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)", marginTop: 16 }}>Opening accuracy</p>
+        <p style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)", marginTop: 16 }}>Opening accuracy — analytics finds your weak spot</p>
         <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 6 }}>
           {ACCURACY.map((a) => (
             <div key={a.name} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 11, color: "var(--chq-text-2)", width: 110, flexShrink: 0 }}>{a.name}</span>
-              <div style={{ flex: 1, height: 7, borderRadius: 4, background: "var(--chq-panel)", overflow: "hidden" }}>
-                <div style={{ width: `${a.pct}%`, height: "100%", background: "var(--chq-gold-gradient)" }} />
+              <span style={{ fontSize: 11, color: "var(--chq-text-2)", width: 116, flexShrink: 0, display: "flex", alignItems: "center", gap: 5 }}>
+                {a.name}
+                {a.weak && <span style={{ fontSize: 7.5, color: "#08080A", background: "#e0a13b", padding: "1px 5px", borderRadius: 999, fontWeight: 700, letterSpacing: ".06em" }}>FOCUS</span>}
+              </span>
+              <div style={{ flex: 1, height: 8, borderRadius: 4, background: "var(--chq-panel)", overflow: "hidden" }}>
+                <div style={{ width: `${a.pct}%`, height: "100%", background: a.weak ? "linear-gradient(90deg,#b9842b,#e0a13b)" : "var(--chq-gold-gradient)" }} />
               </div>
-              <span style={{ fontSize: 11, color: "var(--chq-gold-2)", width: 34, textAlign: "right" }}>{a.pct}%</span>
+              <span style={{ fontSize: 11, color: a.weak ? "#e0a13b" : "var(--chq-gold-2)", width: 34, textAlign: "right" }}>{a.pct}%</span>
             </div>
           ))}
         </div>
@@ -358,33 +362,32 @@ function Faq() {
   );
 }
 
-/* Illustrated "inside the app" tour — concrete, with real examples. */
+/* What you'll get — icon-led, concise; each icon maps cleanly to the feature. */
 const FEATURES = [
-  { img: "/landing/archetype-strategist.png", title: "Discover your Chess DNA", copy: "20 real positions, ~2 minutes. We score how close your moves are to the engine and map you to one of four archetypes with a 0–1000 Opening IQ. (Pick 3…Bc5 in the Italian → you lean classical attacker.)" },
-  { img: "/landing/kingdom-italian.png", title: "Learn every line", copy: "Walk the main line and its branches move by move — e.g. the Italian 1.e4 e5 2.Nf3 Nc6 3.Bc4 — with the plan behind each move (here: pressure on f7). Tap any move to see why it's played." },
-  { img: "/landing/kingdom-caro-kann.png", title: "Drill to mastery", copy: "Spaced repetition resurfaces each line right before you'd forget it. Miss the Fried Liver defence 5…Na5? It returns tomorrow; nail it and the gap grows. It's Anki, built for openings." },
-  { img: "/landing/scene-guardian-poster.jpg", title: "Beat the Opening Guardians", copy: "Every opening ends with a themed boss — e.g. Aldovrandi, the Roman Edge, guards the Italian. Survive the critical line under pressure to seal your mastery and unlock the next gate." },
-  { img: "/art/worlds/world-warrior-map.png", title: "Climb each realm", copy: "Four worlds, 20 openings: the Ember Marches (attack), Obsidian Court (strategy), Aegis Bastion (defence) and Mirage Bazaar (traps). Light up each map node by node." },
-  { img: "/landing/passport-tome.png", title: "Earn your Passport", copy: "Each conquest stamps a wax seal in your Opening Passport. Collect all 20, push your Opening IQ past 900, and you're the King of Openings — ready for any opponent." },
+  { Icon: Dna, title: "Discover your Chess DNA", copy: "20 positions, 2 minutes → your playstyle + a 0–1000 Opening IQ." },
+  { Icon: BookOpen, title: "Learn every line", copy: "Walk each opening move by move, with the idea behind every move." },
+  { Icon: Repeat, title: "Drill to mastery", copy: "Spaced-repetition drills lock every line into memory for good." },
+  { Icon: Swords, title: "Beat the Guardians", copy: "A themed boss per opening — survive the line to conquer it." },
+  { Icon: MapIcon, title: "Climb each realm", copy: "4 worlds, 20 openings. Light up the map node by node." },
+  { Icon: Stamp, title: "Earn your Passport", copy: "Seal all 20, pass Opening IQ 900 — become King of Openings." },
 ];
 
 function WhatYouUnlock() {
   return (
     <section style={{ maxWidth: 1040, margin: "80px auto 0", padding: "0 20px" }}>
-      <div style={{ textAlign: "center", marginBottom: 18 }}>
+      <div style={{ textAlign: "center", marginBottom: 22 }}>
         <p style={{ ...eyebrow, color: "var(--chq-gold-3)" }}>Inside ChessHeroQuest</p>
         <h2 className="chq-display chq-gold-text" style={{ fontSize: 24, fontWeight: 700, margin: "6px 0 0" }}>What you&apos;ll get</h2>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 14 }}>
         {FEATURES.map((f) => (
-          <div key={f.title} style={{ background: "var(--chq-panel)", border: "1px solid var(--chq-line)", borderRadius: "var(--chq-r-card)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
-            <div style={{ position: "relative", aspectRatio: "4 / 3", width: "100%" }}>
-              <Image src={f.img} alt={f.title} fill sizes="(max-width: 640px) 100vw, 340px" style={{ objectFit: "cover", objectPosition: "center 28%" }} />
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, var(--chq-panel), transparent 55%)" }} />
+          <div key={f.title} style={{ background: "var(--chq-panel)", border: "1px solid var(--chq-line)", borderRadius: "var(--chq-r-card)", padding: "20px", display: "flex", gap: 14, alignItems: "flex-start" }}>
+            <div style={{ flexShrink: 0, width: 48, height: 48, borderRadius: 12, display: "grid", placeItems: "center", background: "linear-gradient(180deg, rgba(217,162,39,.18), rgba(217,162,39,.04))", border: "1px solid var(--chq-gold-4)" }}>
+              <f.Icon size={24} color="var(--chq-gold-2)" strokeWidth={1.6} />
             </div>
-            <div style={{ padding: "14px 18px 20px", flex: 1 }}>
+            <div>
               <h3 className="chq-display" style={{ fontSize: 16, color: "var(--chq-text-1)", margin: 0 }}>{f.title}</h3>
-              <p style={{ color: "var(--chq-text-2)", fontSize: 13, lineHeight: 1.55, margin: "8px 0 0" }}>{f.copy}</p>
+              <p style={{ color: "var(--chq-text-2)", fontSize: 13, lineHeight: 1.5, margin: "6px 0 0" }}>{f.copy}</p>
             </div>
           </div>
         ))}
