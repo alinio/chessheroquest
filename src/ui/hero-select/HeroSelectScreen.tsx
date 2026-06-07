@@ -29,8 +29,8 @@ function Shell({ children }: { children: ReactNode }) {
     <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
       <GradientDefs />
       <AccountBoot />
-      <header style={{ height: 72, flexShrink: 0, display: "flex", alignItems: "center", gap: 10, padding: "0 24px", borderBottom: "1px solid var(--chq-line)" }}>
-        <Image src={BRAND_LOGO} alt="ChessHeroQuest" width={1478} height={418} priority style={{ height: 48, width: "auto" }} />
+      <header style={{ height: 92, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 24px", borderBottom: "1px solid var(--chq-line)" }}>
+        <Image src={BRAND_LOGO} alt="ChessHeroQuest" width={1478} height={418} priority style={{ height: 64, width: "auto" }} />
       </header>
       <main style={{ flex: 1, width: "100%", padding: "20px 0 48px" }}>{children}</main>
     </div>
