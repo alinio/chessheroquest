@@ -5,8 +5,12 @@
  * Today / Quest / Insights / Passport / Profile. Immersive screens (Boss/DNA/Learn/
  * Drill) render WITHOUT this shell. Rail hidden < 880px.
  */
+"use client";
+
 import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { inter } from "@/src/ui/design-system/fonts";
+import { getArchetypeSigil, getArchetypeArt } from "@/src/lib/assets";
 import "./hub.css";
 import {
   IconFlame, IconMap2, IconChartLine, IconAward, IconShield,
@@ -23,25 +27,38 @@ const PRIMARY: { key: HubNav; label: string; Icon: typeof IconFlame }[] = [
   { key: "profile", label: "Profile", Icon: IconShield },
 ];
 
+function deriveActive(pathname: string | null): HubNav {
+  if (!pathname) return "train";
+  if (pathname.includes("/world") || pathname.includes("/quest")) return "quest";
+  if (pathname.includes("/insights")) return "insights";
+  if (pathname.includes("/passport")) return "passport";
+  if (pathname.includes("/profile")) return "profile";
+  return "train";
+}
+
 export function AppShell({
   active,
-  realmName,
-  realmCrest,
-  heroAvatar,
-  streak,
-  iq,
+  // TODO(real-data): defaults are sample — wire realm/crest/avatar/streak/iq from the
+  // player store (archetype, Opening IQ, streak) once exposed server- or client-side.
+  realmName = "The Obsidian Court",
+  realmCrest = getArchetypeSigil("strategist"),
+  heroAvatar = getArchetypeArt("strategist"),
+  streak = 7,
+  iq = 742,
   pro = true,
   children,
 }: {
-  active: HubNav;
-  realmName: string;
-  realmCrest: string;
-  heroAvatar: string;
-  streak: number;
-  iq: number;
+  active?: HubNav;
+  realmName?: string;
+  realmCrest?: string;
+  heroAvatar?: string;
+  streak?: number;
+  iq?: number;
   pro?: boolean;
   children: ReactNode;
 }) {
+  const pathname = usePathname();
+  const current = active ?? deriveActive(pathname);
   return (
     <div className={`chq-hub ${inter.variable}`}>
       <div className="app">
@@ -52,7 +69,7 @@ export function AppShell({
             <span className="wordmark">ChessHeroQuest</span>
           </div>
           {PRIMARY.map(({ key, label, Icon }) => (
-            <button key={key} type="button" className={`nav-item${active === key ? " active" : ""}`}>
+            <button key={key} type="button" className={`nav-item${current === key ? " active" : ""}`}>
               <Icon />
               {label}
             </button>

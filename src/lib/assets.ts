@@ -120,6 +120,30 @@ export const REALM_NAMES: Record<RealmId, string> = {
   "mirage-bazaar": "The Mirage Bazaar",
 };
 
+/** Canonical display names per opening (matches the mockups). */
+export const OPENING_NAMES: Record<OpeningId, string> = {
+  italian: "Italian Game",
+  "kings-gambit": "King's Gambit",
+  scotch: "Scotch Game",
+  "smith-morra": "Smith-Morra Gambit",
+  "sicilian-dragon": "Sicilian Dragon",
+  "ruy-lopez": "Ruy Lopez",
+  "queens-gambit": "Queen's Gambit",
+  "nimzo-indian": "Nimzo-Indian",
+  catalan: "Catalan",
+  english: "English Opening",
+  london: "London System",
+  french: "French Defense",
+  slav: "Slav Defense",
+  petroff: "Petroff Defense",
+  "caro-kann": "Caro-Kann",
+  scandinavian: "Scandinavian",
+  budapest: "Budapest Gambit",
+  stafford: "Stafford Gambit",
+  "blackmar-diemer": "Blackmar-Diemer",
+  englund: "Englund Gambit",
+};
+
 /** Quest-map medallion for a node state. */
 export function getNodeArt(state: NodeState): string {
   return ASSETS.nodes[state];

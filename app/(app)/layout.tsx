@@ -5,9 +5,16 @@
  */
 import { redirect } from "next/navigation";
 import { auth } from "@/src/lib/auth";
-import { AppNav } from "@/src/ui/AppNav";
+import { AppShell } from "@/src/ui/shell/AppShell";
 import "@/src/ui/animations.css";
+import "@/src/ui/shell/hub.css";
 
+/**
+ * Authenticated hub shell (AppShell = rail + top bar, from the mockups). The active
+ * tab is derived from the pathname inside AppShell. Immersive screens (Boss, DNA,
+ * Learn, Drill) live OUTSIDE this group and render shell-less.
+ * TODO(real-data): pass realm/crest/avatar/streak/iq from the player store.
+ */
 export default async function AppLayout({
   children,
 }: {
@@ -15,10 +22,5 @@ export default async function AppLayout({
 }) {
   const session = await auth();
   if (!session?.user) redirect("/signin");
-  return (
-    <>
-      <div className="pb-20">{children}</div>
-      <AppNav />
-    </>
-  );
+  return <AppShell>{children}</AppShell>;
 }
