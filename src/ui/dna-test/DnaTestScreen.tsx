@@ -47,15 +47,25 @@ function formatLine(sans: readonly string[]): string {
 }
 
 function TestShell({ children }: { children: ReactNode }) {
+  const reduced = useReducedMotion();
   return (
-    <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
+    <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", position: "relative" }}>
       <GradientDefs />
       <AnalyticsBoot />
-      <header style={{ height: 56, flexShrink: 0, display: "flex", alignItems: "center", gap: 8, padding: "0 20px", borderBottom: "1px solid var(--chq-line)" }}>
-        <Image src={BRAND_LOGO} alt="ChessHeroQuest" width={1478} height={418} priority style={{ height: 26, width: "auto" }} />
-        <span className="chq-display" style={{ fontSize: 12, color: "var(--chq-text-2)", textTransform: "uppercase", letterSpacing: ".1em" }}>· Chess DNA</span>
+      {/* Home hero video backdrop — faint; reduced-motion shows the poster only. */}
+      <div aria-hidden="true" style={{ position: "fixed", inset: 0, zIndex: 0, overflow: "hidden" }}>
+        {reduced ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src="/landing/hero-desktop-poster.png" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.18 }} />
+        ) : (
+          <video src="/landing/hero-desktop.mp4" poster="/landing/hero-desktop-poster.png" autoPlay muted loop playsInline style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.18 }} />
+        )}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,10,.84), rgba(8,8,10,.93))" }} />
+      </div>
+      <header style={{ position: "relative", zIndex: 1, height: 76, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 20px", borderBottom: "1px solid var(--chq-line)" }}>
+        <Image src={BRAND_LOGO} alt="ChessHeroQuest" width={1478} height={418} priority style={{ height: 46, width: "auto" }} />
       </header>
-      <main style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%", padding: "24px 20px" }}>
+      <main style={{ position: "relative", zIndex: 1, flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%", padding: "24px 20px" }}>
         {children}
       </main>
     </div>
@@ -149,10 +159,14 @@ function TestRunner({ position, index, reduced, onAnswer }: { position: TestPosi
       </div>
       <ProgressBar value={index / TEST_LENGTH} height={4} ariaLabel={`Position ${index + 1} of ${TEST_LENGTH}`} />
 
+      <p style={{ textAlign: "center", color: "var(--chq-text-2)", fontSize: 14, lineHeight: 1.5, margin: "12px auto 2px", maxWidth: 520 }}>
+        Answer all {TEST_LENGTH} positions to reveal your <span style={{ color: "var(--chq-gold-3)", fontWeight: 600 }}>Chess DNA</span>.
+      </p>
+
       {/* board + RPG context panel (side-by-side desktop, stacked mobile via wrap) */}
       <div style={{ display: "flex", gap: 18, flexWrap: "wrap", justifyContent: "center", alignItems: "flex-start" }}>
         <div style={{ width: "min(440px, 86vw)" }}>
-          <TestBoard fen={position.fen} orientation={position.sideToMove} />
+          <TestBoard fen={position.fen} orientation="white" />
           <p style={{ textAlign: "center", marginTop: 8, fontSize: 13 }}>
             <span style={{ color: "var(--chq-gold-3)" }}>●</span>{" "}
             <span style={{ color: "var(--chq-text-1)", fontWeight: 600 }}>{position.sideToMove === "white" ? "White" : "Black"} to move</span>
@@ -180,18 +194,10 @@ function TestRunner({ position, index, reduced, onAnswer }: { position: TestPosi
         })}
       </div>
 
-      {answered ? (
+      {answered && (
         <Button variant="primary" onClick={cont} style={{ margin: "2px auto 0", minWidth: 200 }}>
           {index + 1 >= TEST_LENGTH ? "See my result →" : "Continue →"}
         </Button>
-      ) : (
-        <button
-          type="button"
-          onClick={() => pick("skip")}
-          style={{ background: "transparent", border: 0, color: "var(--chq-text-muted)", fontSize: 13, textDecoration: "underline", cursor: "pointer", margin: "2px auto 0" }}
-        >
-          I&apos;m not sure (skip)
-        </button>
       )}
       {/* reduced-motion: the .chq-rise reveal is disabled by the global guard */}
       <span style={{ display: "none" }}>{reduced ? "" : ""}</span>
