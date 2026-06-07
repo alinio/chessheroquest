@@ -90,7 +90,8 @@ export const FOOTER = {
   wordmark: "ChessHeroQuest",
   tagline: "The RPG of chess openings.",
   links: [
-    { label: "How it works", href: "#how-it-works" },
+    { label: "How it works", href: "/#how-it-works" },
+    { label: "Blog", href: "/blog" },
     { label: "Log in", href: "/signin" },
     { label: "Privacy", href: "/privacy" },
     { label: "Terms", href: "/terms" },

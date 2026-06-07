@@ -13,8 +13,14 @@
 ## Key pages
 - [Home — free Chess DNA Test](https://chessheroquest.com/): the assessment funnel and product overview.
 - [Pricing](https://chessheroquest.com/pricing): Free, Pro (monthly/annual) and Lifetime plans.
+- [Blog](https://chessheroquest.com/blog): guides on chess openings, training and strategy ([RSS](https://chessheroquest.com/blog/rss.xml)).
 - [Sign up](https://chessheroquest.com/signup) · [Log in](https://chessheroquest.com/signin)
 - [Privacy](https://chessheroquest.com/privacy) · [Terms](https://chessheroquest.com/terms)
+
+## Featured articles
+- [What Is Your Chess DNA? The 4 Player Archetypes](https://chessheroquest.com/blog/what-is-your-chess-dna)
+- [The 5 Best Chess Openings for Beginners](https://chessheroquest.com/blog/best-chess-openings-for-beginners)
+- [How to Actually Remember Your Opening Repertoire](https://chessheroquest.com/blog/remember-your-opening-repertoire)
 
 ## Who it's for
 Chess players (beginner to intermediate, roughly 800–1800 Elo) who want to learn and remember chess openings, fix their weaknesses, and gain rating — without grinding 300 variations they'll forget.
