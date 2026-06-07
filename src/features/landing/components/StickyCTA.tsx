@@ -39,18 +39,18 @@ export function StickyCTA() {
     >
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-4 py-2.5 sm:gap-3 sm:px-6">
         <Wordmark size="md" />
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          {/* Log in — always visible, for returning heroes */}
+        {/* Over the hero: logo only (the hero owns the CTA). The whole action
+            group — Log in + Take the Test — fades in together once past the fold. */}
+        <div
+          className={`flex shrink-0 items-center gap-2 transition-all duration-300 sm:gap-3 ${
+            pastHero
+              ? "translate-y-0 opacity-100"
+              : "pointer-events-none -translate-y-1 opacity-0"
+          }`}
+        >
           <LoginButton />
 
-          {/* Take the Test — fades in once past the hero (hero has its own CTA) */}
-          <div
-            className={`transition-all duration-300 ${
-              pastHero
-                ? "translate-y-0 opacity-100"
-                : "pointer-events-none -translate-y-1 opacity-0"
-            }`}
-          >
+          <div>
             {/* short label on mobile (logo + full label don't fit on a phone bar) */}
             <span className="sm:hidden">
               <CTAButton

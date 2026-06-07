@@ -1,5 +1,4 @@
 import { CTAButton } from "../components/CTAButton";
-import { Microcopy } from "../components/Microcopy";
 import { OrnamentalDivider } from "../components/OrnamentalDivider";
 import { SectionBackdrop } from "../components/SectionBackdrop";
 import { Reveal } from "../components/Reveal";
@@ -40,9 +39,8 @@ export function Pain() {
           </p>
         </Reveal>
         <Reveal index={3}>
-          <div className="mt-9 inline-flex flex-col items-center gap-3">
+          <div className="mt-9">
             <CTAButton section="pain" label={PAIN.ctaLabel} />
-            <Microcopy items={["Free", "no signup to begin", "~2 minutes"]} />
           </div>
         </Reveal>
       </div>
