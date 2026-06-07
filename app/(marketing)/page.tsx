@@ -19,7 +19,8 @@ const DESCRIPTION = SITE.description;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
-  title: TITLE,
+  // `absolute` bypasses the root title template (TITLE already includes the brand).
+  title: { absolute: TITLE },
   description: DESCRIPTION,
   keywords: [...SITE.keywords],
   alternates: {
