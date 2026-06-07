@@ -3,6 +3,8 @@
 - docs/art-direction-bible.md    — design tokens, dimensions, assets, Higgsfield rules
 - docs/opening-boss-catalog.md   — openings, variations, bosses, design briefs
 - docs/screen-wireframe-spec.md  — exact screen-by-screen layouts
+- docs/in-app-architecture-spec.md — logged-in shell, navigation, section map, connective screens (post-auth/Pro)
+- docs/chess-curation-spec.md     — chess content data contract (test positions / line trees / explorer; truth = curated data + engine, NEVER an LLM)
 
 
 # CLAUDE.md — ChessHeroQuest.com
