@@ -220,63 +220,69 @@ export function BossBlock() {
 }
 
 function ArenaCinematic() {
-  const ref = useRef<HTMLVideoElement | null>(null);
-  const stillOnly = useStillOnly(ref);
-
-  if (stillOnly) {
-    return (
-      <Image
-        src={ARENA_POSTER}
-        alt="A hall of giant chess pieces — the Kingdom Boss arena"
-        fill
-        sizes="(max-width: 1080px) 100vw, 1040px"
-        className="object-cover"
-      />
-    );
-  }
   return (
-    <video
-      ref={ref}
-      muted
-      loop
-      playsInline
-      preload="none"
+    <Cinematic
+      video={ARENA_VIDEO}
       poster={ARENA_POSTER}
-      className="absolute inset-0 h-full w-full object-cover"
-    >
-      <source src={ARENA_VIDEO} type="video/mp4" />
-    </video>
+      alt="A hall of giant chess pieces — the Kingdom Boss arena"
+      sizes="(max-width: 1080px) 100vw, 1040px"
+    />
   );
 }
 
 function BossCinematic({ realm }: { realm: Realm }) {
+  const { boss } = realm;
+  return (
+    <Cinematic
+      video={boss.video}
+      poster={boss.poster}
+      alt={`${boss.name} — ${boss.title}`}
+      sizes="(max-width: 768px) 100vw, 520px"
+    />
+  );
+}
+
+/**
+ * Poster-behind-video: the poster shows instantly and the video fades in only
+ * once it actually has frames — so a large clip buffering (preload=none + play)
+ * never leaves a black gap, including when switching realms. reduced-motion /
+ * SSR → poster still only.
+ */
+function Cinematic({
+  video,
+  poster,
+  alt,
+  sizes,
+}: {
+  video: string;
+  poster: string;
+  alt: string;
+  sizes: string;
+}) {
   const ref = useRef<HTMLVideoElement | null>(null);
   const stillOnly = useStillOnly(ref);
-  const { boss } = realm;
+  const [ready, setReady] = useState(false);
 
-  if (stillOnly) {
-    return (
-      <Image
-        src={boss.poster}
-        alt={`${boss.name} — ${boss.title}`}
-        fill
-        sizes="(max-width: 768px) 100vw, 520px"
-        className="object-cover"
-      />
-    );
-  }
   return (
-    <video
-      ref={ref}
-      muted
-      loop
-      playsInline
-      preload="none"
-      poster={boss.poster}
-      className="absolute inset-0 h-full w-full object-cover"
-    >
-      <source src={boss.video} type="video/mp4" />
-    </video>
+    <>
+      <Image src={poster} alt={alt} fill sizes={sizes} className="object-cover" />
+      {!stillOnly && (
+        <video
+          ref={ref}
+          muted
+          loop
+          playsInline
+          preload="none"
+          poster={poster}
+          onLoadedData={() => setReady(true)}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
+            ready ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <source src={video} type="video/mp4" />
+        </video>
+      )}
+    </>
   );
 }
 

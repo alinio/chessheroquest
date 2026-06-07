@@ -268,6 +268,19 @@ export const achievements = pgTable(
   (t) => [uniqueIndex("achievements_user_key_uq").on(t.userId, t.key)],
 );
 
+// Phase-0 passwordless accounts (Module 9a) for the new module flow: email-keyed
+// magic-link token + a JSON snapshot of the client stores (save/sync across
+// devices). Independent of the legacy `users` table.
+// TODO (M9): consolidate with Auth.js + harden (rate limit, real email provider).
+export const accountStates = pgTable("account_states", {
+  email: varchar("email", { length: 320 }).primaryKey(),
+  tokenHash: varchar("token_hash", { length: 128 }),
+  tokenExpires: timestamp("token_expires", { withTimezone: true }),
+  state: jsonb("state"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const quests = pgTable(
   "quests",
   {

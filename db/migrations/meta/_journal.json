@@ -50,6 +50,13 @@
       "when": 1780736563484,
       "tag": "0006_useful_roland_deschain",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1780801476703,
+      "tag": "0007_deep_obadiah_stane",
+      "breakpoints": true
     }
   ]
 }

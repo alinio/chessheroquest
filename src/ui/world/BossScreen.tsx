@@ -16,6 +16,7 @@ import { HERO_ACCENTS } from "@/src/ui/design-system/tokens";
 import { useWorldProgress, progressFor } from "./useWorldProgress";
 import { usePlayer } from "@/src/ui/player/usePlayer";
 import { useEntitlement } from "@/src/ui/entitlement/useEntitlement";
+import { SaveProgress } from "@/src/ui/account/SaveProgress";
 
 const ACCENT = HERO_ACCENTS.warrior.base; // seed Guardian is in the Warrior world
 const eyebrow = { fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase" } as const;
@@ -158,6 +159,9 @@ export function BossScreen() {
                 {guardian.name} falls. <b style={{ color: "var(--chq-text-1)" }}>{tree.name}</b> conquered — seal earned ({difficulty === "hard" ? "Gold" : "Silver"}). +{difficulty === "hard" ? 150 : 100} XP.
               </p>
               <Button variant="primary" onClick={() => router.push("/world")}>Return to the map →</Button>
+              <div style={{ width: "100%", maxWidth: 340, marginTop: 8 }}>
+                <SaveProgress />
+              </div>
             </>
           ) : (
             <>

@@ -11,6 +11,7 @@ import { WORLDS } from "@/src/domain/recommend/worlds";
 import { WORLD_OPENINGS, WORLD_BOSS_POS, type WorldOpeningMeta } from "@/src/domain/world/openings";
 import { type Archetype } from "@/src/domain/style-quiz/types";
 import { useHeroSelect } from "@/src/ui/hero-select/useHeroSelect";
+import { AccountBoot } from "@/src/ui/account/AccountBoot";
 import { useWorldProgress, progressFor } from "./useWorldProgress";
 
 function useHydrated() {
@@ -69,6 +70,7 @@ export function WorldMapScreen() {
   return (
     <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh" }}>
       <GradientDefs />
+      <AccountBoot />
 
       {/* transparent overlay top bar */}
       <header style={{ position: "fixed", top: 0, left: 0, right: 0, height: 56, zIndex: 10, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", background: "linear-gradient(180deg, rgba(8,8,10,.85), transparent)" }}>

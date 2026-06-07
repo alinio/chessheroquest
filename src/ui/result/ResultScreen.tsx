@@ -13,6 +13,7 @@ import { WORLDS } from "@/src/domain/recommend/worlds";
 import { roadToElo, provisionalTopPercent } from "@/src/domain/recommend/road-to-elo";
 import { useDnaTest } from "@/src/ui/dna-test/useDnaTest";
 import { useStyleQuiz } from "@/src/ui/style-quiz/useStyleQuiz";
+import { SaveProgress } from "@/src/ui/account/SaveProgress";
 import { DnaShareCard } from "./DnaShareCard";
 
 function useHydrated() {
@@ -190,6 +191,11 @@ export function ResultScreen() {
         <Button variant="ghost" onClick={onDownload} disabled={busy}>
           {busy ? "Rendering…" : "Download card"}
         </Button>
+      </div>
+
+      {/* Save your progress (after the payoff — not a blocker to starting). */}
+      <div style={{ marginTop: 16 }}>
+        <SaveProgress />
       </div>
 
       {/* Road to Elo */}
