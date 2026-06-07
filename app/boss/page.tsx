@@ -6,7 +6,7 @@
 import type { Metadata } from "next";
 import { BossScreen } from "@/src/ui/world/BossScreen";
 
-export const metadata: Metadata = { title: "Opening Guardian — ChessHeroQuest" };
+export const metadata: Metadata = { title: "Opening Guardian — ChessHeroQuest", robots: { index: false } };
 
 export default function BossPage() {
   return <BossScreen />;

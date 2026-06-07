@@ -6,7 +6,7 @@
 import type { Metadata } from "next";
 import { PaywallScreen } from "@/src/ui/paywall/PaywallScreen";
 
-export const metadata: Metadata = { title: "Go Pro — ChessHeroQuest" };
+export const metadata: Metadata = { title: "Go Pro — ChessHeroQuest", robots: { index: false } };
 
 export default function PaywallPage() {
   return <PaywallScreen />;

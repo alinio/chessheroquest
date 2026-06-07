@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { StyleQuizScreen } from "@/src/ui/style-quiz/StyleQuizScreen";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Chess DNA — Style Quiz",
   description: "16 quick questions to reveal your chess archetype and your recommended Hero.",
 };

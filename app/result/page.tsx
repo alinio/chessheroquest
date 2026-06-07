@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import { ResultScreen } from "@/src/ui/result/ResultScreen";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Your Chess DNA — ChessHeroQuest",
   description: "Your Opening IQ, your archetype, your strengths and weaknesses — and your Road to Elo.",
 };

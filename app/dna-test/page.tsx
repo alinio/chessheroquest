@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 import { DnaTestScreen } from "@/src/ui/dna-test/DnaTestScreen";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Chess DNA Test — ChessHeroQuest",
   description: "Discover your Chess DNA: 20 positions, your Opening IQ, your style. Free, ~2 minutes, no signup.",
 };

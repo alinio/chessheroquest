@@ -67,7 +67,7 @@ function AnalyticsPanel() {
       <div style={{ position: "relative" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span style={{ ...eyebrow, fontSize: 10, color: "var(--chq-gold-3)" }}>The payoff</span>
-          <span style={{ fontSize: 11, color: "#2FB67A", display: "inline-flex", alignItems: "center", gap: 5 }}>● Lichess synced</span>
+          <span style={{ fontSize: 11, color: "#2FB67A", display: "inline-flex", alignItems: "center", gap: 5 }}>● Lichess + Chess.com synced</span>
         </div>
 
         {/* win-rate area chart climbing */}
@@ -169,7 +169,7 @@ const PROMISES = [
   { Icon: TrendingUp, text: "Raise your win rate", sub: "stop losing in the first 10 moves" },
   { Icon: Trophy, text: "Boost your ELO", sub: "drills that stick — spaced repetition" },
   { Icon: Zap, text: "Level up faster", sub: "Hard mode + unlimited drills" },
-  { Icon: Activity, text: "Train on your real games", sub: "Lichess sync + weakness analytics" },
+  { Icon: Activity, text: "Train on your real games", sub: "Lichess & Chess.com sync + weakness analytics" },
 ];
 
 /* Commercial value-prop box above the hero chooser. */
@@ -314,7 +314,7 @@ const TESTIMONIALS = [
 
 const FAQ = [
   { q: "Is it really free?", a: "Yes — take the Chess DNA Test and play your first opening (Learn, Drill & its Opening Guardian) with no signup." },
-  { q: "What does Premium unlock?", a: "Every opening and all their variations across the four realms, all 4 heroes, Hard mode, unlimited drills, Lichess sync and weakness analytics." },
+  { q: "What does Premium unlock?", a: "Every opening and all their variations across the four realms, all 4 heroes, Hard mode, unlimited drills, Lichess & Chess.com sync and weakness analytics." },
   { q: "Do I need an account?", a: "Only to save your progress across devices — you can start instantly without one." },
   { q: "Will this actually raise my rating?", a: "ChessHeroQuest targets the opening phase, where most rating is lost. Drill a real repertoire until it's automatic and you stop giving games away early. Results depend on your practice." },
   { q: "Can I switch heroes?", a: "Anytime. Your Chess DNA suggests one, but every hero's path is open." },

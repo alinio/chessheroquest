@@ -5,7 +5,7 @@
 import type { Metadata } from "next";
 import { WorldMapScreen } from "@/src/ui/world/WorldMapScreen";
 
-export const metadata: Metadata = { title: "Your World — ChessHeroQuest" };
+export const metadata: Metadata = { title: "Your World — ChessHeroQuest", robots: { index: false } };
 
 export default function WorldPage() {
   return <WorldMapScreen />;
