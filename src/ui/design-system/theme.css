@@ -187,6 +187,115 @@
   animation: chq-seal-stamp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
+/* Chess-checker backdrop (subtle, like the home page) over the obsidian + ember. */
+.chq-checker {
+  background-image:
+    radial-gradient(1200px 600px at 50% -10%, rgba(217, 162, 39, 0.08), transparent 60%),
+    repeating-conic-gradient(rgba(255, 255, 255, 0.022) 0% 25%, transparent 0% 50%);
+  background-size:
+    auto,
+    72px 72px;
+  background-color: var(--chq-obsidian);
+}
+
+/* Home-style 3D gold CTA with a shine sweep (reduced-motion guard disables shine). */
+@keyframes chq-cta-shine {
+  0% {
+    transform: translateX(-160%) skewX(-20deg);
+  }
+  55%,
+  100% {
+    transform: translateX(260%) skewX(-20deg);
+  }
+}
+.chq-cta {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 50px;
+  padding: 0 26px;
+  border: 0;
+  border-radius: var(--chq-r-pill);
+  background: var(--chq-gold-gradient);
+  color: #08080a;
+  font-family: var(--chq-font-body);
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow:
+    0 4px 0 #8a5e12,
+    0 10px 24px rgba(217, 162, 39, 0.35);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+.chq-cta:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 0 #8a5e12,
+    0 14px 30px rgba(217, 162, 39, 0.45);
+}
+.chq-cta:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #8a5e12;
+}
+.chq-cta::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 38%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: translateX(-160%) skewX(-20deg);
+  animation: chq-cta-shine 3.6s ease-in-out infinite;
+  pointer-events: none;
+}
+/* Ghost CTA (secondary) — hairline, hero-accent on hover via inline border. */
+.chq-cta--ghost {
+  background: transparent;
+  color: var(--chq-text-1);
+  border: 1px solid var(--chq-line);
+  box-shadow: none;
+}
+.chq-cta--ghost:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
+}
+.chq-cta--ghost::after {
+  display: none;
+}
+
+/* Segmented toggle (Free/Premium · plan picker). */
+.chq-seg {
+  display: inline-flex;
+  padding: 4px;
+  gap: 4px;
+  border-radius: var(--chq-r-pill);
+  background: var(--chq-panel);
+  border: 1px solid var(--chq-line);
+}
+.chq-seg button {
+  min-height: 38px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--chq-r-pill);
+  background: transparent;
+  color: var(--chq-text-2);
+  font-family: var(--chq-font-body);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.chq-seg button[data-active="true"] {
+  background: var(--chq-gold-gradient);
+  color: #08080a;
+  font-weight: 700;
+}
+
 /* §7 Entrance — fade + rise 12px, staggered via --chq-d. */
 @keyframes chq-rise {
   from {
