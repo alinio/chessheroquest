@@ -83,7 +83,7 @@ export function SectionBackdrop({
       <div
         className="absolute inset-0"
         style={{
-          background: `linear-gradient(to bottom, rgba(15,16,21,0.8) 0%, rgba(15,16,21,0.4) 13%, rgba(15,16,21,${0.16 * dim}) 38%, rgba(15,16,21,${0.16 * dim}) 72%, rgba(15,16,21,0.45) 100%)`,
+          background: `linear-gradient(to bottom, rgba(15,16,21,0.95) 0%, rgba(15,16,21,0.78) 6%, rgba(15,16,21,0.5) 14%, rgba(15,16,21,0.28) 24%, rgba(15,16,21,${0.15 * dim}) 36%, rgba(15,16,21,${0.15 * dim}) 70%, rgba(15,16,21,0.45) 100%)`,
         }}
       />
     </div>
