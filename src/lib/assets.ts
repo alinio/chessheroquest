@@ -9,7 +9,6 @@
  */
 const BASE = "/assets";
 const O = `${BASE}/openings`;
-const R = `${BASE}/realms`;
 
 /** Gray stand-in shown until a real asset file is placed. */
 export const PLACEHOLDER = `${BASE}/_placeholder.svg`;
@@ -28,17 +27,18 @@ export const ASSETS = {
     appIcon: `${BASE}/brand/app-icon.png`,
   },
   archetypes: {
+    // Reusing the landing's canon archetype art + crests (no separate drop needed).
     portrait: {
-      warrior: `${BASE}/archetypes/warrior-portrait.png`,
-      strategist: `${BASE}/archetypes/strategist-portrait.png`,
-      defender: `${BASE}/archetypes/defender-portrait.png`,
-      trickster: `${BASE}/archetypes/trickster-portrait.png`,
+      warrior: "/landing/archetype-warrior.png",
+      strategist: "/landing/archetype-strategist.png",
+      defender: "/landing/archetype-defender.png",
+      trickster: "/landing/archetype-trickster.png",
     } as Record<Archetype, string>,
     sigil: {
-      warrior: `${BASE}/archetypes/sigil-warrior.png`,
-      strategist: `${BASE}/archetypes/sigil-strategist.png`,
-      defender: `${BASE}/archetypes/sigil-defender.png`,
-      trickster: `${BASE}/archetypes/sigil-trickster.png`,
+      warrior: "/landing/crest-warrior.png",
+      strategist: "/landing/crest-strategist.png",
+      defender: "/landing/crest-defender.png",
+      trickster: "/landing/crest-trickster.png",
     } as Record<Archetype, string>,
   },
   backgrounds: {
@@ -80,10 +80,11 @@ export const ASSETS = {
     stampLocked: `${BASE}/passport/stamp-locked.png`,
   },
   realms: {
-    "ember-marches": { boss: `${R}/ember-marches/boss.png` },
-    "obsidian-court": { boss: `${R}/obsidian-court/boss.png` },
-    "aegis-bastion": { boss: `${R}/aegis-bastion/boss.png` },
-    "mirage-bazaar": { boss: `${R}/mirage-bazaar/boss.png` },
+    // Reusing the landing's Guardian art for now (drop realms/<realm>/boss.png to override).
+    "ember-marches": { boss: "/landing/scene-guardian-poster.jpg" },
+    "obsidian-court": { boss: "/landing/scene-guardian-poster.jpg" },
+    "aegis-bastion": { boss: "/landing/scene-guardian-poster.jpg" },
+    "mirage-bazaar": { boss: "/landing/scene-guardian-poster.jpg" },
   } as Record<RealmId, { boss: string }>,
   // 20 openings (5 per realm). Sicilian Dragon's art lives in the `sicilian` folder.
   openings: {
