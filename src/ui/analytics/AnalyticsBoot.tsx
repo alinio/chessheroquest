@@ -35,7 +35,7 @@ export function AnalyticsBoot() {
   return (
     <div role="dialog" aria-label="Analytics consent" style={{ position: "fixed", bottom: 12, left: 12, right: 12, zIndex: 60, maxWidth: 520, margin: "0 auto", background: "var(--chq-panel)", border: "1px solid var(--chq-gold-4)", borderRadius: "var(--chq-r-panel)", padding: "14px 16px", boxShadow: "0 10px 30px rgba(0,0,0,.5)" }}>
       <p style={{ color: "var(--chq-text-2)", fontSize: 13, lineHeight: 1.5, margin: 0 }}>
-        We use privacy-friendly analytics (PostHog, EU) to improve ChessHeroQuest. No ads, no selling data. You can opt out anytime.
+        We use privacy-friendly analytics &amp; error monitoring (EU) to improve ChessHeroQuest. No ads, no selling data. You can opt out anytime.
       </p>
       <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: 12 }}>
         <button type="button" onClick={() => decide("denied")} style={{ background: "transparent", border: "1px solid var(--chq-line)", color: "var(--chq-text-2)", borderRadius: "var(--chq-r-pill)", padding: "8px 16px", fontSize: 13, cursor: "pointer" }}>Decline</button>

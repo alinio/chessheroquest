@@ -1,70 +1,45 @@
 "use client";
 
 /**
- * Provider-agnostic analytics adapter. Default = PostHog (EU host) loaded lazily
- * ONLY when consent is granted AND an env key is present; otherwise a no-op.
- * Swap providers by reimplementing this file — no call site references PostHog.
+ * Provider-agnostic analytics adapter. Current provider = Sentry.
+ * Sentry is an error/perf monitor, not a product-analytics funnel — so funnel
+ * events are recorded as Sentry BREADCRUMBS (they enrich error context). The real
+ * funnel lives in the first-party /api/app-track sink (events.ts). Swap providers
+ * by reimplementing this file; no call site references Sentry directly.
  *
- * ENV (never hardcoded):
- *   NEXT_PUBLIC_POSTHOG_KEY   — project key (EU project)
- *   NEXT_PUBLIC_POSTHOG_HOST  — defaults to https://eu.i.posthog.com
- * TODO: set NEXT_PUBLIC_POSTHOG_KEY (EU) — analytics is a no-op until then.
+ * ENV (never hardcoded): NEXT_PUBLIC_SENTRY_DSN (EU project) — no-op until set.
+ * Error monitoring itself initialises in the sentry.*.config files (legitimate
+ * interest, no PII); THIS layer (funnel breadcrumbs + identify) is consent-gated.
  */
-import type { PostHog } from "posthog-js";
-import { getConsent, getAnonId } from "./consent";
+import * as Sentry from "@sentry/nextjs";
+import { getConsent } from "./consent";
 
 export type AnalyticsProps = Record<string, string | number | boolean | undefined>;
 
-const KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY;
-const HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://eu.i.posthog.com";
+const DSN = process.env.NEXT_PUBLIC_SENTRY_DSN;
 
-let ph: PostHog | null = null;
-let loading: Promise<void> | null = null;
-
-/** True only when a key is configured AND the user has granted consent. */
+/** True only when a DSN is configured AND the user has granted consent. */
 export function analyticsEnabled(): boolean {
-  return Boolean(KEY) && getConsent() === "granted";
-}
-
-async function ensure(): Promise<void> {
-  if (!analyticsEnabled() || ph) return;
-  if (!loading) {
-    loading = import("posthog-js").then((m) => {
-      ph = m.default;
-      ph.init(KEY as string, {
-        api_host: HOST,
-        person_profiles: "identified_only", // no profile until identify() — privacy-first
-        capture_pageview: false,
-        autocapture: false,
-        bootstrap: { distinctID: getAnonId() },
-      });
-    });
-  }
-  await loading;
+  return Boolean(DSN) && getConsent() === "granted";
 }
 
 export async function providerCapture(event: string, props?: AnalyticsProps): Promise<void> {
   if (!analyticsEnabled()) return;
-  await ensure();
-  ph?.capture(event, props);
+  Sentry.addBreadcrumb({ category: "funnel", message: event, level: "info", data: props });
 }
 
 export async function providerIdentify(id: string, props?: AnalyticsProps): Promise<void> {
   if (!analyticsEnabled()) return;
-  await ensure();
-  ph?.identify(id, props);
+  Sentry.setUser({ id, ...(props ?? {}) });
 }
 
-/** Warm the provider after consent is granted (so the first event isn't delayed). */
-export function providerWarm(): void {
-  void ensure();
-}
+/** Nothing to warm — Sentry initialises via instrumentation. */
+export function providerWarm(): void {}
 
-/** Stop capturing + drop the identity (consent withdrawn). */
+/** Consent withdrawn — drop the identity. */
 export function providerOptOut(): void {
   try {
-    ph?.opt_out_capturing();
-    ph?.reset();
+    Sentry.setUser(null);
   } catch {
     /* never throw from analytics */
   }
