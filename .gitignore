@@ -46,3 +46,5 @@ next-env.d.ts
 
 # corrupt .git backup (failing-disk objects) — do not track
 .git-corrupt-bak/
+
+.DS_Store

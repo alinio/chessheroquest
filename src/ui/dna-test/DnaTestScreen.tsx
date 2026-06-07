@@ -11,6 +11,7 @@ import { Button } from "@/src/ui/design-system/Button";
 import { TestBoard } from "@/src/ui/design-system/TestBoard";
 import { MoveExplorerList, type ExplorerRow } from "@/src/ui/world/MoveExplorerList";
 import { BRAND_LOGO } from "@/src/ui/design-system/art";
+import { ASSETS } from "@/src/lib/assets";
 import { HERO_ACCENTS, type HeroKey } from "@/src/ui/design-system/tokens";
 import { DNA_TEST_BANK, TEST_LENGTH } from "@/src/domain/dna-test/bank";
 import type { TestPosition } from "@/src/domain/dna-test/types";
@@ -48,20 +49,15 @@ function formatLine(sans: readonly string[]): string {
 }
 
 function TestShell({ children }: { children: ReactNode }) {
-  const reduced = useReducedMotion();
   return (
     <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", position: "relative" }}>
       <GradientDefs />
       <AnalyticsBoot />
       {/* Home hero video backdrop — faint; reduced-motion shows the poster only. */}
-      <div aria-hidden="true" style={{ position: "fixed", inset: 0, zIndex: 0, overflow: "hidden" }}>
-        {reduced ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src="/landing/hero-desktop-poster.png" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.5 }} />
-        ) : (
-          <video src="/landing/hero-desktop.mp4" poster="/landing/hero-desktop-poster.png" autoPlay muted loop playsInline preload="auto" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.5 }} />
-        )}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,10,.55), rgba(8,8,10,.72) 55%, rgba(8,8,10,.82))" }} />
+      <div aria-hidden="true" style={{ position: "fixed", inset: 0, zIndex: 0 }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={ASSETS.backgrounds.dnaTest} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,10,.5), rgba(8,8,10,.72) 55%, rgba(8,8,10,.82))" }} />
       </div>
       <header style={{ position: "relative", zIndex: 1, minHeight: 100, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: "12px 20px", borderBottom: "1px solid var(--chq-line)" }}>
         <Image src={BRAND_LOGO} alt="ChessHeroQuest" width={1478} height={418} priority style={{ height: 72, width: "auto" }} />

@@ -5,7 +5,13 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
-import { GradientDefs, LogoMark, MapNode, Medal, type NodeState } from "@/src/ui/design-system/icons";
+import { GradientDefs, LogoMark, Medal, type NodeState } from "@/src/ui/design-system/icons";
+import { getNodeArt, ASSETS, type NodeState as MedallionState } from "@/src/lib/assets";
+
+/** Map the world node state → the painted medallion state. */
+function medallion(st: NodeState): MedallionState {
+  return st === "conquered" ? "completed" : st === "locked" ? "locked" : "active";
+}
 import { Button } from "@/src/ui/design-system/Button";
 import { HERO_ACCENTS } from "@/src/ui/design-system/tokens";
 import { BRAND_LOGO, WORLD_MAP, KINGDOM_TILE, CREST_ART } from "@/src/ui/design-system/art";
@@ -88,6 +94,13 @@ export function WorldMapScreen() {
       <GradientDefs />
       <AccountBoot />
 
+      {/* Full-bleed Quest Map backdrop (path + node medallions render over it). */}
+      <div aria-hidden="true" style={{ position: "fixed", inset: 0, zIndex: 0 }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={ASSETS.backgrounds.questMap} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,10,.5), rgba(8,8,10,.8))" }} />
+      </div>
+
       <header style={{ position: "fixed", top: 0, left: 0, right: 0, height: 56, zIndex: 20, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", background: "linear-gradient(180deg, rgba(8,8,10,.92), transparent)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <Image src={BRAND_LOGO} alt="ChessHeroQuest" width={1478} height={418} priority style={{ height: 26, width: "auto" }} />
@@ -106,12 +119,8 @@ export function WorldMapScreen() {
       )}
 
       {/* Framed, scrollable portrait map (vignette blends edges into obsidian). */}
-      <div style={{ position: "relative", width: "100%", maxWidth: MAP_W, margin: "0 auto", padding: "72px 0 132px" }}>
-        <div style={{ position: "relative", width: "100%" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={WORLD_MAP[archetype]} alt={`${world.name} map`} style={{ width: "100%", display: "block", borderRadius: 16 }} />
-          <div aria-hidden="true" style={{ position: "absolute", inset: 0, borderRadius: 16, boxShadow: "inset 0 0 90px 30px #08080A", pointerEvents: "none" }} />
-
+      <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: MAP_W, margin: "0 auto", padding: "72px 0 132px" }}>
+        <div style={{ position: "relative", width: "100%", height: "min(74vh, 620px)" }}>
           {/* connecting path */}
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
             {openings.map((o, i) => {
@@ -133,7 +142,8 @@ export function WorldMapScreen() {
                 aria-label={`${o.name} — ${st}`}
                 style={{ position: "absolute", left: `${o.pos.x}%`, top: `${o.pos.y}%`, transform: "translate(-50%,-50%)", background: "transparent", border: 0, padding: 0, cursor: st === "locked" ? "default" : "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}
               >
-                <MapNode state={st} size={isStart ? 76 : 60} progress={progressFor(progress, o.id).drillAccuracy} />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={getNodeArt(medallion(st))} alt="" width={isStart ? 78 : 62} height={isStart ? 78 : 62} className={isStart ? "chq-pulse" : undefined} style={{ display: "block", filter: st === "locked" ? "saturate(.55) brightness(.85)" : undefined }} />
                 <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".02em", color: isStart ? "var(--chq-gold-1)" : st === "locked" ? "var(--chq-text-muted)" : "var(--chq-text-1)", background: "rgba(8,8,10,.85)", border: `1px solid ${isStart ? accent.border : "var(--chq-line)"}`, borderRadius: 999, padding: "2px 8px", whiteSpace: "nowrap" }}>
                   {isStart ? `▶ ${o.name}` : o.name}
                 </span>
@@ -148,7 +158,8 @@ export function WorldMapScreen() {
             aria-label="Kingdom Boss"
             style={{ position: "absolute", left: `${bossPos.x}%`, top: `${bossPos.y}%`, transform: "translate(-50%,-50%)", background: "transparent", border: 0, cursor: allConquered ? "pointer" : "default", display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}
           >
-            <MapNode state={allConquered ? "available" : "locked"} size={88} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={getNodeArt("boss")} alt="" width={108} height={108} style={{ display: "block", opacity: allConquered ? 1 : 0.6, filter: allConquered ? undefined : "grayscale(.4)" }} />
             <span style={{ ...eyebrow, fontSize: 9, color: accent.base, background: "rgba(8,8,10,.85)", border: "1px solid var(--chq-line)", borderRadius: 999, padding: "2px 8px" }}>Kingdom Boss</span>
           </button>
         </div>

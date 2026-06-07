@@ -14,7 +14,8 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "dna:bank": "node scripts/build-dna-bank.mjs",
-    "postinstall": "node scripts/copy-stockfish.mjs"
+    "postinstall": "node scripts/copy-stockfish.mjs",
+    "assets:optimize": "node scripts/optimize-assets.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",

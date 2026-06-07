@@ -54,16 +54,33 @@
   /* §1.2 Fonts — Cinzel is already global (--font-cinzel); Inter via wrapper. */
   --chq-font-display: var(--font-cinzel), serif;
   --chq-font-body: var(--font-inter), system-ui, sans-serif;
+
+  /* Surface textures (visual-assets.md) — global obsidian base + parchment for Learn/Passport. */
+  --surface-texture: url("/assets/textures/obsidian.webp");
+  --surface-parchment: url("/assets/textures/parchment.webp");
 }
 
 /* Obsidian surface for design-system screens (radial gold ambiance + base). */
 .chq-root {
   background:
     radial-gradient(1200px 600px at 50% -10%, rgba(217, 162, 39, 0.06), transparent 60%),
+    var(--surface-texture),
     var(--chq-obsidian);
+  background-repeat: no-repeat, repeat, no-repeat;
+  background-size:
+    auto,
+    480px 480px,
+    auto;
   color: var(--chq-text-1);
   font-family: var(--chq-font-body);
   -webkit-font-smoothing: antialiased;
+}
+
+/* Parchment surface for Learn / Passport (visual-assets.md). */
+.chq-parchment {
+  background-image: var(--surface-parchment);
+  background-size: 460px 460px;
+  background-repeat: repeat;
 }
 
 /* §1.2 Display type — Cinzel, all-caps tracking. */
