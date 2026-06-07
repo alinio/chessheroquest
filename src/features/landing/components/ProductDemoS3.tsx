@@ -72,6 +72,9 @@ export function ProductDemoS3() {
   const [stage, setStage] = useState(0); // 0 TEST · 1 SCORE · 2 DNA · 3 ROAD
   const [testStep, setTestStep] = useState(0); // 0 idle · 1 select · 2 confirm · 3 advance
 
+  // Toggle inView (don't latch) so the clip restarts each time it re-enters view
+  // — the visitor reliably catches the animation from the top, not the held end
+  // frame. A higher threshold starts it once the card is properly on screen.
   useEffect(() => {
     const el = ref.current;
     if (!el || typeof IntersectionObserver === "undefined") {
@@ -79,13 +82,8 @@ export function ProductDemoS3() {
       return;
     }
     const io = new IntersectionObserver(
-      ([e]) => {
-        if (e?.isIntersecting) {
-          setInView(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.3 },
+      ([e]) => setInView(!!e?.isIntersecting),
+      { threshold: 0.55 },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -274,8 +272,10 @@ export function ProductDemoS3() {
           <button
             type="button"
             onClick={() => setRunId((r) => r + 1)}
-            className={`text-[0.62rem] font-semibold uppercase tracking-wide text-text-low transition-opacity duration-300 hover:text-gold ${
-              stage === 3 && !reduce ? "opacity-100" : "pointer-events-none opacity-0"
+            className={`inline-flex items-center gap-1 rounded-chip border border-gold/45 bg-gold/10 px-2.5 py-1 text-[0.6rem] font-semibold uppercase tracking-wide text-gold transition-all duration-300 hover:bg-gold/20 ${
+              stage === 3 && !reduce
+                ? "opacity-100"
+                : "pointer-events-none opacity-0"
             }`}
             aria-label="Replay the demo"
           >

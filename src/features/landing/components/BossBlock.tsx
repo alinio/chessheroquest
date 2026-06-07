@@ -57,27 +57,80 @@ export function BossBlock() {
         </div>
       </Panel>
 
-      {/* ---- LAYER 2 · realm selector ---- */}
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-        {REALMS.map((r, i) => {
-          const active = i === idx;
-          return (
-            <button
-              key={r.key}
-              type="button"
-              onClick={() => setIdx(i)}
-              aria-pressed={active}
-              className="rounded-chip border px-3 py-1.5 text-[0.62rem] font-semibold uppercase tracking-wide transition-colors duration-200"
-              style={{
-                borderColor: active ? r.accent : "var(--color-hairline)",
-                color: active ? "#0F1015" : r.accent,
-                backgroundColor: active ? r.accent : "transparent",
-              }}
-            >
-              {r.name}
-            </button>
-          );
-        })}
+      {/* ---- LAYER 2 · realm selector (boss thumbnails — clearly tappable) ---- */}
+      <div className="mt-7 w-full">
+        <p className="mb-3 text-center text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-text-low">
+          Pick a realm to face its Kingdom Boss
+        </p>
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
+          {REALMS.map((r, i) => {
+            const active = i === idx;
+            return (
+              <button
+                key={r.key}
+                type="button"
+                onClick={() => setIdx(i)}
+                aria-pressed={active}
+                className="group relative overflow-hidden rounded-card border transition-all duration-200 hover:-translate-y-0.5"
+                style={{
+                  borderColor: active ? r.accent : "var(--color-hairline)",
+                  boxShadow: active
+                    ? `0 0 0 1px ${r.accent}, 0 12px 30px -12px ${r.accent}`
+                    : undefined,
+                }}
+              >
+                <div className="relative aspect-[16/10]">
+                  <Image
+                    src={r.boss.poster}
+                    alt={r.boss.name}
+                    fill
+                    sizes="(max-width: 640px) 50vw, 240px"
+                    className={`object-cover transition duration-300 ${
+                      active
+                        ? "saturate-100"
+                        : "opacity-55 saturate-[0.55] group-hover:opacity-90"
+                    }`}
+                  />
+                  <div
+                    aria-hidden
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        "linear-gradient(to top, rgba(8,9,14,0.94), transparent 68%)",
+                    }}
+                  />
+                  <div className="absolute inset-x-0 bottom-0 p-2 text-left">
+                    <span
+                      className="block text-[0.5rem] font-semibold uppercase tracking-wide"
+                      style={{ color: r.accent }}
+                    >
+                      {r.name}
+                    </span>
+                    <span className="block text-[0.66rem] font-bold leading-tight text-text-hi">
+                      {r.boss.name.split(",")[0]}
+                    </span>
+                  </div>
+                  <span
+                    className="absolute right-2 top-2 text-[0.5rem] font-semibold uppercase tracking-wide opacity-0 transition-opacity group-hover:opacity-100"
+                    style={{ color: r.accent }}
+                  >
+                    {active ? "" : "View"}
+                  </span>
+                  {active && (
+                    <span
+                      aria-hidden
+                      className="absolute right-2 top-2 h-2 w-2 rounded-full"
+                      style={{
+                        backgroundColor: r.accent,
+                        boxShadow: `0 0 8px ${r.accent}`,
+                      }}
+                    />
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* ---- LAYER 3 · boss dossier (swaps with the realm) ---- */}
@@ -87,20 +140,22 @@ export function BossBlock() {
         className="mt-6 w-full"
         innerClassName="p-1.5"
       >
-        <div className="grid overflow-hidden rounded-[12px] md:grid-cols-2">
-          {/* boss cinematic */}
-          <div className="relative aspect-video md:aspect-auto md:min-h-full">
-            <BossCinematic key={realm.key} realm={realm} />
-            <span
-              className="absolute left-3 top-3 rounded-chip border px-2 py-0.5 text-[0.55rem] font-semibold uppercase tracking-wide backdrop-blur-sm"
-              style={{
-                color: accent,
-                borderColor: `${accent}88`,
-                backgroundColor: "rgba(8,9,14,0.6)",
-              }}
-            >
-              Kingdom Boss
-            </span>
+        <div className="grid overflow-hidden rounded-[12px] md:grid-cols-2 md:items-center">
+          {/* boss cinematic — fixed 16:9 so every boss video is the same size */}
+          <div className="bg-abyss/40 p-3">
+            <div className="relative aspect-video w-full overflow-hidden rounded-md">
+              <BossCinematic key={realm.key} realm={realm} />
+              <span
+                className="absolute left-2.5 top-2.5 rounded-chip border px-2 py-0.5 text-[0.55rem] font-semibold uppercase tracking-wide backdrop-blur-sm"
+                style={{
+                  color: accent,
+                  borderColor: `${accent}88`,
+                  backgroundColor: "rgba(8,9,14,0.6)",
+                }}
+              >
+                Kingdom Boss
+              </span>
+            </div>
           </div>
 
           {/* dossier: name plate + gauntlet */}

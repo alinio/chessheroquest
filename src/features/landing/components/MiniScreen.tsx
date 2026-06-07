@@ -26,7 +26,7 @@ const ITALIAN: MiniPosition = {
     "PPPP.PPP",
     "RNBQK..R",
   ],
-  highlight: [4, 2],
+  highlight: [3, 2], // c5 — the answer square (…Bc5)
 };
 
 /** Shared screen frame — identical across all three mockups. */
@@ -51,8 +51,8 @@ function TestScreen() {
         Best move?
       </p>
       <div className="mt-1.5 grid grid-cols-2 gap-2">
-        <span className="rounded-chip border border-gold/40 bg-gold/10 py-1 text-center text-[0.68rem] font-semibold text-gold">
-          Bc5
+        <span className="inline-flex items-center justify-center gap-1 rounded-chip border border-gold bg-gold/15 py-1 text-center text-[0.68rem] font-semibold text-gold shadow-[0_0_14px_-4px_rgba(227,178,60,0.8)]">
+          Bc5 <span aria-hidden>✓</span>
         </span>
         <span className="rounded-chip border border-hairline py-1 text-center text-[0.68rem] text-text-mid">
           Nf6

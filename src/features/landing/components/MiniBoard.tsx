@@ -4,13 +4,15 @@
  * clean per THE BOARD RULE (DESIGN.md): parchment/stone squares, classic glyphs,
  * a gold highlight on the "answer" square. Illustrative only — no evaluation.
  */
+// Solid (filled) glyphs for BOTH sides — the hollow white outline glyphs (♔♕…)
+// render thin/muddy at small sizes; colour distinguishes the side instead.
 const GLYPH: Record<string, string> = {
-  K: "♔",
-  Q: "♕",
-  R: "♖",
-  B: "♗",
-  N: "♘",
-  P: "♙",
+  K: "♚",
+  Q: "♛",
+  R: "♜",
+  B: "♝",
+  N: "♞",
+  P: "♟",
   k: "♚",
   q: "♛",
   r: "♜",
@@ -59,12 +61,15 @@ export function MiniBoard({
                   : dark
                     ? "var(--color-sq-dark)"
                     : "var(--color-sq-light)",
-                fontSize: size / 9,
+                fontSize: size / 8.4,
                 lineHeight: 1,
-                color: white ? "#fbfbf7" : "#15140f",
+                color: white ? "#F6F2E6" : "#1A1712",
+                WebkitTextStroke: white
+                  ? "0.5px rgba(20,16,12,0.5)"
+                  : "0.4px rgba(255,255,255,0.18)",
                 textShadow: white
-                  ? "0 1px 1px rgba(0,0,0,0.45)"
-                  : "0 1px 0 rgba(255,255,255,0.25)",
+                  ? "0 1px 2px rgba(0,0,0,0.5)"
+                  : "0 1px 1px rgba(255,255,255,0.18)",
               }}
             >
               {GLYPH[ch] ?? ""}
