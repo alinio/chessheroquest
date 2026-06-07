@@ -10,6 +10,8 @@ import { HERO_ACCENTS, type HeroKey } from "@/src/ui/design-system/tokens";
 import { useEntitlement } from "@/src/ui/entitlement/useEntitlement";
 import { fetchAccount, syncEntitlement } from "@/src/ui/account/useAccount";
 import { track } from "@/src/lib/track";
+import { track as atrack } from "@/src/analytics/events";
+import { AnalyticsBoot } from "@/src/ui/analytics/AnalyticsBoot";
 import { SaveProgress } from "@/src/ui/account/SaveProgress";
 import { openCheckout, paddleConfigured, type ProPlan } from "./paddle";
 
@@ -37,6 +39,7 @@ function Shell({ children }: { children: ReactNode }) {
   return (
     <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh", position: "relative", display: "flex", flexDirection: "column" }}>
       <GradientDefs />
+      <AnalyticsBoot />
       {/* scene-throne backdrop missing → coded fallback. TODO: public/art/scene-throne.webp */}
       <div aria-hidden="true" style={{ position: "fixed", inset: 0, zIndex: 0, background: "radial-gradient(900px 500px at 50% -5%, rgba(217,162,39,.10), transparent 60%), #08080A" }} />
       <header style={{ position: "relative", zIndex: 1, height: 56, display: "flex", alignItems: "center", gap: 8, padding: "0 20px" }}>
@@ -56,6 +59,11 @@ export function PaywallScreen() {
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    const source = (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("source")) || "direct";
+    atrack("paywall_view", { source });
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
