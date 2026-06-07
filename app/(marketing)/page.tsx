@@ -8,39 +8,38 @@
  */
 import type { Metadata } from "next";
 import { LandingPage } from "@/src/features/landing/LandingPage";
-import { LANDING_ASSETS } from "@/src/features/landing/assets";
+import { SITE } from "@/src/lib/site";
 import {
   resolveHeadlineVariant,
   firstParam,
 } from "@/src/features/landing/variants";
 
-const TITLE = "ChessHeroQuest — What's Your Chess DNA?";
-const DESCRIPTION =
-  "Take the free 2-minute Chess DNA Test to reveal your Opening IQ, your chess style, and the opening weaknesses holding back your rating. The RPG of chess openings.";
-
-// Canonical/OG must resolve to the public domain — NOT the env URL (prod
-// NEXT_PUBLIC_APP_URL is localhost) and NOT the Vercel preview URL.
-const SITE_URL = "https://chessheroquest.com";
+const TITLE = SITE.title;
+const DESCRIPTION = SITE.description;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(SITE.url),
   title: TITLE,
   description: DESCRIPTION,
-  alternates: { canonical: "/" },
+  keywords: [...SITE.keywords],
+  alternates: {
+    canonical: "/",
+    languages: { "en-US": "/", "x-default": "/" },
+  },
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
     type: "website",
-    siteName: "ChessHeroQuest",
-    images: [
-      { url: LANDING_ASSETS.ogImage, width: 1600, height: 900, alt: TITLE },
-    ],
+    siteName: SITE.name,
+    url: SITE.url,
+    locale: SITE.locale,
+    images: [{ url: SITE.ogImage, width: 1200, height: 630, alt: TITLE }],
   },
   twitter: {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
-    images: [LANDING_ASSETS.ogImage],
+    images: [SITE.ogImage],
   },
 };
 

@@ -8,6 +8,7 @@ import { HowItWorks } from "./sections/HowItWorks";
 import { Kingdoms } from "./sections/Kingdoms";
 import { FinalCTA } from "./sections/FinalCTA";
 import { Footer } from "./sections/Footer";
+import { JsonLd } from "./components/JsonLd";
 import { HEADLINES, type HeadlineVariant } from "./variants";
 
 /**
@@ -24,6 +25,7 @@ export function LandingPage({ variant }: { variant: HeadlineVariant }) {
 
   return (
     <>
+      <JsonLd />
       <LandingAnalytics variant={variant} />
       <BackdropAtmosphere />
       <StickyCTA />

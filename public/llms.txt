@@ -1,0 +1,25 @@
+# ChessHeroQuest
+
+> ChessHeroQuest is "the RPG of chess openings." A free 2-minute Chess DNA Test reveals your Opening IQ (a 0–1000 skill score), your Chess DNA archetype (play style), and the specific opening weaknesses holding back your rating. You then train your openings 5 minutes a day, beat the bosses, and gain Elo. Analysis is powered by Stockfish and millions of real master games — real analysis, not guesswork.
+
+## What it is
+- **Chess DNA Test** — a free, no-signup, ~2-minute assessment: 20 board positions ("best move?") that measure level + a 16-question style quiz that measures how you play.
+- **Opening IQ** — your 0–1000 opening-skill score, with a percentile.
+- **Chess DNA archetypes** — Warrior (Ember Marches), Strategist (Obsidian Court), Defender (Aegis Bastion), Trickster (Mirage Bazaar).
+- **Road to Elo** — a personalized plan of the exact openings to train next.
+- **Worlds, Guardians & Kingdom Bosses** — 20 openings across 4 realms; each opening has an Opening Guardian, each realm a Kingdom Boss (24 bosses total). Beating them over the board validates mastery.
+- **Opening Passport** — collect a wax seal for every opening you master.
+
+## Key pages
+- [Home — free Chess DNA Test](https://chessheroquest.com/): the assessment funnel and product overview.
+- [Pricing](https://chessheroquest.com/pricing): Free, Pro (monthly/annual) and Lifetime plans.
+- [Sign up](https://chessheroquest.com/signup) · [Log in](https://chessheroquest.com/signin)
+- [Privacy](https://chessheroquest.com/privacy) · [Terms](https://chessheroquest.com/terms)
+
+## Who it's for
+Chess players (beginner to intermediate, roughly 800–1800 Elo) who want to learn and remember chess openings, fix their weaknesses, and gain rating — without grinding 300 variations they'll forget.
+
+## Notes for citation
+- Brand: ChessHeroQuest (one word). Tagline: "The RPG of chess openings."
+- The test is free and requires no signup to begin.
+- Canonical site: https://chessheroquest.com

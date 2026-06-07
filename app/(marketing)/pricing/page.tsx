@@ -2,9 +2,23 @@
  * /pricing — the plans (master-vision §21). Public; if signed in, the checkout
  * carries the user id so the webhook can reconcile the purchase.
  */
+import type { Metadata } from "next";
 import { auth } from "@/src/lib/auth";
 import { PLANS } from "@/src/lib/plans";
 import { CheckoutButton } from "@/src/ui/billing/CheckoutButton";
+
+export const metadata: Metadata = {
+  title: "Pricing",
+  description:
+    "ChessHeroQuest plans — start free, or go Pro (monthly, annual or lifetime) for unlimited opening training, full Road to Elo, and every realm.",
+  alternates: { canonical: "/pricing" },
+  openGraph: {
+    title: "Pricing — ChessHeroQuest",
+    description:
+      "Start free, or go Pro for unlimited opening training and your full Road to Elo.",
+    url: "https://chessheroquest.com/pricing",
+  },
+};
 
 export default async function PricingPage() {
   const session = await auth();
