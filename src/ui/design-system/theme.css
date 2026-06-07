@@ -214,33 +214,38 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  min-height: 50px;
-  padding: 0 26px;
-  border: 0;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 24px;
+  border: 1px solid var(--chq-gold-4);
   border-radius: var(--chq-r-pill);
   background: var(--chq-gold-gradient);
-  color: #08080a;
+  color: #1a1206;
   font-family: var(--chq-font-body);
   font-weight: 700;
   font-size: 15px;
+  letter-spacing: 0.01em;
   cursor: pointer;
   box-shadow:
-    0 4px 0 #8a5e12,
-    0 10px 24px rgba(217, 162, 39, 0.35);
+    0 6px 18px rgba(217, 162, 39, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
   transition:
     transform 0.12s ease,
-    box-shadow 0.12s ease;
+    box-shadow 0.12s ease,
+    filter 0.12s ease;
 }
 .chq-cta:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+  filter: brightness(1.04);
   box-shadow:
-    0 6px 0 #8a5e12,
-    0 14px 30px rgba(217, 162, 39, 0.45);
+    0 10px 26px rgba(217, 162, 39, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 .chq-cta:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 #8a5e12;
+  transform: translateY(0);
+  box-shadow:
+    0 4px 12px rgba(217, 162, 39, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 .chq-cta::after {
   content: "";
@@ -280,7 +285,7 @@
 .chq-seg button {
   min-height: 38px;
   padding: 0 18px;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: var(--chq-r-pill);
   background: transparent;
   color: var(--chq-text-2);
@@ -288,12 +293,50 @@
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 .chq-seg button[data-active="true"] {
-  background: var(--chq-gold-gradient);
-  color: #08080a;
+  background: var(--chq-raised);
+  color: var(--chq-gold-2);
+  border-color: var(--chq-gold-4);
   font-weight: 700;
+}
+
+/* Auto-sliding testimonial carousel (reduced-motion → static, scrollable). */
+@keyframes chq-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.chq-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.chq-marquee-track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  animation: chq-marquee 60s linear infinite;
+}
+.chq-marquee:hover .chq-marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .chq-marquee {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .chq-marquee-track {
+    animation: none;
+  }
 }
 
 /* §7 Entrance — fade + rise 12px, staggered via --chq-d. */

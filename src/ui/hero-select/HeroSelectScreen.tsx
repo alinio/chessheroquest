@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
-import { GradientDefs, LockIcon } from "@/src/ui/design-system/icons";
+import { GradientDefs, LockIcon, Medal } from "@/src/ui/design-system/icons";
 import { OrnateFrame } from "@/src/ui/design-system/OrnateFrame";
 import { HERO_ACCENTS } from "@/src/ui/design-system/tokens";
 import { BRAND_LOGO, HERO_ART, CREST_ART } from "@/src/ui/design-system/art";
@@ -58,6 +58,31 @@ function Shell({ children }: { children: ReactNode }) {
   );
 }
 
+/* The payoff — what mastering the game looks like (illustrative target). */
+function PromiseVisual() {
+  return (
+    <div style={{ marginTop: 18, position: "relative", overflow: "hidden", borderRadius: "var(--chq-r-card)", border: "1px solid var(--chq-gold-4)", background: "var(--chq-raised)", padding: "18px 20px" }}>
+      <Image src="/landing/passport-tome.png" alt="" fill sizes="700px" style={{ objectFit: "cover", opacity: 0.1 }} />
+      <div style={{ position: "relative" }}>
+        <p style={{ ...eyebrow, color: "var(--chq-gold-3)", fontSize: 10, textAlign: "center" }}>The payoff</p>
+        <div style={{ display: "flex", gap: 5, justifyContent: "center", flexWrap: "wrap", margin: "12px 0" }}>
+          {Array.from({ length: 20 }).map((_, i) => (
+            <span key={i} className="chq-pulse" style={{ width: 14, height: 14, borderRadius: "50%", background: "var(--chq-gold-gradient)", boxShadow: "0 0 6px rgba(217,162,39,.5)", animationDelay: `${i * 70}ms` }} />
+          ))}
+        </div>
+        <p className="chq-display chq-gold-text" style={{ fontSize: 18, fontWeight: 700, textAlign: "center", margin: 0 }}>Opening Passport — 20 / 20 sealed</p>
+        <div style={{ display: "flex", gap: 16, justifyContent: "center", alignItems: "center", marginTop: 12, flexWrap: "wrap" }}>
+          <Medal tier="gold" size={38} />
+          <span style={{ color: "var(--chq-text-1)", fontSize: 13.5 }}>Opening IQ <b style={{ color: "var(--chq-gold-2)" }}>900+</b></span>
+          <span style={{ color: "var(--chq-text-1)", fontSize: 13.5 }}>Win rate <b style={{ color: "#2FB67A" }}>↑↑</b></span>
+          <span style={{ color: "var(--chq-text-1)", fontSize: 13.5 }}>ELO <b style={{ color: "var(--chq-gold-2)" }}>climbing</b></span>
+        </div>
+        <p style={{ color: "var(--chq-text-muted)", fontSize: 11.5, textAlign: "center", marginTop: 12 }}>This is where the quest leads — every seal a mastered opening, ready for any opponent.</p>
+      </div>
+    </div>
+  );
+}
+
 /* Commercial value-prop box above the hero chooser. */
 function BenefitsBox({ tier, plan, setTier, setPlan, onGoPremium }: { tier: Tier; plan: PlanKey; setTier: (t: Tier) => void; setPlan: (p: PlanKey) => void; onGoPremium: () => void }) {
   const premium = tier === "premium";
@@ -91,6 +116,7 @@ function BenefitsBox({ tier, plan, setTier, setPlan, onGoPremium }: { tier: Tier
 
           {premium && (
             <>
+              <PromiseVisual />
               <div style={{ display: "flex", justifyContent: "center", marginTop: 16, flexWrap: "wrap", gap: 8 }}>
                 <div className="chq-seg" role="tablist" aria-label="Billing plan">
                   {(Object.keys(PLANS) as PlanKey[]).map((k) => (
@@ -124,7 +150,7 @@ function HeroCard({ archetype, recommended, matchPercent, tier, onEnter, onGoPre
   const totalVar = world.openings.reduce((s, o) => s + o.variations, 0);
 
   return (
-    <OrnateFrame variant="hero" hero={archetype} corners={false} style={{ width: 300, flexShrink: 0, scrollSnapAlign: "center", display: "flex" }}>
+    <OrnateFrame variant="hero" hero={archetype} corners={false} style={{ width: 300, flexShrink: 0, scrollSnapAlign: "center" }}>
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <div style={{ position: "relative", aspectRatio: "1 / 1", width: "100%", overflow: "hidden" }}>
           <Image src={HERO_ART[archetype]} alt={`The ${cleanLabel(archetype)}`} fill sizes="300px" style={{ objectFit: "cover" }} />
@@ -168,7 +194,7 @@ function HeroCard({ archetype, recommended, matchPercent, tier, onEnter, onGoPre
           )}
 
           {premium ? (
-            <button type="button" className="chq-cta" onClick={onGoPremium} style={{ marginTop: 12, width: "100%" }}>⚔ Master all openings →</button>
+            <button type="button" className="chq-cta" onClick={onGoPremium} style={{ marginTop: 12, width: "100%" }}>Master all openings →</button>
           ) : (
             <button type="button" className="chq-cta" onClick={onEnter} style={{ marginTop: 12, width: "100%" }}>Start your quest — free →</button>
           )}
@@ -180,16 +206,16 @@ function HeroCard({ archetype, recommended, matchPercent, tier, onEnter, onGoPre
 
 /* TODO: replace with real testimonials before public launch (illustrative for now). */
 const TESTIMONIALS = [
-  { name: "Maya R.", role: "Rapid 1480", seed: "Maya7", quote: "Went from blundering on move 6 to winning my openings. +180 rating in a month." },
-  { name: "Daniel K.", role: "Club player", seed: "Daniel3", quote: "The Guardian fights make theory actually stick — I finally know WHY, not just what." },
-  { name: "Priya S.", role: "Blitz 1620", seed: "Priya9", quote: "I'm a Defender main now. The Caro-Kann drills turned my worst opening into my best." },
-  { name: "Tom B.", role: "Beginner", seed: "TomB2", quote: "Chess DNA pegged me as a Trickster. The Scandinavian traps win me free games." },
-  { name: "Lena M.", role: "Rapid 1750", seed: "Lena5", quote: "Spaced repetition is the cheat code — my openings are on autopilot now." },
-  { name: "Carlos V.", role: "Hit 1500", seed: "Carlos8", quote: "Cracked 1500 for the first time. The Road-to-Elo picks were spot on." },
-  { name: "Aiko T.", role: "Blitz 1900", seed: "Aiko1", quote: "Lichess sync showed exactly where I leak rating. Fixed it in two weeks." },
-  { name: "Sam O.", role: "Casual", seed: "SamO4", quote: "More fun than grinding puzzles — the world map makes me come back daily." },
-  { name: "Grace W.", role: "New to chess", seed: "Grace6", quote: "I was terrified of openings. Now I have a plan from move one." },
-  { name: "Noah F.", role: "Rapid 1340", seed: "Noah0", quote: "Beat my brother for the first time in years. He asked what I was using. 😏" },
+  { name: "Maya R.", role: "Rapid · 1480", photo: "https://randomuser.me/api/portraits/women/68.jpg", quote: "I used to freeze the second my opponent left book. Now I actually have a plan — I went from blundering around move 6 to reaching middlegames I understand. +180 rating in a single month." },
+  { name: "Daniel K.", role: "Club player", photo: "https://randomuser.me/api/portraits/men/32.jpg", quote: "What finally clicked is the *why*. The Guardian boss fights force you to understand the ideas, not just memorise moves, so the theory holds up when a real game goes off-script." },
+  { name: "Priya S.", role: "Blitz · 1620", photo: "https://randomuser.me/api/portraits/women/44.jpg", quote: "The Caro-Kann was my worst opening for years. Two weeks of the spaced-repetition drills and it's now the one I'm most confident in. I'm a proud Defender main now." },
+  { name: "Tom B.", role: "Beginner", photo: "https://randomuser.me/api/portraits/men/75.jpg", quote: "As a total beginner I was terrified of openings. Chess DNA pegged me as a Trickster and handed me a Scandinavian full of traps — I win short games against people rated way above me." },
+  { name: "Lena M.", role: "Rapid · 1750", photo: "https://randomuser.me/api/portraits/women/65.jpg", quote: "Spaced repetition is the cheat code nobody talks about. My openings are basically on autopilot now, which frees up all my clock and brain for the actual fight." },
+  { name: "Carlos V.", role: "Hit 1500", photo: "https://randomuser.me/api/portraits/men/51.jpg", quote: "Cracked 1500 for the first time after months stuck. The Road-to-Elo picks told me exactly which lines to drill for my level instead of wasting time on stuff I'd never face." },
+  { name: "Aiko T.", role: "Blitz · 1900", photo: "https://randomuser.me/api/portraits/women/29.jpg", quote: "The Lichess sync was eye-opening — it showed the exact openings where I was hemorrhaging rating. I fixed two of them in a fortnight and the graph finally started climbing." },
+  { name: "Sam O.", role: "Casual", photo: "https://randomuser.me/api/portraits/men/12.jpg", quote: "Honestly more fun than grinding puzzles. The world map and boss fights give me a reason to come back every day, and I'm improving without it feeling like homework." },
+  { name: "Grace W.", role: "New to chess", photo: "https://randomuser.me/api/portraits/women/90.jpg", quote: "I genuinely didn't know what to play on move one. Now I have a clear plan for both colours and I don't panic anymore. It made chess feel approachable for the first time." },
+  { name: "Noah F.", role: "Rapid · 1340", photo: "https://randomuser.me/api/portraits/men/3.jpg", quote: "Beat my older brother for the first time in years — he played something dodgy and I punished it straight from a line I'd drilled. He asked what I'd been using. 😏" },
 ];
 
 const FAQ = [
@@ -202,27 +228,30 @@ const FAQ = [
 ];
 
 function Testimonials() {
+  const loop = [...TESTIMONIALS, ...TESTIMONIALS]; // duplicated for a seamless marquee
   return (
-    <section style={{ maxWidth: 1040, margin: "8px auto 0", padding: "0 20px" }}>
-      <div style={{ textAlign: "center", marginBottom: 16 }}>
+    <section style={{ margin: "80px auto 0", maxWidth: 1320 }}>
+      <div style={{ textAlign: "center", marginBottom: 24, padding: "0 20px" }}>
         <p style={{ ...eyebrow, color: "var(--chq-gold-3)" }}>Heroes who climbed</p>
         <h2 className="chq-display chq-gold-text" style={{ fontSize: 24, fontWeight: 700, margin: "6px 0 0" }}>Players are winning more</h2>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 14 }}>
-        {TESTIMONIALS.map((t) => (
-          <div key={t.seed} style={{ background: "var(--chq-panel)", border: "1px solid var(--chq-line)", borderRadius: "var(--chq-r-panel)", padding: 16, display: "flex", flexDirection: "column", gap: 8 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${t.seed}`} alt="" width={40} height={40} style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--chq-raised)", border: "1px solid var(--chq-line)" }} />
-              <div>
-                <p style={{ color: "var(--chq-text-1)", fontWeight: 600, fontSize: 14, margin: 0 }}>{t.name}</p>
-                <p style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)", margin: 0 }}>{t.role}</p>
-              </div>
-              <span style={{ marginLeft: "auto", color: "var(--chq-gold-3)", fontSize: 12, letterSpacing: 1 }}>★★★★★</span>
-            </div>
-            <p style={{ color: "var(--chq-text-2)", fontSize: 13.5, lineHeight: 1.5, margin: 0 }}>“{t.quote}”</p>
-          </div>
-        ))}
+      <div className="chq-marquee">
+        <div className="chq-marquee-track" style={{ padding: "4px 20px" }}>
+          {loop.map((t, i) => (
+            <article key={i} style={{ width: 360, flexShrink: 0, background: "var(--chq-panel)", border: "1px solid var(--chq-line)", borderRadius: "var(--chq-r-card)", padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+              <header style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={t.photo} alt="" width={48} height={48} loading="lazy" style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", border: "1px solid var(--chq-gold-4)" }} />
+                <div>
+                  <p style={{ color: "var(--chq-text-1)", fontWeight: 600, fontSize: 15, margin: 0 }}>{t.name}</p>
+                  <p style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)", margin: "2px 0 0" }}>{t.role}</p>
+                </div>
+                <span style={{ marginLeft: "auto", color: "var(--chq-gold-3)", fontSize: 13, letterSpacing: 1 }}>★★★★★</span>
+              </header>
+              <p style={{ color: "var(--chq-text-2)", fontSize: 14, lineHeight: 1.6, margin: 0 }}>“{t.quote}”</p>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -230,7 +259,7 @@ function Testimonials() {
 
 function Faq() {
   return (
-    <section style={{ maxWidth: 720, margin: "40px auto 0", padding: "0 20px" }}>
+    <section style={{ maxWidth: 720, margin: "80px auto 56px", padding: "0 20px" }}>
       <div style={{ textAlign: "center", marginBottom: 16 }}>
         <p style={{ ...eyebrow, color: "var(--chq-gold-3)" }}>Questions</p>
         <h2 className="chq-display chq-gold-text" style={{ fontSize: 24, fontWeight: 700, margin: "6px 0 0" }}>Before you begin</h2>
@@ -259,7 +288,7 @@ const FEATURES = [
 
 function WhatYouUnlock() {
   return (
-    <section style={{ maxWidth: 1040, margin: "44px auto 0", padding: "0 20px" }}>
+    <section style={{ maxWidth: 1040, margin: "80px auto 0", padding: "0 20px" }}>
       <div style={{ textAlign: "center", marginBottom: 18 }}>
         <p style={{ ...eyebrow, color: "var(--chq-gold-3)" }}>Inside ChessHeroQuest</p>
         <h2 className="chq-display chq-gold-text" style={{ fontSize: 24, fontWeight: 700, margin: "6px 0 0" }}>What you&apos;ll get</h2>
@@ -310,7 +339,7 @@ export function HeroSelectScreen() {
     <Shell>
       <BenefitsBox tier={tier} plan={plan} setTier={setTier} setPlan={setPlan} onGoPremium={() => router.push(`/paywall?plan=${plan}`)} />
 
-      <div style={{ padding: "16px 20px 0", textAlign: "center", maxWidth: 680, marginInline: "auto" }}>
+      <div style={{ padding: "56px 20px 0", textAlign: "center", maxWidth: 680, marginInline: "auto" }}>
         <h1 className="chq-display chq-gold-text" style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Choose your Hero</h1>
         <p style={{ ...eyebrow, color: "var(--chq-text-muted)", marginTop: 8 }}>
           {recommended ? "Your Chess DNA points one way — but the choice is yours. Every hero is free to start." : "Pick any hero — the first opening is free."}
