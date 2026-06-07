@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import "@/src/ui/design-system/theme.css";
@@ -17,7 +17,8 @@ import { useEntitlement } from "@/src/ui/entitlement/useEntitlement";
 import { AccountBoot } from "@/src/ui/account/AccountBoot";
 import { fetchAccount, syncEntitlement } from "@/src/ui/account/useAccount";
 import { openCheckout, type ProPlan } from "@/src/ui/paywall/paddle";
-import { track } from "@/src/lib/track";
+import { track } from "@/src/analytics/events";
+import { AnalyticsBoot } from "@/src/ui/analytics/AnalyticsBoot";
 import { useHeroSelect } from "./useHeroSelect";
 
 type Tier = "free" | "premium";
@@ -46,6 +47,7 @@ function Shell({ children }: { children: ReactNode }) {
     <div className={`chq-root chq-checker ${inter.variable}`} style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
       <GradientDefs />
       <AccountBoot />
+      <AnalyticsBoot />
       <header style={{ height: 92, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 24px", borderBottom: "1px solid var(--chq-line)" }}>
         <Image src={BRAND_LOGO} alt="ChessHeroQuest" width={1478} height={418} priority style={{ height: 76, width: "auto" }} />
       </header>
@@ -147,7 +149,7 @@ function PlanPicker({ plan, setPlan }: { plan: PlanKey; setPlan: (p: PlanKey) =>
             <button
               key={k}
               type="button"
-              onClick={() => setPlan(k)}
+              onClick={() => { setPlan(k); track("plan_selected", { plan: k }); }}
               style={{ position: "relative", minWidth: 150, padding: "14px 20px", borderRadius: "var(--chq-r-panel)", cursor: "pointer", textAlign: "center", background: active ? "rgba(217,162,39,.12)" : "var(--chq-panel)", border: `1.5px solid ${active ? "var(--chq-gold-3)" : "var(--chq-line)"}`, boxShadow: active ? "0 0 20px rgba(217,162,39,.3)" : "none", transition: "all .15s ease" }}
             >
               {p.badge && (
@@ -423,6 +425,8 @@ export function HeroSelectScreen() {
   const [tier, setTier] = useState<Tier>("premium");
   const [plan, setPlan] = useState<PlanKey>("yearly");
 
+  useEffect(() => { track("hero_view"); }, []);
+
   if (!mounted) {
     return <Shell><p style={{ color: "var(--chq-text-muted)", textAlign: "center" }}>Loading…</p></Shell>;
   }
@@ -433,14 +437,15 @@ export function HeroSelectScreen() {
   const effectiveTier: Tier = isPro ? "premium" : tier;
 
   const enter = (a: Archetype) => {
-    track("hero_selected", { hero: a });
+    track("hero_selected", { hero: a, recommended: a === recommended });
     selectHero(a);
     router.push("/world");
   };
 
   // Premium: open Paddle directly for the selected plan (falls back to /paywall).
   const goPremium = async (a: Archetype) => {
-    track("checkout_opened", { hero: a, plan });
+    track("hero_selected", { hero: a, recommended: a === recommended });
+    track("checkout_start", { plan });
     const acct = await fetchAccount();
     const ok = await openCheckout(toProPlan(plan), acct.email ?? null, async () => {
       await syncEntitlement();

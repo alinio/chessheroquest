@@ -13,7 +13,8 @@ import { BRAND_LOGO } from "@/src/ui/design-system/art";
 import { HERO_ACCENTS, type HeroKey } from "@/src/ui/design-system/tokens";
 import { DNA_TEST_BANK, TEST_LENGTH } from "@/src/domain/dna-test/bank";
 import type { TestPosition } from "@/src/domain/dna-test/types";
-import { track } from "@/src/lib/track";
+import { track } from "@/src/analytics/events";
+import { AnalyticsBoot } from "@/src/ui/analytics/AnalyticsBoot";
 import { SaveProgress } from "@/src/ui/account/SaveProgress";
 import { useDnaTest } from "./useDnaTest";
 
@@ -49,6 +50,7 @@ function TestShell({ children }: { children: ReactNode }) {
   return (
     <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
       <GradientDefs />
+      <AnalyticsBoot />
       <header style={{ height: 56, flexShrink: 0, display: "flex", alignItems: "center", gap: 8, padding: "0 20px", borderBottom: "1px solid var(--chq-line)" }}>
         <Image src={BRAND_LOGO} alt="ChessHeroQuest" width={1478} height={418} priority style={{ height: 26, width: "auto" }} />
         <span className="chq-display" style={{ fontSize: 12, color: "var(--chq-text-2)", textTransform: "uppercase", letterSpacing: ".1em" }}>· Chess DNA</span>
@@ -211,6 +213,10 @@ export function DnaTestScreen() {
   const answer = useDnaTest((s) => s.answer);
   const reset = useDnaTest((s) => s.reset);
 
+  useEffect(() => {
+    if (finished && result) track("test_complete", { scoreRaw: result.openingIq });
+  }, [finished, result]);
+
   if (!mounted) {
     return <TestShell><span style={{ color: "var(--chq-text-muted)" }}>Loading…</span></TestShell>;
   }
@@ -225,7 +231,7 @@ export function DnaTestScreen() {
             <p style={{ color: "var(--chq-text-2)", fontSize: 15, lineHeight: 1.6 }}>
               {TEST_LENGTH} positions · ~2 minutes · no signup. Read the position, choose — and learn something on every one.
             </p>
-            <Button onClick={() => { track("dna_test_started"); start(); }} style={{ marginTop: 4 }}>Begin the test</Button>
+            <Button onClick={() => { track("test_start"); start(); }} style={{ marginTop: 4 }}>Begin the test</Button>
           </div>
         </OrnateFrame>
       </TestShell>

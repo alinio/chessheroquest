@@ -6,6 +6,7 @@ import { Pain } from "./sections/Pain";
 import { WhatYouGet } from "./sections/WhatYouGet";
 import { HowItWorks } from "./sections/HowItWorks";
 import { Kingdoms } from "./sections/Kingdoms";
+import { Faq } from "./sections/Faq";
 import { FinalCTA } from "./sections/FinalCTA";
 import { Footer } from "./sections/Footer";
 import { JsonLd } from "./components/JsonLd";
@@ -36,6 +37,7 @@ export function LandingPage({ variant }: { variant: HeadlineVariant }) {
         <WhatYouGet />
         <HowItWorks />
         <Kingdoms />
+        <Faq />
         <FinalCTA />
       </main>
       <Footer />
