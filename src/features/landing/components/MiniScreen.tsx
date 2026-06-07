@@ -66,22 +66,60 @@ function ResultScreen() {
   return (
     <Screen>
       <div className="flex flex-col items-center">
-        <OpeningIQGauge value={428} size={112} />
-        <div className="mt-1.5 flex items-center gap-1.5">
+        <OpeningIQGauge value={428} size={92} />
+        <div className="mt-1 flex items-center gap-1.5">
           <Image
             src={LANDING_ASSETS.crests.strategist}
             alt=""
-            width={22}
-            height={22}
-            className="h-5 w-5 object-contain [mix-blend-mode:screen]"
+            width={20}
+            height={20}
+            className="h-[18px] w-[18px] object-contain [mix-blend-mode:screen]"
           />
           <span className="font-display text-sm font-bold text-strategist">
             Strategist
           </span>
+          <span className="text-[0.62rem] text-text-low">· Top 38%</span>
         </div>
-        <span className="mt-1 text-[0.7rem] text-text-mid">Top 38%</span>
+      </div>
+
+      {/* what the report shows you */}
+      <div className="mt-3 space-y-1.5">
+        <StatRow label="Strongest" value="Italian Game" color="#2FB67A" />
+        <StatRow label="Weakness" value="Sicilian Dragon" color="#E0413B" />
+        <div className="pt-0.5">
+          <div className="flex items-center justify-between text-[0.55rem] uppercase tracking-wide text-text-low">
+            <span>Road to Elo</span>
+            <span>1400 → 1600</span>
+          </div>
+          <div className="mt-1 h-1.5 overflow-hidden rounded-chip border border-hairline bg-abyss">
+            <div className="h-full w-2/5 rounded-chip bg-gradient-to-r from-gold-deep via-gold to-gold-bright" />
+          </div>
+        </div>
       </div>
     </Screen>
+  );
+}
+
+function StatRow({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: string;
+  color: string;
+}) {
+  return (
+    <div className="flex items-center justify-between rounded-md border border-hairline/70 bg-surface/60 px-2 py-1">
+      <span className="flex items-center gap-1.5 text-[0.6rem] uppercase tracking-wide text-text-low">
+        <span
+          className="h-1.5 w-1.5 rounded-full"
+          style={{ backgroundColor: color }}
+        />
+        {label}
+      </span>
+      <span className="text-[0.7rem] font-medium text-text-hi">{value}</span>
+    </div>
   );
 }
 

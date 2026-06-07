@@ -9,17 +9,22 @@ import { REALMS, type Realm } from "../realms";
 /**
  * Kingdom Boss showcase (Round-3). A Kingdom Boss is a realm's final Gauntlet —
  * its hardest variations, beaten by outplaying them on the board, which validates
- * mastery and conquers the realm. The featured boss plays as a cinematic in the
- * ornate gold frame (accent-tinted) with a coded name plate; a coded "THE
- * GAUNTLET" panel makes the chess test explicit. A 4-realm selector swaps
- * video + plate + gauntlet. prefers-reduced-motion → poster still.
+ * mastery and conquers the realm.
  *
- * Terminology: Kingdom Boss = per-realm (here); Opening Guardian = per-opening.
+ * Layout: realm selector → the boss cinematic (endboss portrait, accent-tinted
+ * ornate frame + coded name plate) → THE GAUNTLET card pairing the 3D chess-hall
+ * cinematic (scene-guardian) with a plain-language explanation of the test.
+ * prefers-reduced-motion → poster stills. Kingdom Boss = per-realm; Opening
+ * Guardian = per-opening.
  */
+const ARENA_VIDEO = "/landing/scene-guardian.mp4";
+const ARENA_POSTER = "/landing/scene-guardian-poster.jpg";
+
 export function BossBlock() {
   const [idx, setIdx] = useState(0);
   const realm = REALMS[idx] ?? REALMS[0];
   const { boss, accent } = realm;
+  const bossShort = boss.name.split(",")[0]?.split(" ")[0] ?? boss.name;
 
   return (
     <div className="mx-auto flex max-w-[1040px] flex-col items-center text-center">
@@ -61,7 +66,7 @@ export function BossBlock() {
         })}
       </div>
 
-      {/* cinematic in the ornate frame + coded name plate */}
+      {/* boss cinematic + coded name plate */}
       <Panel
         variant="ornate"
         glow={accent}
@@ -70,8 +75,6 @@ export function BossBlock() {
       >
         <div className="relative aspect-video w-full overflow-hidden rounded-[12px]">
           <BossCinematic key={realm.key} realm={realm} />
-
-          {/* coded name plate (text never baked into the video) */}
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/55 to-transparent p-4 text-left sm:p-6">
             <p
               className="font-display text-[0.6rem] font-semibold uppercase tracking-[0.2em]"
@@ -95,67 +98,84 @@ export function BossBlock() {
         </div>
       </Panel>
 
-      {/* THE GAUNTLET — coded chess-test panel */}
-      <div
-        className="mt-6 w-full rounded-card border bg-abyss/40 p-5 text-left sm:p-6"
-        style={{ borderColor: `${accent}55` }}
+      {/* THE GAUNTLET — the 3D chess-hall cinematic paired with a plain-language
+          explanation so it reads unmistakably as a chess test. */}
+      <Panel
+        variant="ornate"
+        glow={accent}
+        className="mt-6 w-full"
+        innerClassName="p-1.5"
       >
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <p
-            className="font-display text-[0.7rem] font-semibold uppercase tracking-[0.22em]"
-            style={{ color: accent }}
-          >
-            The Gauntlet
-          </p>
-          <p className="text-[0.72rem] text-text-low">
-            {realm.gauntlet.format}
-          </p>
-        </div>
-
-        <ul className="mt-3 flex flex-wrap gap-2">
-          {realm.gauntlet.openings.map((o) => (
-            <li
-              key={o.name}
-              className="rounded-chip border border-hairline bg-raised px-2.5 py-1 text-[0.72rem] text-text-hi"
+        <div className="grid overflow-hidden rounded-[12px] md:grid-cols-2">
+          {/* arena cinematic (re-integrated 3D cinematic) */}
+          <div className="relative min-h-[180px] overflow-hidden md:min-h-full">
+            <GauntletArena />
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background: `linear-gradient(90deg, transparent 55%, rgba(8,9,14,0.85) 100%)`,
+              }}
+            />
+            <span
+              className="absolute left-3 top-3 rounded-chip border px-2 py-0.5 text-[0.55rem] font-semibold uppercase tracking-wide backdrop-blur-sm"
+              style={{
+                color: accent,
+                borderColor: `${accent}88`,
+                backgroundColor: "rgba(8,9,14,0.6)",
+              }}
             >
-              {o.name}{" "}
-              <span className="text-text-low">{o.eco}</span>
-            </li>
-          ))}
-        </ul>
+              The Arena
+            </span>
+          </div>
 
-        <p className="mt-4 text-[0.82rem] leading-relaxed text-text-mid">
-          Win it over the board → prove your mastery of the realm → earn its seal
-          in your Opening Passport.
-        </p>
-        {/* TODO(chess-curation): representative tabiya FEN per Gauntlet — the
-            catalog gives move-sequences, not pinned boss FENs (GDD §11). */}
-      </div>
+          {/* the test, explained */}
+          <div className="bg-abyss/50 p-5 text-left sm:p-6">
+            <p
+              className="font-display text-[0.7rem] font-semibold uppercase tracking-[0.22em]"
+              style={{ color: accent }}
+            >
+              The Gauntlet
+            </p>
+            <p className="mt-2 text-[0.92rem] leading-relaxed text-text-hi">
+              Sit down and outplay <strong>{bossShort}</strong> over the board —
+              a timed run through every opening of {realm.name}:
+            </p>
+
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {realm.gauntlet.openings.map((o) => (
+                <li
+                  key={o.name}
+                  className="rounded-chip border border-hairline bg-raised px-2.5 py-1 text-[0.72rem] text-text-hi"
+                >
+                  {o.name} <span className="text-text-low">{o.eco}</span>
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-3 text-[0.72rem] text-text-low">
+              {realm.gauntlet.format}
+            </p>
+
+            <p
+              className="mt-4 border-t pt-3 text-[0.82rem] leading-relaxed text-text-mid"
+              style={{ borderColor: "var(--color-hairline)" }}
+            >
+              Beat the gauntlet → conquer {realm.name} → earn its seal in your
+              Opening Passport.
+            </p>
+            {/* TODO(chess-curation): representative tabiya FEN per Gauntlet —
+                the catalog gives move-sequences, not pinned boss FENs (GDD §11). */}
+          </div>
+        </div>
+      </Panel>
     </div>
   );
 }
 
 function BossCinematic({ realm }: { realm: Realm }) {
-  const isClient = useIsClient();
-  const reduce = useReducedMotion();
   const ref = useRef<HTMLVideoElement | null>(null);
-  const stillOnly = !isClient || reduce;
+  const stillOnly = useStillOnly(ref);
   const { boss } = realm;
-
-  useEffect(() => {
-    if (stillOnly) return;
-    const v = ref.current;
-    if (!v || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e?.isIntersecting) v.play().catch(() => {});
-        else v.pause();
-      },
-      { threshold: 0.3 },
-    );
-    io.observe(v);
-    return () => io.disconnect();
-  }, [stillOnly]);
 
   if (stillOnly) {
     return (
@@ -182,4 +202,59 @@ function BossCinematic({ realm }: { realm: Realm }) {
       <source src={boss.video} type="video/mp4" />
     </video>
   );
+}
+
+function GauntletArena() {
+  const ref = useRef<HTMLVideoElement | null>(null);
+  const stillOnly = useStillOnly(ref);
+
+  if (stillOnly) {
+    return (
+      <Image
+        src={ARENA_POSTER}
+        alt="A hall of giant chess pieces — the gauntlet arena"
+        fill
+        sizes="(max-width: 768px) 100vw, 520px"
+        className="object-cover"
+      />
+    );
+  }
+
+  return (
+    <video
+      ref={ref}
+      muted
+      loop
+      playsInline
+      preload="none"
+      poster={ARENA_POSTER}
+      className="absolute inset-0 h-full w-full object-cover"
+    >
+      <source src={ARENA_VIDEO} type="video/mp4" />
+    </video>
+  );
+}
+
+/** Play a video only while in view; reduced-motion / SSR → poster still. */
+function useStillOnly(ref: React.RefObject<HTMLVideoElement | null>) {
+  const isClient = useIsClient();
+  const reduce = useReducedMotion();
+  const stillOnly = !isClient || reduce;
+
+  useEffect(() => {
+    if (stillOnly) return;
+    const v = ref.current;
+    if (!v || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e?.isIntersecting) v.play().catch(() => {});
+        else v.pause();
+      },
+      { threshold: 0.3 },
+    );
+    io.observe(v);
+    return () => io.disconnect();
+  }, [stillOnly, ref]);
+
+  return stillOnly;
 }

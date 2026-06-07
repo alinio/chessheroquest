@@ -59,7 +59,7 @@ export function MiniBoard({
                   : dark
                     ? "var(--color-sq-dark)"
                     : "var(--color-sq-light)",
-                fontSize: size / 11,
+                fontSize: size / 9,
                 lineHeight: 1,
                 color: white ? "#fbfbf7" : "#15140f",
                 textShadow: white

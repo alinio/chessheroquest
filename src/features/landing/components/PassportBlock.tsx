@@ -12,8 +12,17 @@ import { REALMS } from "../realms";
  * "N / 20 sealed". Earned seals stamp in on scroll (reduced-motion → final
  * state). No stock imagery.
  */
-// Demo earned state (Italian = Ember, London = Aegis) → 2 / 20.
-const EARNED = new Set(["Italian Game", "London System"]);
+// Demo earned state — a representative spread across all four realms.
+const EARNED = new Set([
+  "Italian Game",
+  "King's Gambit",
+  "Scotch Game",
+  "Ruy Lopez",
+  "Queen's Gambit",
+  "London System",
+  "Caro-Kann",
+  "Scandinavian",
+]);
 const TOTAL = REALMS.reduce((n, r) => n + r.gauntlet.openings.length, 0);
 const SEALED = REALMS.reduce(
   (n, r) => n + r.gauntlet.openings.filter((o) => EARNED.has(o.name)).length,
