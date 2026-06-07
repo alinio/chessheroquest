@@ -48,6 +48,8 @@ export function DrillScreen() {
   const [results, setResults] = useState<boolean[]>([]);
   const [feedback, setFeedback] = useState<"idle" | "correct" | "wrong">("idle");
   const [hint, setHint] = useState(false);
+  // "now" snapshot for due counts (captured once; due display needn't tick live).
+  const [now] = useState(() => Date.now());
 
   const openingId = mounted ? new URLSearchParams(window.location.search).get("opening") ?? "italian" : "italian";
   const tree = LINE_TREES[openingId];
@@ -77,7 +79,6 @@ export function DrillScreen() {
     );
   }
 
-  const now = Date.now();
   const due = dueCount(cards, now);
   const mastered = cards.filter((c) => c.reps >= 2).length;
 
