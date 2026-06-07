@@ -6,7 +6,7 @@ import Image from "next/image";
 import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
 import { GradientDefs, LockIcon, Medal } from "@/src/ui/design-system/icons";
-import { Dna, BookOpen, Repeat, Swords, Map as MapIcon, Stamp } from "lucide-react";
+import { Dna, BookOpen, Repeat, Swords, Map as MapIcon, Stamp, Crown, TrendingUp, Trophy, Zap, Activity } from "lucide-react";
 import { OrnateFrame } from "@/src/ui/design-system/OrnateFrame";
 import { HERO_ACCENTS } from "@/src/ui/design-system/tokens";
 import { BRAND_LOGO, HERO_ART, CREST_ART } from "@/src/ui/design-system/art";
@@ -34,14 +34,6 @@ const FREE_BENEFITS = [
   "Your hero's first opening — full Learn, Drill & the Opening Guardian",
   "Your Opening IQ + shareable Chess DNA card",
 ];
-const PREMIUM_BENEFITS = [
-  "Master every opening & variation — across all 4 kingdoms",
-  "Raise your win rate — stop losing in the first 10 moves",
-  "Boost your ELO with drills that stick (spaced repetition)",
-  "Level up faster — Hard mode + unlimited drills",
-  "Train on your real games with Lichess + weakness analytics",
-];
-
 function useHydrated() {
   return useSyncExternalStore(() => () => {}, () => true, () => false);
 }
@@ -71,8 +63,7 @@ const ACCURACY: { name: string; pct: number; weak?: boolean }[] = [
 ];
 function AnalyticsPanel() {
   return (
-    <div style={{ position: "relative", overflow: "hidden", borderRadius: "var(--chq-r-card)", border: "1px solid var(--chq-gold-4)", background: "var(--chq-raised)", padding: "18px 20px", height: "100%" }}>
-      <Image src="/landing/passport-tome.png" alt="" fill sizes="600px" style={{ objectFit: "cover", opacity: 0.08 }} />
+    <div style={{ position: "relative", overflow: "hidden", borderRadius: "var(--chq-r-card)", border: "1px solid var(--chq-gold-4)", background: "var(--chq-raised)", padding: "20px 22px", height: "100%" }}>
       <div style={{ position: "relative" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span style={{ ...eyebrow, fontSize: 10, color: "var(--chq-gold-3)" }}>The payoff</span>
@@ -143,62 +134,89 @@ function AnalyticsPanel() {
   );
 }
 
-/* Commercial value-prop box above the hero chooser. */
-function BenefitsBox({ tier, plan, setTier, setPlan }: { tier: Tier; plan: PlanKey; setTier: (t: Tier) => void; setPlan: (p: PlanKey) => void }) {
-  const premium = tier === "premium";
-  const benefits = premium ? PREMIUM_BENEFITS : FREE_BENEFITS;
+/* Prominent plan picker shown right above the hero cards (premium). */
+function PlanPicker({ plan, setPlan }: { plan: PlanKey; setPlan: (p: PlanKey) => void }) {
   return (
-    <div style={{ maxWidth: 1280, margin: "0 auto 8px", padding: "0 20px" }}>
+    <div style={{ padding: "0 20px", marginTop: 18 }}>
+      <p style={{ ...eyebrow, fontSize: 10, color: "var(--chq-text-muted)", textAlign: "center", marginBottom: 12 }}>Choose your plan</p>
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
+        {(Object.keys(PLANS) as PlanKey[]).map((k) => {
+          const active = plan === k;
+          const p = PLANS[k];
+          return (
+            <button
+              key={k}
+              type="button"
+              onClick={() => setPlan(k)}
+              style={{ position: "relative", minWidth: 150, padding: "14px 20px", borderRadius: "var(--chq-r-panel)", cursor: "pointer", textAlign: "center", background: active ? "rgba(217,162,39,.12)" : "var(--chq-panel)", border: `1.5px solid ${active ? "var(--chq-gold-3)" : "var(--chq-line)"}`, boxShadow: active ? "0 0 20px rgba(217,162,39,.3)" : "none", transition: "all .15s ease" }}
+            >
+              {p.badge && (
+                <span style={{ position: "absolute", top: -9, left: "50%", transform: "translateX(-50%)", ...eyebrow, fontSize: 8, background: "var(--chq-gold-gradient)", color: "#08080A", padding: "2px 9px", borderRadius: 999, fontWeight: 700, whiteSpace: "nowrap" }}>{p.badge}</span>
+              )}
+              <div style={{ ...eyebrow, fontSize: 9, color: active ? "var(--chq-gold-3)" : "var(--chq-text-muted)" }}>{p.label}</div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: "var(--chq-text-1)", marginTop: 3 }}>{p.price}<span style={{ fontSize: 12, color: "var(--chq-text-muted)", fontWeight: 400 }}> {p.per}</span></div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* The 5 core sales promises — the hero of the box. */
+const PROMISES = [
+  { Icon: Crown, text: "Master every opening & variation", sub: "across all 4 kingdoms" },
+  { Icon: TrendingUp, text: "Raise your win rate", sub: "stop losing in the first 10 moves" },
+  { Icon: Trophy, text: "Boost your ELO", sub: "drills that stick — spaced repetition" },
+  { Icon: Zap, text: "Level up faster", sub: "Hard mode + unlimited drills" },
+  { Icon: Activity, text: "Train on your real games", sub: "Lichess sync + weakness analytics" },
+];
+
+/* Commercial value-prop box above the hero chooser. */
+function BenefitsBox({ tier }: { tier: Tier }) {
+  const premium = tier === "premium";
+  return (
+    <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 20px" }}>
       <OrnateFrame>
-        <div style={{ padding: "24px 24px" }}>
+        <div style={{ padding: "28px 26px" }}>
           <div style={{ textAlign: "center" }}>
             <p style={{ ...eyebrow, color: "var(--chq-gold-3)" }}>Your quest, if you accept it</p>
             <h2 className="chq-display chq-gold-text" style={{ fontSize: 26, fontWeight: 700, margin: "6px 0 0" }}>Become the King of Openings</h2>
             <p style={{ color: "var(--chq-text-2)", fontSize: 14, lineHeight: 1.55, margin: "8px auto 0", maxWidth: 600 }}>
-              Conquer each opening to earn its seal and fill your <b style={{ color: "var(--chq-text-1)" }}>Opening Passport</b> — all 20 across the four realms. Master them and you walk into any game ready for <b style={{ color: "var(--chq-text-1)" }}>any opponent</b>. Most players lose in the first 10 moves; you&apos;ll win there.
+              Conquer each opening to earn its seal and fill your <b style={{ color: "var(--chq-text-1)" }}>Opening Passport</b> — all 20 across the four realms. Master them and you walk into any game ready for <b style={{ color: "var(--chq-text-1)" }}>any opponent</b>.
             </p>
-            <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
-              <div className="chq-seg" role="tablist" aria-label="Free or Premium">
-                <button type="button" data-active={!premium} onClick={() => setTier("free")}>Free</button>
-                <button type="button" data-active={premium} onClick={() => setTier("premium")}>Premium</button>
-              </div>
-            </div>
           </div>
 
           {premium ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 28, marginTop: 22, alignItems: "stretch" }}>
-              {/* LEFT — benefits + plan */}
-              <div>
-                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 10 }}>
-                  {benefits.map((b) => (
-                    <li key={b} style={{ display: "flex", gap: 8, alignItems: "flex-start", color: "var(--chq-text-1)", fontSize: 14, lineHeight: 1.45 }}>
-                      <span style={{ color: "var(--chq-gold-3)", flexShrink: 0 }}>✓</span> {b}
-                    </li>
-                  ))}
-                </ul>
-                <div className="chq-seg" role="tablist" aria-label="Billing plan" style={{ marginTop: 18, flexWrap: "wrap" }}>
-                  {(Object.keys(PLANS) as PlanKey[]).map((k) => (
-                    <button key={k} type="button" data-active={plan === k} onClick={() => setPlan(k)}>{PLANS[k].label} · {PLANS[k].price}</button>
-                  ))}
-                </div>
-                <p style={{ ...eyebrow, fontSize: 10, color: "var(--chq-gold-3)", marginTop: 10 }}>
-                  {PLANS[plan].label}: {PLANS[plan].price} {PLANS[plan].per}{PLANS[plan].badge ? ` · ${PLANS[plan].badge}` : ""} — pick your hero below to start
-                </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 32, marginTop: 26, alignItems: "center" }}>
+              {/* LEFT — the sales promises, BIG so they pop */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                {PROMISES.map((p) => (
+                  <div key={p.text} style={{ display: "flex", gap: 14, alignItems: "center" }}>
+                    <div style={{ flexShrink: 0, width: 46, height: 46, borderRadius: 12, display: "grid", placeItems: "center", background: "linear-gradient(180deg, rgba(217,162,39,.2), rgba(217,162,39,.05))", border: "1px solid var(--chq-gold-4)" }}>
+                      <p.Icon size={22} color="var(--chq-gold-2)" strokeWidth={1.7} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: "var(--chq-text-1)", lineHeight: 1.2 }}>{p.text}</div>
+                      <div style={{ fontSize: 12.5, color: "var(--chq-text-2)", marginTop: 2 }}>{p.sub}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              {/* RIGHT — analytics illustration */}
+              {/* RIGHT — analytics proof */}
               <AnalyticsPanel />
             </div>
           ) : (
             <>
-              <ul style={{ listStyle: "none", padding: 0, margin: "18px auto 0", maxWidth: 480, textAlign: "left", display: "flex", flexDirection: "column", gap: 10 }}>
-                {benefits.map((b) => (
-                  <li key={b} style={{ display: "flex", gap: 8, alignItems: "flex-start", color: "var(--chq-text-1)", fontSize: 14, lineHeight: 1.45 }}>
-                    <span style={{ color: "#2FB67A", flexShrink: 0 }}>✓</span> {b}
+              <ul style={{ listStyle: "none", padding: 0, margin: "20px auto 0", maxWidth: 460, textAlign: "left", display: "flex", flexDirection: "column", gap: 12 }}>
+                {FREE_BENEFITS.map((b) => (
+                  <li key={b} style={{ display: "flex", gap: 10, alignItems: "flex-start", color: "var(--chq-text-1)", fontSize: 15, lineHeight: 1.45 }}>
+                    <span style={{ color: "#2FB67A", flexShrink: 0, fontWeight: 700 }}>✓</span> {b}
                   </li>
                 ))}
               </ul>
-              <p style={{ color: "var(--chq-text-muted)", fontSize: 12, marginTop: 14, textAlign: "center" }}>
-                Tap <b style={{ color: "var(--chq-gold-3)" }}>Premium</b> to see everything you unlock.
+              <p style={{ color: "var(--chq-text-muted)", fontSize: 12, marginTop: 16, textAlign: "center" }}>
+                Tap <b style={{ color: "var(--chq-gold-3)" }}>Premium</b> above the heroes to see everything you unlock.
               </p>
             </>
           )}
@@ -434,16 +452,28 @@ export function HeroSelectScreen() {
 
   return (
     <Shell>
-      <BenefitsBox tier={tier} plan={plan} setTier={setTier} setPlan={setPlan} />
+      <BenefitsBox tier={effectiveTier} />
 
-      <div style={{ padding: "56px 20px 0", textAlign: "center", maxWidth: 680, marginInline: "auto" }}>
+      {/* Free/Premium toggle — segmented pill, visually distinct from the plan price cards */}
+      {!isPro && (
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 48 }}>
+          <div className="chq-seg" role="tablist" aria-label="Free or Premium">
+            <button type="button" data-active={tier === "free"} onClick={() => setTier("free")}>Free</button>
+            <button type="button" data-active={tier === "premium"} onClick={() => setTier("premium")}>Premium</button>
+          </div>
+        </div>
+      )}
+
+      <div style={{ padding: "20px 20px 0", textAlign: "center", maxWidth: 680, marginInline: "auto" }}>
         <h1 className="chq-display chq-gold-text" style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Choose your Hero</h1>
         <p style={{ ...eyebrow, color: "var(--chq-text-muted)", marginTop: 8 }}>
           {recommended ? "Your Chess DNA points one way — but the choice is yours. Every hero is free to start." : "Pick any hero — the first opening is free."}
         </p>
       </div>
 
-      <div style={{ display: "flex", gap: 16, overflowX: "auto", padding: "16px 20px 24px", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", alignItems: "stretch", justifyContent: "center" }}>
+      {effectiveTier === "premium" && <PlanPicker plan={plan} setPlan={setPlan} />}
+
+      <div style={{ display: "flex", gap: 16, overflowX: "auto", padding: "20px 20px 24px", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", alignItems: "stretch", justifyContent: "center" }}>
         {ordered.map((a) => (
           <HeroCard
             key={a}
