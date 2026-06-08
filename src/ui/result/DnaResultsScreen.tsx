@@ -32,10 +32,8 @@ export function DnaResultsScreen({ dna }: { dna: DnaFixture }) {
         <div className="topleft"><IconCrown /> Your Chess DNA</div>
         {dna.sample && <p className="sample">Sample data — take the Test &amp; Quiz for your real result</p>}
 
-        {/* DNA CARD */}
+        {/* DNA CARD — the hero (focal light); temple fades around it */}
         <div className="card">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img className="frame-img" src={ASSETS.dnaCard.frame} alt="" />
           <span className="corner tl" /><span className="corner tr" /><span className="corner bl" /><span className="corner br" />
 
           <div className="dna-medal">

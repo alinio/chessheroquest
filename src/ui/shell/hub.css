@@ -25,16 +25,9 @@
 
   font-family: var(--font-inter), "Inter", system-ui, sans-serif;
   color: var(--parchment);
-  background:
-    radial-gradient(120% 80% at 50% -10%, rgba(138, 123, 216, 0.16), transparent 55%),
-    radial-gradient(90% 70% at 50% 120%, rgba(205, 168, 69, 0.08), transparent 60%),
-    linear-gradient(180deg, #0c0913, #070509);
-  min-height: 100vh;
-  padding: 26px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
+  /* full-bleed app surface — fills the whole viewport like a real app/game */
+  min-height: 100dvh;
+  display: block;
 }
 .chq-hub *,
 .chq-hub *::before,
@@ -44,13 +37,10 @@
 /* ============ APP SHELL ============ */
 .chq-hub .app {
   width: 100%;
-  max-width: 1200px;
+  min-height: 100dvh;
   display: flex;
   background: linear-gradient(180deg, var(--obsidian-2), var(--obsidian));
-  border: 1px solid var(--line);
-  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 40px 90px rgba(0, 0, 0, 0.6);
 }
 
 /* ---- left rail ---- */
@@ -234,17 +224,19 @@
 }
 
 /* ============ PASSPORT (mockup-passport-rpg.html) ============ */
-.chq-hub .passport { padding: 26px 30px 34px; display: flex; flex-direction: column; gap: 24px; }
+.chq-hub .passport { padding: 28px 32px 40px; display: flex; flex-direction: column; gap: 32px; }
 .chq-hub .cover-hero {
   display: flex; gap: 24px; align-items: center; border: 1px solid var(--line-soft); border-radius: 16px; padding: 22px 26px;
   background: linear-gradient(180deg, var(--panel-2), var(--panel)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 16px 40px rgba(0, 0, 0, 0.35); position: relative;
 }
 .chq-hub .cover-img {
-  height: 184px; width: 140px; flex-shrink: 0; border-radius: 10px; position: relative; overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(160deg, #241c12, #0e0b14); box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(205, 168, 69, 0.3);
+  height: 212px; width: 162px; flex-shrink: 0; border-radius: 12px; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center; padding: 8px;
+  background-image: var(--surface-parchment), linear-gradient(160deg, #2a2014, #0e0b14);
+  background-size: 320px, cover;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(205, 168, 69, 0.45), inset 0 0 22px rgba(0, 0, 0, 0.5);
 }
-.chq-hub .cover-img img { width: 100%; height: 100%; object-fit: contain; }
+.chq-hub .cover-img img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6)); }
 .chq-hub .cover-meta { flex: 1; }
 .chq-hub .cover-meta .big { font-family: var(--font-cinzel), "Cinzel", serif; font-weight: 700; font-size: 38px; color: var(--gold-bright); margin: 8px 0 14px; line-height: 1; }
 .chq-hub .cover-meta .sub { color: var(--muted); font-size: 14px; margin-top: 12px; }
@@ -265,16 +257,18 @@
   background: linear-gradient(180deg, rgba(30, 23, 48, 0.55), rgba(23, 17, 32, 0.55));
   display: flex; flex-direction: column; align-items: center; gap: 10px; transition: 0.15s;
 }
-.chq-hub .op.sealed { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 38%, transparent), 0 8px 22px rgba(0, 0, 0, 0.3); }
-.chq-hub .op:hover { transform: translateY(-2px); }
-.chq-hub .op-medal { width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.chq-hub .op-medal img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 10px rgba(205, 168, 69, 0.3)); }
+.chq-hub .op.sealed { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent), 0 0 22px color-mix(in srgb, var(--accent) 16%, transparent), 0 10px 26px rgba(0, 0, 0, 0.35); }
+.chq-hub .op.locked { opacity: 0.78; }
+.chq-hub .op:hover { transform: translateY(-3px); }
+.chq-hub .op-medal { width: 66px; height: 66px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.chq-hub .op.sealed .op-medal img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 12px color-mix(in srgb, var(--accent) 45%, transparent)); }
 .chq-hub .op-name { font-size: 13px; font-weight: 600; color: var(--parchment); letter-spacing: 0.01em; }
-.chq-hub .op.locked .op-medal img { filter: grayscale(1) brightness(0.5); opacity: 0.55; }
+.chq-hub .op.locked .op-medal img { width: 100%; height: 100%; object-fit: contain; filter: grayscale(1) brightness(0.45); opacity: 0.5; }
 .chq-hub .op.locked .op-name { color: var(--faint); }
 .chq-hub .seal { position: absolute; top: 9px; right: 9px; width: 30px; height: 30px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .chq-hub .seal img { width: 100%; height: 100%; object-fit: contain; }
-.chq-hub .seal.locked img { filter: grayscale(1) brightness(0.6); opacity: 0.5; }
+.chq-hub .op.sealed .seal img { filter: drop-shadow(0 0 8px rgba(241, 214, 128, 0.7)); }
+.chq-hub .seal.locked img { filter: grayscale(1) brightness(0.6); opacity: 0.4; }
 @media (max-width: 980px) { .chq-hub .op-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 560px) { .chq-hub .op-grid { grid-template-columns: repeat(2, 1fr); } }
 
@@ -322,6 +316,14 @@
 /* LIGHT overlay only — the realm illustration, path & nodes must read clearly (no black hole) */
 .chq-hub .map-bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(85% 85% at 50% 40%, transparent 58%, rgba(8, 5, 12, 0.42)); }
 .chq-hub .map .path { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.chq-hub .map .path path { stroke: var(--accent, #cda845); filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent, #cda845) 65%, transparent)); }
+/* small dismissible coachmark (no full-screen intro over the nodes) */
+.chq-hub .coachmark { position: absolute; top: 12px; left: 12px; z-index: 5; max-width: 252px; display: flex; gap: 10px; align-items: flex-start; background: rgba(12, 9, 18, 0.86); border: 1px solid var(--line); border-radius: 12px; padding: 11px 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); }
+.chq-hub .coachmark p { font-size: 12px; line-height: 1.45; color: var(--parchment); }
+.chq-hub .coachmark p b { color: var(--gold-bright); }
+.chq-hub .coachmark button { background: none; border: 0; color: var(--faint); cursor: pointer; font-size: 15px; line-height: 1; padding: 2px; flex-shrink: 0; }
+.chq-hub .coachmark button:hover { color: var(--parchment); }
+.chq-hub .qnode .here { position: absolute; left: 50%; top: -20px; transform: translateX(-50%); white-space: nowrap; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ember-bright); font-weight: 700; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9); }
 .chq-hub .qnode { position: absolute; transform: translate(-50%, -50%); text-align: center; width: 120px; z-index: 2; }
 .chq-hub .qmedal { width: 62px; height: 62px; margin: 0 auto; position: relative; display: flex; align-items: center; justify-content: center; }
 .chq-hub .qmedal .node-art { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.55)); }
@@ -346,3 +348,24 @@
 .chq-hub .realm-intro { position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 12px; padding: 24px; background: radial-gradient(60% 60% at 50% 45%, rgba(8, 5, 12, 0.3), rgba(8, 5, 12, 0.62)); }
 .chq-hub .realm-intro h2 { font-family: var(--font-cinzel), "Cinzel", serif; font-size: 34px; background: linear-gradient(180deg, var(--gold-bright), var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .chq-hub .realm-intro p { color: var(--parchment); font-size: 14px; max-width: 360px; }
+
+/* ============ TODAY — focal redesign (1 hero + thin HUD + coach line) ============ */
+.chq-hub .today-v2 { padding: 20px 26px 26px; display: flex; flex-direction: column; gap: 14px; min-height: calc(100dvh - 66px); }
+.chq-hub .today-hud { display: flex; align-items: center; gap: 20px; font-size: 13px; color: var(--muted); }
+.chq-hub .today-hud .h { display: inline-flex; align-items: center; gap: 6px; }
+.chq-hub .today-hud .h b { font-family: var(--font-cinzel), "Cinzel", serif; color: var(--gold-bright); font-weight: 700; font-size: 15px; }
+.chq-hub .today-hud .flame { color: var(--ember-bright); }
+.chq-hub .today-hud .sep { flex: 1; }
+.chq-hub .today-hero { position: relative; flex: 1; min-height: 58vh; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
+.chq-hub .today-hero .bg { position: absolute; inset: 0; }
+.chq-hub .today-hero .bg img { width: 100%; height: 100%; object-fit: cover; }
+.chq-hub .today-hero .bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(56% 64% at 50% 42%, rgba(8, 5, 12, 0.12), transparent 60%), radial-gradient(120% 100% at 50% 122%, rgba(0, 0, 0, 0.82), transparent 56%), linear-gradient(180deg, rgba(8, 5, 12, 0.3), rgba(8, 5, 12, 0.5)); }
+.chq-hub .today-hero .focal { position: relative; z-index: 1; text-align: center; max-width: 540px; padding: 0 24px 40px; }
+.chq-hub .today-hero h1 { font-family: var(--font-cinzel), "Cinzel", serif; font-weight: 700; font-size: 46px; line-height: 1.04; margin: 10px 0 8px; color: #fff; text-shadow: 0 2px 30px rgba(0, 0, 0, 0.65); }
+.chq-hub .today-hero .sub { color: var(--parchment); font-size: 15px; margin-bottom: 24px; }
+.chq-hub .today-hero .cta { font-size: 17px; padding: 16px 42px; margin-top: 0; }
+.chq-hub .today-hero .road { position: absolute; left: 26px; right: 26px; bottom: 18px; z-index: 1; }
+.chq-hub .today-hero .road .rl { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.chq-hub .today-coach { display: flex; align-items: center; gap: 12px; font-size: 13px; line-height: 1.5; color: var(--muted); padding: 0 4px; }
+.chq-hub .today-coach img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; object-position: center top; border: 1px solid var(--gold-dim); flex-shrink: 0; }
+.chq-hub .today-coach b { color: var(--gold-bright); }

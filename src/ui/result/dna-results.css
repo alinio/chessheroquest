@@ -22,7 +22,8 @@
 }
 .chq-dna .bg { position: absolute; inset: 0; }
 .chq-dna .bg img { width: 100%; height: 100%; object-fit: cover; }
-.chq-dna .bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 70% at 50% 45%, transparent 40%, rgba(8, 5, 12, 0.66)); }
+/* temple fades around the card — focal light at centre */
+.chq-dna .bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(42% 50% at 50% 46%, rgba(8, 5, 12, 0) 35%, rgba(8, 5, 12, 0.55) 72%, rgba(8, 5, 12, 0.82)); }
 
 .chq-dna .topleft { position: absolute; top: 22px; left: 24px; z-index: 3; display: flex; align-items: center; gap: 9px; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
 .chq-dna .topleft svg { width: 18px; height: 18px; color: var(--gold-bright); }
@@ -30,12 +31,11 @@
 
 /* DNA card */
 .chq-dna .card {
-  position: relative; z-index: 2; width: 460px; max-width: 92vw; border-radius: 18px; padding: 34px 30px 30px; text-align: center;
-  background: linear-gradient(180deg, rgba(23, 17, 32, 0.94), rgba(12, 9, 18, 0.96));
-  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
-  box-shadow: 0 0 44px color-mix(in srgb, var(--accent) 22%, transparent), 0 30px 70px rgba(0, 0, 0, 0.6);
+  position: relative; z-index: 2; width: 440px; max-width: 92vw; border-radius: 18px; padding: 38px 34px 34px; text-align: center;
+  background: linear-gradient(180deg, rgba(23, 17, 32, 0.96), rgba(12, 9, 18, 0.97));
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  box-shadow: 0 0 60px color-mix(in srgb, var(--accent) 28%, transparent), 0 30px 80px rgba(0, 0, 0, 0.7);
 }
-.chq-dna .frame-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; pointer-events: none; opacity: 0.9; mix-blend-mode: screen; }
 .chq-dna .corner { position: absolute; width: 20px; height: 20px; border: 2px solid var(--gold); z-index: 1; }
 .chq-dna .corner.tl { top: 9px; left: 9px; border-right: 0; border-bottom: 0; }
 .chq-dna .corner.tr { top: 9px; right: 9px; border-left: 0; border-bottom: 0; }
