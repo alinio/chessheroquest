@@ -1,14 +1,46 @@
 /**
  * Insights — the analytics / "is this making me better?" screen (hub section).
- * Opening-IQ trend (SVG), Road to Elo, weekly stats, performance on SYNCED real games
- * (Lichess/Chess.com), and weakest openings. Rendered inside AppShell (active=Insights).
- * SVG/CSS charts only (no generated images). Data-driven.
+ * REAL data only: Opening-IQ trend from snapshots, Road-to-Elo from the domain
+ * projection (framed as an estimate, never an invented "current Elo"), weekly
+ * stats from training_events, synced real games (client store), and weakest
+ * openings from FSRS mastery. SVG/CSS charts only. Honest empty states.
  */
 import "@/src/ui/shell/hub.css";
 import { getRankInsignia } from "@/src/lib/assets";
-import type { InsightsFixture } from "@/src/dev/fixtures";
+import type { MasteryState } from "@/src/domain/mastery";
+import { RealGamesCard } from "./RealGamesCard";
 
-const TREND_ARROW = { up: "↑", down: "↓", flat: "→" } as const;
+export interface InsightsWeakness {
+  name: string;
+  state: MasteryState;
+  studied: number;
+  total: number;
+}
+
+export interface InsightsData {
+  openingIq: number;
+  /** IQ change across the trend window (real snapshots — may be 0). */
+  iqDelta: number;
+  /** Oldest → newest snapshot values; length ≥ 2 (padded with current). */
+  iqTrend: number[];
+  eloGoal: number;
+  /** Road fill 0–100 from roadProgress (domain). */
+  roadPct: number;
+  /** Estimated practical Elo gain at the current IQ (transparent estimate). */
+  projectedGain: number;
+  /** 7-day drill accuracy %, or null before the first answers. */
+  accuracy: number | null;
+  drillsThisWeek: number;
+  cardsReviewed: number;
+  weaknesses: InsightsWeakness[];
+}
+
+const STATE_LABEL: Record<MasteryState, string> = {
+  leak: "Leak",
+  review: "Review",
+  solid: "Solid",
+  gold: "Gold",
+};
 
 function iqPaths(trend: number[]) {
   const W = 100, H = 40;
@@ -19,10 +51,8 @@ function iqPaths(trend: number[]) {
   return { line, area: `${line} L${W},${H} L0,${H} Z` };
 }
 
-export function InsightsScreen({ data }: { data: InsightsFixture }) {
-  const { line, area } = iqPaths(data.iqTrend);
-  const eloPct = Math.round(Math.min(1, data.eloNow / data.eloGoal) * 100);
-  const lichess = data.connected.find((c) => c.platform === "lichess");
+export function InsightsScreen({ data }: { data: InsightsData }) {
+  const { line, area } = iqPaths(data.iqTrend.length >= 2 ? data.iqTrend : [data.openingIq, data.openingIq]);
 
   return (
     <main className="insights">
@@ -35,8 +65,13 @@ export function InsightsScreen({ data }: { data: InsightsFixture }) {
       <div className="ins-grid">
         {/* Opening IQ trend */}
         <section className="ins-card ins-iq">
-          <p className="ct">Opening IQ · last 12 weeks</p>
-          <p className="big">{data.openingIq}<small>Top {data.topPercent}%</small></p>
+          <p className="ct">Opening IQ · recent trend</p>
+          <p className="big">
+            {data.openingIq}
+            <small style={data.iqDelta > 0 ? { color: "#6fd89a" } : undefined}>
+              {data.iqDelta > 0 ? `+${data.iqDelta} over this window` : data.iqDelta < 0 ? `${data.iqDelta} over this window` : "your baseline — drill to move it"}
+            </small>
+          </p>
           <svg className="ins-chart" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
             <defs>
               <linearGradient id="chq-iq-area" x1="0" y1="0" x2="0" y2="1">
@@ -51,53 +86,52 @@ export function InsightsScreen({ data }: { data: InsightsFixture }) {
 
         {/* Road to Elo */}
         <section className="ins-card">
-          <p className="ct">Road to Elo</p>
+          <p className="ct">Road to Elo · {data.eloGoal}</p>
           <div className="elo-row" style={{ marginTop: 12 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={getRankInsignia(data.eloGoal)} alt="" />
             <div style={{ flex: 1 }}>
-              <div><span className="num">{data.eloNow}</span> <span style={{ color: "var(--muted)", fontSize: 13 }}>→ {data.eloGoal}</span></div>
-              <div className="bar" style={{ marginTop: 8 }}><span style={{ width: `${eloPct}%` }} /></div>
-              <p style={{ color: "var(--faint)", fontSize: 11, marginTop: 8 }}>Projected from your Opening IQ + synced results.</p>
+              <div><span className="num">{data.roadPct}%</span> <span style={{ color: "var(--muted)", fontSize: 13 }}>of the road</span></div>
+              <div className="bar" style={{ marginTop: 8 }}><span style={{ width: `${data.roadPct}%` }} /></div>
+              <p style={{ color: "var(--faint)", fontSize: 11, marginTop: 8 }}>
+                Openings at this IQ are worth an estimated +{data.projectedGain} Elo of practical strength.
+              </p>
             </div>
           </div>
         </section>
       </div>
 
       <div className="ins-stats">
-        <div className="ins-stat"><span className="n">{data.accuracy}%</span><span className="k">Drill accuracy</span></div>
+        <div className="ins-stat">
+          <span className="n">{data.accuracy != null ? `${data.accuracy}%` : "—"}</span>
+          <span className="k">Drill accuracy · 7d</span>
+        </div>
         <div className="ins-stat"><span className="n">{data.drillsThisWeek}</span><span className="k">Drills this week</span></div>
-        <div className="ins-stat"><span className="n">{data.cardsReviewed}</span><span className="k">Cards reviewed</span></div>
+        <div className="ins-stat"><span className="n">{data.cardsReviewed}</span><span className="k">Positions answered</span></div>
       </div>
 
       <div className="ins-two">
-        {/* real games */}
-        <section className="ins-card">
-          <p className="ct">Your real games</p>
-          <div className="conn">
-            {lichess ? <><span className="badge">Lichess</span> @{lichess.username} synced</> : "No platform connected"}
-            <button className="btn-ghost sm" type="button" style={{ marginLeft: "auto" }}>Connect Chess.com</button>
-          </div>
-          <div className="perf">
-            {data.openingPerf.map((o) => (
-              <div className="perf-row" key={o.name}>
-                <span className="nm">{o.name}</span>
-                <span className="gm">{o.games} games</span>
-                <span className={`wr ${o.trend}`}>{o.winPct}% {TREND_ARROW[o.trend]}</span>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* real games — client card reads the sync store */}
+        <RealGamesCard />
 
-        {/* weaknesses */}
+        {/* weaknesses from real FSRS mastery */}
         <section className="ins-card">
           <p className="ct">Focus — weakest openings</p>
-          {data.weaknesses.map((w) => (
-            <div className="weak-row" key={w.name}>
-              <div className="wl">{w.name}<span>{w.accuracy}% accuracy</span></div>
-              <div className="wbar"><span style={{ width: `${w.accuracy}%` }} /></div>
-            </div>
-          ))}
+          {data.weaknesses.length === 0 ? (
+            <p style={{ color: "var(--muted)", fontSize: 13, lineHeight: 1.55, marginTop: 8 }}>
+              Drill your first lines and your leaks will surface here.
+            </p>
+          ) : (
+            data.weaknesses.map((w) => {
+              const pct = w.total > 0 ? Math.round((w.studied / w.total) * 100) : 0;
+              return (
+                <div className="weak-row" key={w.name}>
+                  <div className="wl">{w.name}<span>{STATE_LABEL[w.state]} · {w.studied}/{w.total} positions</span></div>
+                  <div className="wbar"><span style={{ width: `${Math.max(pct, 4)}%` }} /></div>
+                </div>
+              );
+            })
+          )}
         </section>
       </div>
     </main>

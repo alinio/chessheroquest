@@ -5,47 +5,21 @@
  */
 import type { Archetype, RealmId, OpeningId } from "@/src/lib/assets";
 
-export interface OpeningPerf {
-  name: string;
-  games: number;
-  winPct: number;
-  trend: "up" | "down" | "flat";
-}
-export interface InsightsFixture {
-  openingIq: number;
-  topPercent: number;
-  iqTrend: number[]; // ~12 recent points (0–1000)
-  eloGoal: number;
-  eloNow: number;
-  accuracy: number;
-  drillsThisWeek: number;
-  cardsReviewed: number;
-  connected: { platform: "lichess" | "chesscom"; username: string }[];
-  openingPerf: OpeningPerf[]; // from synced real games
-  weaknesses: { name: string; accuracy: number }[];
-}
-
-/** Demo analytics for /insights. */
-export const DEMO_INSIGHTS: InsightsFixture = {
+/** Demo analytics for /dev/screens/insights (mirrors InsightsData in InsightsScreen). */
+export const DEMO_INSIGHTS = {
   openingIq: 742,
-  topPercent: 12,
+  iqDelta: 324,
   iqTrend: [418, 442, 470, 503, 540, 561, 598, 630, 661, 690, 718, 742],
   eloGoal: 1500,
-  eloNow: 1386,
-  accuracy: 86,
+  roadPct: 100,
+  projectedGain: 186,
+  accuracy: 86 as number | null,
   drillsThisWeek: 41,
   cardsReviewed: 312,
-  connected: [{ platform: "lichess", username: "marc_1900" }],
-  openingPerf: [
-    { name: "Ruy Lopez", games: 64, winPct: 61, trend: "up" },
-    { name: "Queen's Gambit", games: 38, winPct: 55, trend: "up" },
-    { name: "English Opening", games: 21, winPct: 52, trend: "flat" },
-    { name: "Sicilian Defense", games: 47, winPct: 41, trend: "down" },
-  ],
   weaknesses: [
-    { name: "Sicilian Defense", accuracy: 48 },
-    { name: "French Defense", accuracy: 57 },
-    { name: "Caro-Kann", accuracy: 63 },
+    { name: "Sicilian Dragon", state: "leak" as const, studied: 2, total: 5 },
+    { name: "French Defense — Classical", state: "review" as const, studied: 4, total: 5 },
+    { name: "Caro-Kann Defense — Classical", state: "solid" as const, studied: 5, total: 5 },
   ],
 };
 

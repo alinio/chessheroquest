@@ -84,6 +84,17 @@ export async function getProgress(userId: string): Promise<UserProgress | null> 
   };
 }
 
+/** The user's Opening-IQ history, oldest → newest (the Insights trend line). */
+export async function getIqTrend(userId: string, limit = 12): Promise<number[]> {
+  const rows = await db
+    .select({ value: openingIqSnapshots.value })
+    .from(openingIqSnapshots)
+    .where(eq(openingIqSnapshots.userId, userId))
+    .orderBy(desc(openingIqSnapshots.createdAt))
+    .limit(limit);
+  return rows.map((r) => r.value).reverse();
+}
+
 /** The user's latest DNA result (the full shareable object), or null. */
 export async function getLatestDnaResult(userId: string): Promise<DnaResult | null> {
   const rows = await db
