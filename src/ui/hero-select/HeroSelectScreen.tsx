@@ -450,7 +450,7 @@ export function HeroSelectScreen() {
     const ok = await openCheckout(toProPlan(plan), acct.email ?? null, async () => {
       await syncEntitlement();
       selectHero(a);
-      router.push("/world?welcome=1");
+      router.push("/welcome"); // post-payment → one-time Arrival/orientation (UX audit P0)
     });
     if (!ok) router.push(`/paywall?hero=${a}&plan=${plan}`);
   };
