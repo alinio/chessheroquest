@@ -3,6 +3,7 @@ import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
 
 const LINKS: [string, string][] = [
+  ["/dev/screens/welcome", "★ Arrival dashboard — one-time orientation (post-payment)"],
   ["/dev/screens/today", "Today / Dashboard — daily loop"],
   ["/dev/screens/quest-map", "Quest Map — realm hub + node medallions"],
   ["/dev/screens/opening/ruy-lopez", "Opening detail — Ruy Lopez (banner + boss)"],

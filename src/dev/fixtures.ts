@@ -5,6 +5,27 @@
  */
 import type { Archetype, RealmId, OpeningId } from "@/src/lib/assets";
 
+export interface ArrivalFixture {
+  archetype: Archetype;
+  archetypeName: string;
+  iq: number;
+  topPercent: number;
+  strength: string;
+  weakness: string;
+  strengthId: OpeningId;
+}
+
+/** One-time post-payment arrival/orientation (P0 from the UX audit). */
+export const DEMO_ARRIVAL: ArrivalFixture = {
+  archetype: "strategist",
+  archetypeName: "Strategist",
+  iq: 742,
+  topPercent: 12,
+  strength: "Ruy Lopez",
+  weakness: "Sicilian Defense",
+  strengthId: "ruy-lopez",
+};
+
 export interface QuestNode {
   id: OpeningId;
   name: string;
