@@ -43,10 +43,25 @@ export function realmPathIds(realm: RealmId): string[] {
     .filter((p): p is string => Boolean(p));
 }
 
-/** Reverse lookup: curated path id → OpeningId. Evans Gambit is a second Italian path. */
-export const PATH_TO_OPENING: Record<string, OpeningId> = {
-  ...(Object.fromEntries(
-    Object.entries(OPENING_TO_PATH).map(([opening, path]) => [path, opening]),
-  ) as Record<string, OpeningId>),
-  "evans-gambit": "italian",
-};
+/**
+ * ALL curated lines per opening, mainline first (OPENING_TO_PATH stays the
+ * canonical mainline — Guardians duel on it; extra lines deepen Learn/Drill).
+ */
+export const OPENING_LINES: Partial<Record<OpeningId, string[]>> = Object.fromEntries(
+  Object.entries(OPENING_TO_PATH).map(([opening, path]) => [opening, [path]]),
+);
+OPENING_LINES.italian!.push("evans-gambit", "italian-two-knights");
+OPENING_LINES["ruy-lopez"]!.push("ruy-lopez-exchange");
+OPENING_LINES.scotch!.push("scotch-mieses");
+OPENING_LINES["sicilian-dragon"]!.push("sicilian-dragon-yugoslav");
+OPENING_LINES["queens-gambit"]!.push("queens-gambit-accepted");
+OPENING_LINES.london!.push("london-vs-kings-indian");
+OPENING_LINES["caro-kann"]!.push("caro-kann-advance");
+OPENING_LINES.french!.push("french-advance");
+
+/** Reverse lookup: curated path id → OpeningId (covers every line). */
+export const PATH_TO_OPENING: Record<string, OpeningId> = Object.fromEntries(
+  Object.entries(OPENING_LINES).flatMap(([opening, paths]) =>
+    (paths ?? []).map((p) => [p, opening as OpeningId]),
+  ),
+);

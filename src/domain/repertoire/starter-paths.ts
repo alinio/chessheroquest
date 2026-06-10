@@ -199,6 +199,81 @@ export const BLACKMAR_DIEMER_GAMBIT: CuratedPath = {
   moves: ["d4", "d5", "e4", "dxe4", "Nc3", "Nf6", "f3", "exf3", "Nxf3", "g6"],
 };
 
+/* —— Second lines (variation depth): one more major theory branch per flagship
+   opening. Same certification: every move legal via chess.js (line.test.ts). */
+
+export const ITALIAN_TWO_KNIGHTS: CuratedPath = {
+  id: "italian-two-knights",
+  name: "Italian Game — Two Knights, Ng5",
+  eco: "C58",
+  archetype: "warrior",
+  description: "The sharpest Italian: strike at f7 before Black finishes developing.",
+  moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nf6", "Ng5", "d5", "exd5", "Na5"],
+};
+
+export const RUY_LOPEZ_EXCHANGE: CuratedPath = {
+  id: "ruy-lopez-exchange",
+  name: "Ruy Lopez — Exchange",
+  eco: "C68",
+  archetype: "strategist",
+  description: "Trade on c6 and play the long game against the doubled pawns.",
+  moves: ["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Bxc6", "dxc6", "O-O", "f6"],
+};
+
+export const SCOTCH_MIESES: CuratedPath = {
+  id: "scotch-mieses",
+  name: "Scotch Game — Mieses",
+  eco: "C45",
+  archetype: "warrior",
+  description: "Chase the knight with e5 and unbalance the game from move six.",
+  moves: ["e4", "e5", "Nf3", "Nc6", "d4", "exd4", "Nxd4", "Nf6", "Nxc6", "bxc6", "e5", "Qe7", "Qe2", "Nd5"],
+};
+
+export const SICILIAN_DRAGON_YUGOSLAV: CuratedPath = {
+  id: "sicilian-dragon-yugoslav",
+  name: "Sicilian Dragon — vs the Yugoslav",
+  eco: "B76",
+  archetype: "warrior",
+  description: "Castle into the storm: the dragon bishop answers White's pawn avalanche.",
+  moves: ["e4", "c5", "Nf3", "d6", "d4", "cxd4", "Nxd4", "Nf6", "Nc3", "g6", "Be3", "Bg7", "f3", "O-O"],
+};
+
+export const QUEENS_GAMBIT_ACCEPTED: CuratedPath = {
+  id: "queens-gambit-accepted",
+  name: "Queen's Gambit — Accepted",
+  eco: "D26",
+  archetype: "strategist",
+  description: "Let Black take c4, reclaim it with tempo, and own the centre.",
+  moves: ["d4", "d5", "c4", "dxc4", "Nf3", "Nf6", "e3", "e6", "Bxc4", "c5"],
+};
+
+export const LONDON_VS_KINGS_INDIAN: CuratedPath = {
+  id: "london-vs-kings-indian",
+  name: "London System — vs the King's Indian setup",
+  eco: "A48",
+  archetype: "strategist",
+  description: "The same reliable wall, tuned against the kingside fianchetto.",
+  moves: ["d4", "Nf6", "Nf3", "g6", "Bf4", "Bg7", "e3", "O-O", "Be2", "d6"],
+};
+
+export const CARO_KANN_ADVANCE: CuratedPath = {
+  id: "caro-kann-advance",
+  name: "Caro-Kann — vs the Advance",
+  eco: "B12",
+  archetype: "defender",
+  description: "Free the bishop before closing the chain — the Caro-Kann's whole point.",
+  moves: ["e4", "c6", "d4", "d5", "e5", "Bf5", "Nf3", "e6", "Be2", "Nd7"],
+};
+
+export const FRENCH_ADVANCE: CuratedPath = {
+  id: "french-advance",
+  name: "French Defense — vs the Advance",
+  eco: "C02",
+  archetype: "defender",
+  description: "Attack the chain at its base: c5 and Qb6 lean on d4 immediately.",
+  moves: ["e4", "e6", "d4", "d5", "e5", "c5", "c3", "Nc6", "Nf3", "Qb6"],
+};
+
 export const STARTER_PATHS: CuratedPath[] = [
   ITALIAN_GIUOCO_PIANISSIMO,
   SCANDINAVIAN_MAINLINE,
@@ -221,4 +296,12 @@ export const STARTER_PATHS: CuratedPath[] = [
   PETROFF_CLASSICAL,
   STAFFORD_GAMBIT,
   BLACKMAR_DIEMER_GAMBIT,
+  ITALIAN_TWO_KNIGHTS,
+  RUY_LOPEZ_EXCHANGE,
+  SCOTCH_MIESES,
+  SICILIAN_DRAGON_YUGOSLAV,
+  QUEENS_GAMBIT_ACCEPTED,
+  LONDON_VS_KINGS_INDIAN,
+  CARO_KANN_ADVANCE,
+  FRENCH_ADVANCE,
 ];

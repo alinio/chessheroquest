@@ -265,6 +265,15 @@ export const PATH_SIDE: Record<string, GuardianSide> = {
   "budapest-gambit": "black",
   "stafford-gambit": "black",
   "englund-gambit": "black",
+  // second lines
+  "italian-two-knights": "white",
+  "ruy-lopez-exchange": "white",
+  "scotch-mieses": "white",
+  "sicilian-dragon-yugoslav": "black",
+  "queens-gambit-accepted": "white",
+  "london-vs-kings-indian": "white",
+  "caro-kann-advance": "black",
+  "french-advance": "black",
 };
 
 export interface PathChallenge {

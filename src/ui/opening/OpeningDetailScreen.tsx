@@ -26,15 +26,24 @@ export interface OpeningMasteryView {
   state: MasteryState;
 }
 
+export interface OpeningLineView {
+  id: string;
+  name: string;
+  mastery: OpeningMasteryView | null;
+}
+
 export function OpeningDetailScreen({
   openingId,
   name,
   mastery,
+  lines = [],
 }: {
   openingId: OpeningId;
   name?: string;
   /** Real coverage from getOpeningMastery; absent = not started yet. */
   mastery?: OpeningMasteryView | null;
+  /** Every curated line of this opening (mainline first), with real mastery. */
+  lines?: OpeningLineView[];
 }) {
   const art = getOpeningArt(openingId);
   const realm = getOpeningRealm(openingId);
@@ -88,6 +97,28 @@ export function OpeningDetailScreen({
           <Link className="btn-gold" href="/train">Back to training →</Link>
         )}
       </div>
+
+      {/* CURATED LINES — every branch of this opening, with real mastery */}
+      {lines.length > 1 && (
+        <section className="op-lines">
+          <p className="eyebrow gold">Lines</p>
+          {lines.map((l) => {
+            const sub = l.name.includes("—") ? l.name.split("—")[1]!.trim() : l.name;
+            return (
+              <div className="op-line" key={l.id}>
+                <span className="ol-name">{sub}</span>
+                <span className="ol-state">
+                  {l.mastery ? `${STATE_LABEL[l.mastery.state].split(" — ")[0]} · ${l.mastery.studied}/${l.mastery.total}` : "Not started"}
+                </span>
+                <span className="ol-actions">
+                  <Link className="btn-ghost sm" href={`/train/${l.id}/learn`}>Learn</Link>
+                  <Link className="btn-ghost sm" href={`/drill/${l.id}`}>Drill</Link>
+                </span>
+              </div>
+            );
+          })}
+        </section>
+      )}
 
       {/* OPENING GUARDIAN ENTRY */}
       {realm && guardian && pathId && (

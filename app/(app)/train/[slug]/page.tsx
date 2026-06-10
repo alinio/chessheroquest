@@ -6,9 +6,10 @@
 import { notFound } from "next/navigation";
 import { auth } from "@/src/lib/auth";
 import { getOpeningMastery } from "@/src/data/repos/openings";
-import { OpeningDetailScreen, type OpeningMasteryView } from "@/src/ui/opening/OpeningDetailScreen";
+import { OpeningDetailScreen, type OpeningLineView, type OpeningMasteryView } from "@/src/ui/opening/OpeningDetailScreen";
 import { OPENING_NAMES, ASSETS, type OpeningId } from "@/src/lib/assets";
-import { OPENING_TO_PATH } from "@/src/lib/opening-paths";
+import { OPENING_TO_PATH, OPENING_LINES } from "@/src/lib/opening-paths";
+import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 
 export default async function OpeningDetailPage({
   params,
@@ -19,14 +20,20 @@ export default async function OpeningDetailPage({
   if (!(slug in ASSETS.openings)) notFound();
   const id = slug as OpeningId;
 
-  // Real coverage for this opening's curated path (when signed in + started).
+  // Real coverage for this opening's curated lines (when signed in + started).
   let mastery: OpeningMasteryView | null = null;
+  let lines: OpeningLineView[] = [];
   const session = await auth();
   const pathId = OPENING_TO_PATH[id];
   if (session?.user?.id && pathId) {
     const all = await getOpeningMastery(session.user.id);
     mastery = all[pathId] ?? null;
+    lines = (OPENING_LINES[id] ?? []).map((lineId) => ({
+      id: lineId,
+      name: STARTER_PATHS.find((p) => p.id === lineId)?.name ?? lineId,
+      mastery: all[lineId] ?? null,
+    }));
   }
 
-  return <OpeningDetailScreen openingId={id} name={OPENING_NAMES[id]} mastery={mastery} />;
+  return <OpeningDetailScreen openingId={id} name={OPENING_NAMES[id]} mastery={mastery} lines={lines} />;
 }
