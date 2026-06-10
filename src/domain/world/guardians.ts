@@ -22,9 +22,6 @@ export interface Guardian {
   art: string;
 }
 
-/** Shared poster fallback until per-guardian stills are dropped (catalog asset plan). */
-const POSTER = "/landing/scene-guardian-poster.jpg";
-
 /**
  * The full 20-guardian roster. Names, titles and lore are AUTHORED in
  * docs/opening-boss-catalog.md (original CHQ flavor — chess truth lives in the
@@ -38,7 +35,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Roman Edge",
     lore: "A Renaissance condottiero who duels with two crossed bishop-blades aimed at the king's throat.",
     taunt: "Your king's gate is f7 — and my blades already know the road.",
-    art: "/art/bosses/boss-warrior-italian.png",
+    art: "/art/bosses/boss-warrior-italian.webp",
   },
   "kings-gambit": {
     openingId: "kings-gambit",
@@ -46,7 +43,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Unbridled",
     lore: "A flame-wreathed warrior-king who sets his own pawns alight to clear a path to glory.",
     taunt: "I burn my own pawns for the open file — what will YOU sacrifice?",
-    art: POSTER,
+    art: "/art/bosses/boss-warrior-kingsgambit.webp",
   },
   scotch: {
     openingId: "scotch",
@@ -54,7 +51,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "Of the Broken Center",
     lore: "A highland warlord who cleaves the board's center with a single d4 blow.",
     taunt: "One blow at d4 and your centre is rubble.",
-    art: POSTER,
+    art: "/art/bosses/boss-warrior-scotch.webp",
   },
   "smith-morra": {
     openingId: "smith-morra",
@@ -62,7 +59,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Pawn-Reaper",
     lore: "A gambit-sorcerer who sows a single pawn and reaps a storm of attacking pieces.",
     taunt: "Take my pawn. Every storm begins with a single seed.",
-    art: POSTER,
+    art: "/art/bosses/boss-warrior-morra.webp",
   },
   "sicilian-dragon": {
     openingId: "sicilian-dragon",
@@ -70,7 +67,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Dragon of the Long Diagonal",
     lore: "A true dragon coiled along the a1–h8 diagonal, breathing fire the length of the board.",
     taunt: "My diagonal is long — and your king stands at the end of it.",
-    art: POSTER,
+    art: "/art/bosses/boss-warrior-dragon.webp",
   },
   // —— Obsidian Court (Strategist)
   "ruy-lopez": {
@@ -79,7 +76,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Spanish Inquisitor",
     lore: "A towering ecclesiastic who pins and converts, patient and merciless.",
     taunt: "Your knight on c6 is already mine — it just doesn't know it yet.",
-    art: "/art/bosses/boss-strategist-ruylopez.png",
+    art: "/art/bosses/boss-strategist-ruylopez.webp",
   },
   "queens-gambit": {
     openingId: "queens-gambit",
@@ -87,7 +84,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Veiled Queen",
     lore: "A regal sorceress-queen who offers a jeweled pawn as bait and closes the trap with the whole board.",
     taunt: "Take the pawn, child. The board will close around you.",
-    art: POSTER,
+    art: "/art/bosses/boss-strategist-queensgambit.webp",
   },
   "nimzo-indian": {
     openingId: "nimzo-indian",
@@ -95,7 +92,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "Of the Bound Knight",
     lore: "A mystic strategist who binds enemies in invisible chains before they can move.",
     taunt: "Move, then. Oh — you can't.",
-    art: POSTER,
+    art: "/art/bosses/boss-strategist-nimzo.webp",
   },
   catalan: {
     openingId: "catalan",
@@ -103,7 +100,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Architect of Light",
     lore: "A geometer-noble who channels a single bishop into a ray that cuts the board in half.",
     taunt: "From g2 I see your whole kingdom.",
-    art: POSTER,
+    art: "/art/bosses/boss-strategist-catalan.webp",
   },
   english: {
     openingId: "english",
@@ -111,7 +108,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Flank Sovereign",
     lore: "A sovereign who commands from the wing, mirroring and outflanking every plan.",
     taunt: "You watch the centre. I am already behind you.",
-    art: POSTER,
+    art: "/art/bosses/boss-strategist-english.webp",
   },
   // —— Aegis Bastion (Defender)
   london: {
@@ -120,7 +117,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Stone Wall",
     lore: "A fortress-warden who never advances and never breaks; he simply outlasts you.",
     taunt: "Come. Break yourself upon me.",
-    art: POSTER,
+    art: "/art/bosses/boss-defender-london.webp",
   },
   "caro-kann": {
     openingId: "caro-kann",
@@ -128,7 +125,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Patient Wall",
     lore: "A hooded sentinel of the chain who waits, unbreakable, for the enemy to overreach.",
     taunt: "Strike when you wish. The wall was here before you.",
-    art: POSTER,
+    art: "/art/bosses/boss-defender-carokann.webp",
   },
   french: {
     openingId: "french",
@@ -136,7 +133,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "Of the Chain",
     lore: "A chevalière who fights from behind a fortified pawn chain, striking only at its base.",
     taunt: "My chain bends; it does not break. Yours will.",
-    art: POSTER,
+    art: "/art/bosses/boss-defender-french.webp",
   },
   slav: {
     openingId: "slav",
@@ -144,7 +141,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Unmoved",
     lore: "A bogatyr who stands upon a frozen river; nothing crosses without his leave.",
     taunt: "The river is frozen — and you do not have my leave.",
-    art: POSTER,
+    art: "/art/bosses/boss-defender-slav.webp",
   },
   petroff: {
     openingId: "petroff",
@@ -152,7 +149,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Mirror Sentinel",
     lore: "A knight who answers every strike with its perfect reflection.",
     taunt: "Whatever you bring, I return it — polished.",
-    art: POSTER,
+    art: "/art/bosses/boss-defender-petroff.webp",
   },
   // —— Mirage Bazaar (Trickster)
   scandinavian: {
@@ -161,7 +158,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Northern Mirage",
     lore: "A skald-trickster who lures the queen into the open as a glittering feint.",
     taunt: "Chase my queen across the snow — I'll be home before you.",
-    art: POSTER,
+    art: "/art/bosses/boss-trickster-scandinavian.webp",
   },
   budapest: {
     openingId: "budapest",
@@ -169,7 +166,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Thermal Phantom",
     lore: "An illusionist who rises from the bath-house steam to snatch a pawn and vanish.",
     taunt: "Blink — and your pawn is steam.",
-    art: POSTER,
+    art: "/art/bosses/boss-trickster-budapest.webp",
   },
   stafford: {
     openingId: "stafford",
@@ -177,7 +174,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Gift-Giver",
     lore: "A grinning imp who hands you a knight like a gift, then snaps a trap shut.",
     taunt: "A free knight, friend! Take it. I insist.",
-    art: POSTER,
+    art: "/art/bosses/boss-trickster-stafford.webp",
   },
   "blackmar-diemer": {
     openingId: "blackmar-diemer",
@@ -185,7 +182,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Flame-Juggler",
     lore: "A street-magician who juggles burning pawns and sets the open file alight.",
     taunt: "Two pawns for a file of fire — a bargain!",
-    art: POSTER,
+    art: "/art/bosses/boss-trickster-blackmardiemer.webp",
   },
   englund: {
     openingId: "englund",
@@ -193,7 +190,7 @@ export const GUARDIANS: Record<string, Guardian> = {
     title: "The Mad",
     lore: "A court jester whose opening “blunder” hides a noose of threats.",
     taunt: "A jester's blunder? Look again. Look AGAIN.",
-    art: POSTER,
+    art: "/art/bosses/boss-trickster-englund.webp",
   },
 };
 

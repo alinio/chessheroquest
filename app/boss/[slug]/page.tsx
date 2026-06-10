@@ -13,7 +13,7 @@ import { ASSETS, OPENING_NAMES } from "@/src/lib/assets";
 import { GuardianDuel } from "@/src/ui/boss/GuardianDuel";
 
 export const metadata: Metadata = {
-  title: "Opening Guardian — ChessHeroQuest",
+  title: "Opening Guardian",
   robots: { index: false },
 };
 

@@ -10,6 +10,7 @@ import "./arrival.css";
 import type { CSSProperties } from "react";
 import { TestBoard } from "@/src/ui/design-system/TestBoard";
 import { ASSETS, type Archetype } from "@/src/lib/assets";
+import { PictureBg } from "@/src/ui/PictureBg";
 import type { ArrivalFixture } from "@/src/dev/fixtures";
 
 const ARCH_ACCENT: Record<Archetype, string> = {
@@ -34,8 +35,7 @@ export function ArrivalScreen({
     <div className="chq-arrival" style={{ "--accent": ARCH_ACCENT[arrival.archetype] } as CSSProperties}>
       <div className="stage">
         <div className="bg">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={ASSETS.backgrounds.resultsReveal} alt="" />
+          <PictureBg landscape={ASSETS.backgrounds.resultsReveal} portrait={ASSETS.backgrounds.resultsRevealPortrait} />
         </div>
 
         <div className="wrap">

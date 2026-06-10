@@ -16,6 +16,7 @@ import { useDnaTest } from "@/src/ui/dna-test/useDnaTest";
 import { useStyleQuiz } from "@/src/ui/style-quiz/useStyleQuiz";
 import { SaveProgress } from "@/src/ui/account/SaveProgress";
 import { ASSETS, getRankInsignia } from "@/src/lib/assets";
+import { PictureBg } from "@/src/ui/PictureBg";
 import { DnaShareCard } from "./DnaShareCard";
 
 function useHydrated() {
@@ -43,8 +44,7 @@ function Shell({ children }: { children: ReactNode }) {
     <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", position: "relative" }}>
       <GradientDefs />
       <div aria-hidden="true" style={{ position: "fixed", inset: 0, zIndex: 0 }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={ASSETS.backgrounds.resultsReveal} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <PictureBg landscape={ASSETS.backgrounds.resultsReveal} portrait={ASSETS.backgrounds.resultsRevealPortrait} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,10,.6), rgba(8,8,10,.85))" }} />
       </div>
       <header style={{ position: "relative", zIndex: 1, height: 56, flexShrink: 0, display: "flex", alignItems: "center", gap: 8, padding: "0 20px", borderBottom: "1px solid var(--chq-line)" }}>

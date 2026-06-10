@@ -9,7 +9,7 @@
  * Non-destructive: re-running skips files already cut out (those with a _raw backup).
  */
 import { readdirSync, statSync, mkdirSync, copyFileSync, existsSync } from "node:fs";
-import { join, relative, dirname, sep } from "node:path";
+import { join, relative, dirname } from "node:path";
 import { execFileSync } from "node:child_process";
 
 const ROOT = join(process.cwd(), "public", "assets");

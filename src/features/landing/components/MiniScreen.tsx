@@ -135,7 +135,7 @@ function ConquerScreen() {
       <div className="mx-auto h-[150px] w-[116px] overflow-hidden rounded-lg border border-gold/30">
         {/* boss still — reuse existing art (public/art/bosses) */}
         <Image
-          src="/art/bosses/boss-strategist-ruylopez.png"
+          src="/art/bosses/boss-strategist-ruylopez.webp"
           alt="An Opening Guardian"
           width={232}
           height={300}

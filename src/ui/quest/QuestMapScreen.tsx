@@ -11,6 +11,7 @@ import { useState, type CSSProperties } from "react";
 import Link from "next/link";
 import "@/src/ui/shell/hub.css";
 import { ASSETS, getNodeArt, getOpeningArt, PLACEHOLDER, type NodeState, type RealmId } from "@/src/lib/assets";
+import { PictureBg } from "@/src/ui/PictureBg";
 import { learnHref } from "@/src/lib/opening-paths";
 import type { QuestMapFixture, QuestNode } from "@/src/dev/fixtures";
 
@@ -55,8 +56,7 @@ export function QuestMapScreen({ quest }: { quest: QuestMapFixture }) {
 
       <div className="map" style={{ "--accent": REALM_ACCENT[quest.realm] } as CSSProperties}>
         <div className="map-bg">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={ASSETS.backgrounds.questMap} alt="" />
+          <PictureBg landscape={ASSETS.backgrounds.questMap} portrait={ASSETS.backgrounds.questMapPortrait} />
         </div>
 
         <svg className="path" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">

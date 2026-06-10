@@ -7,6 +7,7 @@ import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
 import { GradientDefs, LogoMark, Medal, type NodeState } from "@/src/ui/design-system/icons";
 import { getNodeArt, ASSETS, type NodeState as MedallionState } from "@/src/lib/assets";
+import { PictureBg } from "@/src/ui/PictureBg";
 
 /** Map the world node state → the painted medallion state. */
 function medallion(st: NodeState): MedallionState {
@@ -96,8 +97,8 @@ export function WorldMapScreen() {
 
       {/* Full-bleed Quest Map backdrop (path + node medallions render over it). */}
       <div aria-hidden="true" style={{ position: "fixed", inset: 0, zIndex: 0 }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={ASSETS.backgrounds.questMap} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        { }
+        <PictureBg landscape={ASSETS.backgrounds.questMap} portrait={ASSETS.backgrounds.questMapPortrait} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,10,.5), rgba(8,8,10,.8))" }} />
       </div>
 

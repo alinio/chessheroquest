@@ -15,7 +15,7 @@ import { REALM_NAMES, type RealmId } from "@/src/lib/assets";
 import { RealmGauntlet } from "@/src/ui/boss/RealmGauntlet";
 
 export const metadata: Metadata = {
-  title: "Kingdom Boss — ChessHeroQuest",
+  title: "Kingdom Boss",
   robots: { index: false },
 };
 

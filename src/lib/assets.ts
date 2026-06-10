@@ -43,6 +43,12 @@ export const ASSETS = {
     dnaTest: `${BASE}/backgrounds/dna-test-bg.webp`,
     resultsReveal: `${BASE}/backgrounds/results-reveal-bg.webp`,
     bossArena: `${BASE}/backgrounds/boss-arena-bg.webp`,
+    // 9:16 variants — phones get true portrait art, never a 60% center-crop.
+    questMapPortrait: `${BASE}/backgrounds/quest-map-bg-portrait.webp`,
+    todayPortrait: `${BASE}/backgrounds/today-hero-bg-portrait.webp`,
+    dnaTestPortrait: `${BASE}/backgrounds/dna-test-bg-portrait.webp`,
+    resultsRevealPortrait: `${BASE}/backgrounds/results-reveal-bg-portrait.webp`,
+    bossArenaPortrait: `${BASE}/backgrounds/boss-arena-bg-portrait.webp`,
   },
   textures: {
     obsidian: `${BASE}/textures/obsidian.webp`,

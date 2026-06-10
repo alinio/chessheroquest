@@ -12,6 +12,8 @@ import { isStreakAlive } from "@/src/domain/gamification/streak";
 import { pickFocusOpenings } from "@/src/domain/gamification/focus";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 import { TodayScreen, type TodayData } from "@/src/ui/today/TodayScreen";
+import { ASSETS } from "@/src/lib/assets";
+import { PictureBg } from "@/src/ui/PictureBg";
 
 export default async function TodayPage() {
   const session = await auth();
@@ -23,8 +25,7 @@ export default async function TodayPage() {
       <main className="today-v2 today-first">
         <section className="today-hero">
           <div className="bg">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/assets/backgrounds/today-hero-bg.webp" alt="" />
+            <PictureBg landscape={ASSETS.backgrounds.today} portrait={ASSETS.backgrounds.todayPortrait} />
           </div>
           <div className="focal">
             <p className="eyebrow gold">Your quest begins</p>

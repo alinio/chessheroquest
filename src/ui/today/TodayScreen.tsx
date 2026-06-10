@@ -7,6 +7,7 @@
 import "@/src/ui/shell/hub.css";
 import Link from "next/link";
 import { ASSETS } from "@/src/lib/assets";
+import { PictureBg } from "@/src/ui/PictureBg";
 import { generateDailyQuests, type Quest } from "@/src/domain/gamification/quests";
 import { xpProgress } from "@/src/domain/gamification/xp";
 import { HowItWorks } from "@/src/ui/onboarding/HowItWorks";
@@ -85,8 +86,7 @@ export function TodayScreen({ data }: { data: TodayData }) {
       {/* cinematic HERO — the one thing to do now */}
       <section className="today-hero">
         <div className="bg">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={ASSETS.backgrounds.today} alt="" />
+          <PictureBg landscape={ASSETS.backgrounds.today} portrait={ASSETS.backgrounds.todayPortrait} />
         </div>
         <div className="focal">
           <p className="eyebrow gold">Daily training</p>

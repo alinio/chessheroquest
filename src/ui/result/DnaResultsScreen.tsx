@@ -7,6 +7,7 @@
 import type { CSSProperties } from "react";
 import "./dna-results.css";
 import { ASSETS, getArchetypeSigil, type Archetype } from "@/src/lib/assets";
+import { PictureBg } from "@/src/ui/PictureBg";
 import { IconCrown } from "@/src/ui/shell/icons";
 import type { DnaFixture } from "@/src/dev/fixtures";
 
@@ -25,8 +26,7 @@ export function DnaResultsScreen({ dna }: { dna: DnaFixture }) {
     <div className="chq-dna" style={{ "--accent": ARCH_ACCENT[dna.archetype] } as CSSProperties}>
       <div className="stage">
         <div className="bg">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={ASSETS.backgrounds.resultsReveal} alt="" />
+          <PictureBg landscape={ASSETS.backgrounds.resultsReveal} portrait={ASSETS.backgrounds.resultsRevealPortrait} />
         </div>
 
         <div className="topleft"><IconCrown /> Your Chess DNA</div>

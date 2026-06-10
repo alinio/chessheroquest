@@ -14,7 +14,7 @@ import { Chess } from "chess.js";
 import type { PieceDropHandlerArgs } from "react-chessboard";
 import "./boss-fight.css";
 import { Board } from "@/src/ui/board/Board";
-import { ASSETS, getRealmBoss, type RealmId } from "@/src/lib/assets";
+import { ASSETS, type RealmId } from "@/src/lib/assets";
 import { IconCrown } from "@/src/ui/shell/icons";
 import { DIFFICULTY, PATH_SIDE, pathChallenges, type Guardian } from "@/src/domain/world/guardians";
 import type { CuratedPath } from "@/src/domain/repertoire/types";
@@ -148,8 +148,9 @@ export function GuardianDuel({
     <div className="chq-boss" style={{ "--accent": a.accent, "--accent-bright": a.bright } as CSSProperties}>
       <div className="stage">
         <div className="bg">
+          {/* The Guardian's own still (3:4 portrait — perfect for the duel). */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={getRealmBoss(realm)} alt="" />
+          <img src={guardian.art} alt="" />
         </div>
         <div className="glow" />
         <div className="topleft"><IconCrown /> Opening Guardian</div>
