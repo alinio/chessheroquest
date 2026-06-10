@@ -64,6 +64,13 @@
       "when": 1780803243807,
       "tag": "0008_magical_gravity",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1781113180981,
+      "tag": "0009_little_kingpin",
+      "breakpoints": true
     }
   ]
 }

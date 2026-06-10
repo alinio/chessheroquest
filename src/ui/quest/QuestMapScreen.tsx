@@ -85,15 +85,30 @@ export function QuestMapScreen({ quest }: { quest: QuestMapFixture }) {
           </div>
         ))}
 
-        {/* REALM BOSS node */}
-        <div className="qnode boss" style={{ left: `${quest.bossX}%`, top: `${quest.bossY}%` }}>
-          <div className="qmedal">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="node-art" src={getNodeArt("boss")} alt="" />
+        {/* REALM BOSS node — the Gauntlet opens at 5/5 */}
+        {quest.conquered >= quest.total ? (
+          <Link
+            className="qnode boss"
+            href={`/boss/realm/${quest.realm}`}
+            style={{ left: `${quest.bossX}%`, top: `${quest.bossY}%` }}
+          >
+            <div className="qmedal">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="node-art" src={getNodeArt("boss")} alt="" />
+            </div>
+            <span className="qname serif">{quest.bossName}</span>
+            <span className="qmeta">The Gauntlet is open — claim the realm →</span>
+          </Link>
+        ) : (
+          <div className="qnode boss" style={{ left: `${quest.bossX}%`, top: `${quest.bossY}%` }}>
+            <div className="qmedal">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="node-art" src={getNodeArt("boss")} alt="" />
+            </div>
+            <span className="qname serif">{quest.bossName}</span>
+            <span className="qmeta">Kingdom Boss — seal all {quest.total} to face him</span>
           </div>
-          <span className="qname serif">{quest.bossName}</span>
-          <span className="qmeta">Realm Boss — defeat to claim the realm</span>
-        </div>
+        )}
 
         {coach && (
           <div className="coachmark">

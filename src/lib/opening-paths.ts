@@ -4,7 +4,7 @@
  * /drill/[slug]) are keyed by STARTER_PATHS ids. Openings without a curated
  * path yet map to null — UI must fall back to a safe route, never a 404.
  */
-import type { OpeningId } from "@/src/lib/assets";
+import { ASSETS, type OpeningId, type RealmId } from "@/src/lib/assets";
 
 export const OPENING_TO_PATH: Partial<Record<OpeningId, string>> = {
   italian: "italian-giuoco-pianissimo",
@@ -33,6 +33,14 @@ export const OPENING_TO_PATH: Partial<Record<OpeningId, string>> = {
 export function learnHref(id: OpeningId): string | null {
   const path = OPENING_TO_PATH[id];
   return path ? `/train/${path}/learn` : null;
+}
+
+/** The realm's curated path ids, in registry order (the gauntlet sequence). */
+export function realmPathIds(realm: RealmId): string[] {
+  return (Object.keys(ASSETS.openings) as OpeningId[])
+    .filter((id) => ASSETS.openings[id].realm === realm)
+    .map((id) => OPENING_TO_PATH[id])
+    .filter((p): p is string => Boolean(p));
 }
 
 /** Reverse lookup: curated path id → OpeningId. Evans Gambit is a second Italian path. */

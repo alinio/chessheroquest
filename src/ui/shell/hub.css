@@ -347,6 +347,8 @@
 .chq-hub .coachmark button:hover { color: var(--parchment); }
 .chq-hub .qnode .here { position: absolute; left: 50%; top: -20px; transform: translateX(-50%); white-space: nowrap; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ember-bright); font-weight: 700; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9); }
 .chq-hub .qnode { position: absolute; transform: translate(-50%, -50%); text-align: center; width: 120px; z-index: 2; }
+.chq-hub a.qnode { display: block; text-decoration: none; color: inherit; }
+.chq-hub a.qnode:hover .qmedal { filter: drop-shadow(0 0 16px rgba(241, 214, 128, 0.5)); }
 .chq-hub .qmedal { width: 62px; height: 62px; margin: 0 auto; position: relative; display: flex; align-items: center; justify-content: center; }
 .chq-hub .qmedal .node-art { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.55)); }
 .chq-hub .qmedal .node-emblem { position: absolute; width: 54%; height: 54%; left: 50%; top: 46%; transform: translate(-50%, -50%); object-fit: contain; }

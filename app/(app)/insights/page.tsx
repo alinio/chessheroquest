@@ -6,7 +6,7 @@
  */
 import { redirect } from "next/navigation";
 import { auth } from "@/src/lib/auth";
-import { getProgress, getIqTrend } from "@/src/data/repos/progress";
+import { getProgress, getIqTrend, getLinkedAccounts } from "@/src/data/repos/progress";
 import { getTrainingStats } from "@/src/data/repos/stats";
 import { getOpeningMastery } from "@/src/data/repos/openings";
 import { roadProgress, projectedEloGain, type EloGoal, ELO_GOALS } from "@/src/domain/gamification/road";
@@ -22,10 +22,11 @@ export default async function InsightsPage() {
   const progress = await getProgress(session.user.id);
   if (!progress) redirect("/train"); // first-quest prompt lives there
 
-  const [trend, stats, mastery] = await Promise.all([
+  const [trend, stats, mastery, linked] = await Promise.all([
     getIqTrend(session.user.id),
     getTrainingStats(session.user.id),
     getOpeningMastery(session.user.id),
+    getLinkedAccounts(session.user.id),
   ]);
 
   const goal: EloGoal = (ELO_GOALS as readonly number[]).includes(progress.eloGoal)
@@ -54,5 +55,5 @@ export default async function InsightsPage() {
     weaknesses,
   };
 
-  return <InsightsScreen data={data} />;
+  return <InsightsScreen data={data} savedUsernames={linked} />;
 }

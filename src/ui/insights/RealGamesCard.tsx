@@ -6,15 +6,31 @@
  * with the Connect CTA. The proof-it's-working card (DESIGN.md content voice).
  */
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useGameSync } from "@/src/ui/games/useGameSync";
 
 const useHydrated = () =>
   useSyncExternalStore(() => () => {}, () => true, () => false);
 
-export function RealGamesCard() {
+export function RealGamesCard({
+  savedUsernames,
+}: {
+  /** Account-linked usernames (server) — auto-resyncs on a fresh device. */
+  savedUsernames?: { lichess?: string | null; chesscom?: string | null };
+}) {
   const hydrated = useHydrated();
   const summary = useGameSync((s) => s.summary);
+  const status = useGameSync((s) => s.status);
+  const sync = useGameSync((s) => s.sync);
+
+  // Fresh device / cleared storage but the account knows the usernames →
+  // re-pull the public games automatically (real data, no tokens involved).
+  useEffect(() => {
+    if (!hydrated || summary || status !== "idle") return;
+    const lichess = savedUsernames?.lichess ?? undefined;
+    const chesscom = savedUsernames?.chesscom ?? undefined;
+    if (lichess || chesscom) void sync({ lichess, chesscom });
+  }, [hydrated, summary, status, savedUsernames, sync]);
 
   const top = summary?.byOpening.slice(0, 4) ?? [];
 
@@ -23,7 +39,7 @@ export function RealGamesCard() {
       <p className="ct">Your real games</p>
       {!hydrated || !summary || summary.totalGames === 0 ? (
         <>
-          <div className="conn">No platform connected</div>
+          <div className="conn">{status === "loading" ? "Syncing your games…" : "No platform connected"}</div>
           <p style={{ color: "var(--muted)", fontSize: 13, lineHeight: 1.55, margin: "6px 0 14px" }}>
             Connect Lichess or Chess.com to measure your openings on real games —
             proof your training is working.

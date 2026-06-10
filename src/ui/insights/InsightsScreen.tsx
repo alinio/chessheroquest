@@ -51,7 +51,13 @@ function iqPaths(trend: number[]) {
   return { line, area: `${line} L${W},${H} L0,${H} Z` };
 }
 
-export function InsightsScreen({ data }: { data: InsightsData }) {
+export function InsightsScreen({
+  data,
+  savedUsernames,
+}: {
+  data: InsightsData;
+  savedUsernames?: { lichess?: string | null; chesscom?: string | null };
+}) {
   const { line, area } = iqPaths(data.iqTrend.length >= 2 ? data.iqTrend : [data.openingIq, data.openingIq]);
 
   return (
@@ -112,7 +118,7 @@ export function InsightsScreen({ data }: { data: InsightsData }) {
 
       <div className="ins-two">
         {/* real games — client card reads the sync store */}
-        <RealGamesCard />
+        <RealGamesCard savedUsernames={savedUsernames} />
 
         {/* weaknesses from real FSRS mastery */}
         <section className="ins-card">

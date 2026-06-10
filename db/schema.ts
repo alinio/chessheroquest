@@ -122,6 +122,10 @@ export const users = pgTable("users", {
   // Road to Elo goal (master-vision §5): 1000 | 1200 | 1500 | 1800.
   eloGoal: integer("elo_goal").notNull().default(1200),
 
+  // Linked platforms (game sync — public usernames only, re-fetched on demand).
+  lichessUsername: varchar("lichess_username", { length: 64 }),
+  chesscomUsername: varchar("chesscom_username", { length: 64 }),
+
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
