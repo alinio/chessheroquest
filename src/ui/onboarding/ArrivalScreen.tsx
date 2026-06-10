@@ -1,17 +1,15 @@
 "use client";
 
 /**
- * Arrival / first-session orientation (P0 from the UX audit) — shown ONCE right after
- * payment. Immersive, no shell. Fixes the post-payment "what do I do?" gap: defines
- * Opening IQ once, teaches the 3-step loop (Drill → Beat the Guardian → Seal), uses the
- * player's DNA (edge/gap), and offers ONE primary action. Data-driven.
- *
- * onStart() → deep-link straight into the first drill on the strength opening.
- * onSkip()  → Today. Caller sets arrival_seen=true on first render (never blocks again).
+ * Arrival — the coach's diagnosis (board + plan). Chess-first and pedagogical: a real
+ * board shows where the player loses, beside a concrete plan (strength / gap + first
+ * session). Opening IQ is demoted to a small chip. Immersive, no shell, shown once
+ * post-payment. onStart → drill the GAP opening; onSkip → Today.
  */
-import type { CSSProperties } from "react";
 import "./arrival.css";
-import { ASSETS, getArchetypeSigil, type Archetype } from "@/src/lib/assets";
+import type { CSSProperties } from "react";
+import { TestBoard } from "@/src/ui/design-system/TestBoard";
+import { ASSETS, type Archetype } from "@/src/lib/assets";
 import type { ArrivalFixture } from "@/src/dev/fixtures";
 
 const ARCH_ACCENT: Record<Archetype, string> = {
@@ -30,6 +28,8 @@ export function ArrivalScreen({
   onStart?: () => void;
   onSkip?: () => void;
 }) {
+  const shortWeak = arrival.weakness.split(" ")[0];
+
   return (
     <div className="chq-arrival" style={{ "--accent": ARCH_ACCENT[arrival.archetype] } as CSSProperties}>
       <div className="stage">
@@ -38,61 +38,56 @@ export function ArrivalScreen({
           <img src={ASSETS.backgrounds.resultsReveal} alt="" />
         </div>
 
-        <div className="col">
-          <p className="eyebrow">Welcome, {arrival.archetypeName}</p>
-          <h1 className="serif">Here&apos;s your plan</h1>
-
-          <div className="sigil">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={getArchetypeSigil(arrival.archetype)} alt="" />
+        <div className="wrap">
+          <div className="a-head">
+            <p className="eyebrow">Your training plan</p>
+            <h1 className="serif">We found where you&apos;re losing.</h1>
+            <p className="sub">From your 8-position test: you&apos;re sharp in the {arrival.strength}, but the {arrival.weakness} is costing you games. Here&apos;s the fix.</p>
           </div>
 
-          {/* Opening IQ — defined ONCE */}
-          <div className="iq">
-            <span className="num">{arrival.iq}<small>OPENING IQ</small></span>
-            <span className="def">
-              <b>Opening IQ</b> is one score (0–1000) for how well you know your openings. It climbs as you master lines — higher is better. <b>Top {arrival.topPercent}%</b> means you&apos;re ahead of {100 - arrival.topPercent}% of players at your level.
-            </span>
-          </div>
-
-          {/* edge / gap from the DNA */}
-          <div className="eg">
-            <div className="box">
-              <div className="k">Your edge</div>
-              <div className="v edge">{arrival.strength}</div>
-              <div className="note">Your strongest opening — we start here to build the habit.</div>
-            </div>
-            <div className="box">
-              <div className="k">Your gap</div>
-              <div className="v">{arrival.weakness}</div>
-              <div className="note">Your weakest reply — we&apos;ll shore it up next.</div>
-            </div>
-          </div>
-
-          {/* the loop — 3 steps */}
-          <div className="loop">
-            <p className="lbl">How it works — three steps, repeated</p>
-            <div className="steps">
-              <div className="step on">
-                <span className="n">1</span>
-                <span className="t">Drill<small>the key lines</small></span>
+          <div className="diag">
+            {/* board = the hero */}
+            <div>
+              <div className="board-wrap">
+                <TestBoard fen={arrival.weakFen} orientation={arrival.weakOrientation} />
               </div>
-              <span className="arrow">→</span>
-              <div className="step">
-                <span className="n">2</span>
-                <span className="t">Beat the Guardian<small>one engine duel</small></span>
+              <p className="board-cap">
+                <span className="turn">White to play</span><br />
+                The <b>{arrival.weakness}</b> · {arrival.weaknessLine}. You score just <b>{arrival.weaknessWin}%</b> as White from here — the fork most players fumble.
+              </p>
+            </div>
+
+            {/* the plan */}
+            <div className="plan">
+              <div className="pr">
+                <span className="lab">Strength</span>
+                <span className="op edge">{arrival.strength}</span>
+                <span className="wn up">{arrival.strengthWin}% ↑</span>
               </div>
-              <span className="arrow">→</span>
-              <div className="step">
-                <span className="n">3</span>
-                <span className="t">Seal it<small>in your Passport</small></span>
+              <div className="pr">
+                <span className="lab">Gap</span>
+                <span className="op gap">{arrival.weakness}</span>
+                <span className="wn down">{arrival.weaknessWin}% ↓</span>
+              </div>
+
+              <div className="sep" />
+
+              <div className="sess">
+                <div className="k">Your first session — start with the gap</div>
+                <div className="v"><b>{arrival.firstSessionLines} key lines</b> of the {arrival.weaknessLine} · ~{arrival.firstSessionMin} min</div>
+              </div>
+
+              <button className="cta" type="button" onClick={onStart}>Fix my {shortWeak} →</button>
+
+              <div className="foot">
+                <span className="iqchip">
+                  <b>{arrival.iq}</b> Opening IQ · Top {arrival.topPercent}%
+                  <span className="i" title="One score (0–1000) for how well you know your openings — it climbs as you master lines.">i</span>
+                </span>
+                <button className="skip" type="button" onClick={onSkip}>Explore on my own</button>
               </div>
             </div>
           </div>
-
-          <button className="cta" type="button" onClick={onStart}>Start my first drill →</button>
-          <p className="ctasub">~3 min · 5 drills on {arrival.strength}</p>
-          <button className="skip" type="button" onClick={onSkip}>Explore on my own</button>
         </div>
       </div>
     </div>

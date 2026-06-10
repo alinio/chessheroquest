@@ -112,19 +112,36 @@ export interface ArrivalFixture {
   iq: number;
   topPercent: number;
   strength: string;
+  strengthWin: number;
   weakness: string;
+  weaknessLine: string;
+  weaknessWin: number;
+  weakFen: string;
+  weakOrientation: "white" | "black";
+  firstSessionLines: number;
+  firstSessionMin: number;
   strengthId: OpeningId;
+  weaknessId: OpeningId;
 }
 
-/** One-time post-payment arrival/orientation (P0 from the UX audit). */
+/** One-time post-payment arrival — the coach's diagnosis (board + plan). */
 export const DEMO_ARRIVAL: ArrivalFixture = {
   archetype: "strategist",
   archetypeName: "Strategist",
   iq: 742,
   topPercent: 12,
   strength: "Ruy Lopez",
+  strengthWin: 61,
   weakness: "Sicilian Defense",
+  weaknessLine: "Dragon · Yugoslav Attack",
+  weaknessWin: 41,
+  // 1.e4 c5 2.Nf3 d6 3.d4 cxd4 4.Nxd4 Nf6 5.Nc3 g6 — White to play vs the Dragon.
+  weakFen: "rnbqkb1r/pp2pp1p/3p1np1/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6",
+  weakOrientation: "white",
+  firstSessionLines: 3,
+  firstSessionMin: 6,
   strengthId: "ruy-lopez",
+  weaknessId: "sicilian-dragon",
 };
 
 export interface QuestNode {

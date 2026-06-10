@@ -33,7 +33,7 @@ export default function WelcomePage() {
   return (
     <ArrivalScreen
       arrival={DEMO_ARRIVAL}
-      onStart={() => router.push(`/train/${DEMO_ARRIVAL.strengthId}/learn`)}
+      onStart={() => router.push(`/train/${DEMO_ARRIVAL.weaknessId}/learn`)}
       onSkip={() => router.push("/train")}
     />
   );
