@@ -5,6 +5,107 @@
  */
 import type { Archetype, RealmId, OpeningId } from "@/src/lib/assets";
 
+export interface OpeningPerf {
+  name: string;
+  games: number;
+  winPct: number;
+  trend: "up" | "down" | "flat";
+}
+export interface InsightsFixture {
+  openingIq: number;
+  topPercent: number;
+  iqTrend: number[]; // ~12 recent points (0–1000)
+  eloGoal: number;
+  eloNow: number;
+  accuracy: number;
+  drillsThisWeek: number;
+  cardsReviewed: number;
+  connected: { platform: "lichess" | "chesscom"; username: string }[];
+  openingPerf: OpeningPerf[]; // from synced real games
+  weaknesses: { name: string; accuracy: number }[];
+}
+
+/** Demo analytics for /insights. */
+export const DEMO_INSIGHTS: InsightsFixture = {
+  openingIq: 742,
+  topPercent: 12,
+  iqTrend: [418, 442, 470, 503, 540, 561, 598, 630, 661, 690, 718, 742],
+  eloGoal: 1500,
+  eloNow: 1386,
+  accuracy: 86,
+  drillsThisWeek: 41,
+  cardsReviewed: 312,
+  connected: [{ platform: "lichess", username: "marc_1900" }],
+  openingPerf: [
+    { name: "Ruy Lopez", games: 64, winPct: 61, trend: "up" },
+    { name: "Queen's Gambit", games: 38, winPct: 55, trend: "up" },
+    { name: "English Opening", games: 21, winPct: 52, trend: "flat" },
+    { name: "Sicilian Defense", games: 47, winPct: 41, trend: "down" },
+  ],
+  weaknesses: [
+    { name: "Sicilian Defense", accuracy: 48 },
+    { name: "French Defense", accuracy: 57 },
+    { name: "Caro-Kann", accuracy: 63 },
+  ],
+};
+
+export interface RealmEntry {
+  id: RealmId;
+  name: string;
+  sub: string;
+  archetype: Archetype;
+  accent: string;
+  sealed: number;
+  total: number;
+  current: boolean;
+}
+/** The 4 realms overview for /realms. */
+export const DEMO_REALMS: RealmEntry[] = [
+  { id: "ember-marches", name: "Ember Marches", sub: "Realm of the Warrior", archetype: "warrior", accent: "#e0413b", sealed: 2, total: 5, current: false },
+  { id: "obsidian-court", name: "Obsidian Court", sub: "Realm of the Strategist", archetype: "strategist", accent: "#8a7bd8", sealed: 3, total: 5, current: true },
+  { id: "aegis-bastion", name: "Aegis Bastion", sub: "Realm of the Defender", archetype: "defender", accent: "#4fb477", sealed: 1, total: 5, current: false },
+  { id: "mirage-bazaar", name: "Mirage Bazaar", sub: "Realm of the Trickster", archetype: "trickster", accent: "#46c7d8", sealed: 0, total: 5, current: false },
+];
+
+export interface ProfileFixture {
+  name: string;
+  archetype: Archetype;
+  archetypeName: string;
+  realmName: string;
+  openingIq: number;
+  topPercent: number;
+  rankElo: number;
+  level: number;
+  xp: number;
+  xpNext: number;
+  totalSeals: number;
+  totalOpenings: number;
+  streakRecord: number;
+  strength: string;
+  weakness: string;
+  joined: string;
+}
+
+/** Demo profile for /profile. */
+export const DEMO_PROFILE: ProfileFixture = {
+  name: "Alex",
+  archetype: "strategist",
+  archetypeName: "The Strategist",
+  realmName: "The Obsidian Court",
+  openingIq: 742,
+  topPercent: 12,
+  rankElo: 1500,
+  level: 14,
+  xp: 2240,
+  xpNext: 3000,
+  totalSeals: 6,
+  totalOpenings: 20,
+  streakRecord: 23,
+  strength: "Ruy Lopez",
+  weakness: "Sicilian Defense",
+  joined: "Apr 2026",
+};
+
 export interface ArrivalFixture {
   archetype: Archetype;
   archetypeName: string;

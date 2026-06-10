@@ -6,9 +6,12 @@ const LINKS: [string, string][] = [
   ["/dev/screens/welcome", "★ Arrival dashboard — one-time orientation (post-payment)"],
   ["/dev/screens/today", "Today / Dashboard — daily loop"],
   ["/dev/screens/quest-map", "Quest Map — realm hub + node medallions"],
+  ["/dev/screens/insights", "Insights — analytics (IQ trend, Road-to-Elo, synced games)"],
   ["/dev/screens/opening/ruy-lopez", "Opening detail — Ruy Lopez (banner + boss)"],
   ["/dev/screens/boss-fight", "Boss Fight — arena + guardian"],
   ["/dev/screens/passport", "Passport — seals (mastered/locked)"],
+  ["/dev/screens/profile", "Profile — hero identity + lifetime stats"],
+  ["/dev/screens/realms", "Realms — the 4 worlds overview"],
   ["/dev/screens/dna-results", "DNA Results (S2) — reveal + DNA card"],
 ];
 
