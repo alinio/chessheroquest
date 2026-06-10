@@ -8,14 +8,27 @@
  * bottom CTA. Rendered inside AppShell (active = Quest).
  */
 import { useState, type CSSProperties } from "react";
+import Link from "next/link";
 import "@/src/ui/shell/hub.css";
 import { ASSETS, getNodeArt, getOpeningArt, PLACEHOLDER, type NodeState, type RealmId } from "@/src/lib/assets";
+import { learnHref } from "@/src/lib/opening-paths";
 import type { QuestMapFixture, QuestNode } from "@/src/dev/fixtures";
 
 const STATE_MEDALLION: Record<QuestNode["state"], NodeState> = {
   conquered: "completed",
   available: "active",
   locked: "locked",
+};
+/** State glyph inside the name plate — color is never the only signal. */
+const STATE_GLYPH: Record<QuestNode["state"], string> = {
+  conquered: "✓",
+  available: "⚔",
+  locked: "🔒",
+};
+const STATE_LABEL: Record<QuestNode["state"], string> = {
+  conquered: "Conquered",
+  available: "Available now",
+  locked: "Locked — seal the path to reach it",
 };
 const REALM_ACCENT: Record<RealmId, string> = {
   "ember-marches": "#e0413b",
@@ -51,7 +64,12 @@ export function QuestMapScreen({ quest }: { quest: QuestMapFixture }) {
         </svg>
 
         {quest.nodes.map((n) => (
-          <div key={n.id} className={`qnode ${n.state}`} style={{ left: `${n.x}%`, top: `${n.y}%` }}>
+          <div
+            key={n.id}
+            className={`qnode ${n.state}`}
+            style={{ left: `${n.x}%`, top: `${n.y}%` }}
+            title={STATE_LABEL[n.state]}
+          >
             {n.state === "available" && <span className="here">You are here</span>}
             <div className="qmedal">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -59,7 +77,11 @@ export function QuestMapScreen({ quest }: { quest: QuestMapFixture }) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className="node-emblem" src={getOpeningArt(n.id)?.emblem ?? PLACEHOLDER} alt="" />
             </div>
-            <span className="qname serif">{n.name}</span>
+            <span className="qname serif">
+              <span className="qstate" aria-hidden="true">{STATE_GLYPH[n.state]}</span>
+              {n.name}
+              <span className="sr-only"> — {STATE_LABEL[n.state]}</span>
+            </span>
           </div>
         ))}
 
@@ -70,7 +92,7 @@ export function QuestMapScreen({ quest }: { quest: QuestMapFixture }) {
             <img className="node-art" src={getNodeArt("boss")} alt="" />
           </div>
           <span className="qname serif">{quest.bossName}</span>
-          <span className="qmeta">Realm Boss</span>
+          <span className="qmeta">Realm Boss — defeat to claim the realm</span>
         </div>
 
         {coach && (
@@ -82,7 +104,9 @@ export function QuestMapScreen({ quest }: { quest: QuestMapFixture }) {
       </div>
 
       <div className="questbar">
-        <button className="btn-quest" type="button">⚔ Continue · {continueName}</button>
+        <Link className="btn-quest" href={learnHref(quest.continueId) ?? "/review"}>
+          ⚔ Continue · {continueName}
+        </Link>
         <span className="legend">
           <span><span className="dot" style={{ background: "var(--gold-bright)" }} />conquered</span>
           <span><span className="dot" style={{ background: "var(--ember-bright)" }} />active</span>

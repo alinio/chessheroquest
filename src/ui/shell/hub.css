@@ -23,7 +23,9 @@
   --line: rgba(205, 168, 69, 0.28);
   --line-soft: rgba(205, 168, 69, 0.14);
 
-  font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+  /* Body font is Manrope (DESIGN.md) — --font-inter was never loaded in the hub
+     and silently fell back to the system font. */
+  font-family: var(--font-manrope), "Manrope", system-ui, sans-serif;
   color: var(--parchment);
   /* full-bleed app surface — fills the whole viewport like a real app/game */
   min-height: 100dvh;
@@ -147,14 +149,15 @@
 .chq-hub .hero-inner { position: relative; padding: 24px; width: 100%; }
 .chq-hub .hero-inner h2 { font-weight: 700; font-size: 26px; margin: 6px 0 4px; color: #fff; }
 .chq-hub .btn-gold {
-  margin-top: 16px; border: 0; cursor: pointer; font-family: var(--font-inter), "Inter", sans-serif; font-weight: 700; font-size: 15px;
+  margin-top: 16px; border: 0; cursor: pointer; font-family: var(--font-manrope), "Manrope", sans-serif; font-weight: 700; font-size: 15px;
   color: #2a2008; padding: 13px 26px; border-radius: 999px;
+  display: inline-block; text-decoration: none; text-align: center;
   background: linear-gradient(180deg, var(--gold-bright), var(--gold));
   box-shadow: 0 6px 20px rgba(205, 168, 69, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 .chq-hub .btn-gold.sm { padding: 9px 18px; font-size: 13px; margin-top: 0; }
 .chq-hub .btn-ghost {
-  cursor: pointer; font-family: var(--font-inter), "Inter", sans-serif; font-weight: 600; font-size: 13px;
+  cursor: pointer; font-family: var(--font-manrope), "Manrope", sans-serif; font-weight: 600; font-size: 13px;
   color: var(--parchment); padding: 9px 18px; border-radius: 999px; background: transparent; border: 1px solid var(--line);
 }
 
@@ -329,7 +332,8 @@
 .chq-hub .qmedal .node-art { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.55)); }
 .chq-hub .qmedal .node-emblem { position: absolute; width: 54%; height: 54%; left: 50%; top: 46%; transform: translate(-50%, -50%); object-fit: contain; }
 .chq-hub .qnode.locked .qmedal .node-emblem { filter: grayscale(1) brightness(0.5); opacity: 0.5; }
-.chq-hub .qname { display: inline-block; margin-top: 9px; font-family: var(--font-cinzel), "Cinzel", serif; font-size: 12.5px; letter-spacing: 0.5px; line-height: 1.2; color: #fff; font-weight: 600; background: rgba(8, 5, 12, 0.74); border: 1px solid rgba(205, 168, 69, 0.2); border-radius: 999px; padding: 3px 10px; }
+.chq-hub .qname { display: inline-flex; align-items: center; gap: 5px; margin-top: 9px; font-family: var(--font-cinzel), "Cinzel", serif; font-size: 12.5px; letter-spacing: 0.5px; line-height: 1.2; color: #fff; font-weight: 600; background: rgba(8, 5, 12, 0.88); border: 1px solid rgba(205, 168, 69, 0.28); border-radius: 999px; padding: 4px 11px; }
+.chq-hub .qname .qstate { font-size: 10px; opacity: 0.92; }
 .chq-hub .qnode.locked .qname { color: var(--muted); font-weight: 500; }
 .chq-hub .qnode.conquered .qname { color: var(--gold-bright); }
 .chq-hub .qnode.available .qname { border-color: color-mix(in srgb, var(--accent, #cda845) 55%, transparent); box-shadow: 0 0 14px color-mix(in srgb, var(--accent, #cda845) 30%, transparent); }
@@ -343,7 +347,8 @@
 @keyframes chq-pulse-node { 0%, 100% { filter: drop-shadow(0 0 10px rgba(224, 65, 59, 0.45)); } 50% { filter: drop-shadow(0 0 22px rgba(224, 65, 59, 0.85)); } }
 @media (prefers-reduced-motion: reduce) { .chq-hub .qnode.available .qmedal { animation: none; } }
 .chq-hub .questbar { display: flex; align-items: center; gap: 16px; margin-top: 18px; flex-wrap: wrap; }
-.chq-hub .btn-quest { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-cinzel), "Cinzel", serif; font-weight: 600; font-size: 14px; letter-spacing: 0.5px; color: #1a1206; background: linear-gradient(180deg, var(--gold-bright), var(--gold)); border: none; border-radius: 10px; padding: 13px 22px; cursor: pointer; box-shadow: 0 0 22px rgba(205, 168, 69, 0.35); }
+/* Typography discipline: buttons are functional UI → body font, not Cinzel. */
+.chq-hub .btn-quest { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-manrope), "Manrope", sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.3px; color: #1a1206; background: linear-gradient(180deg, var(--gold-bright), var(--gold)); border: none; border-radius: 10px; padding: 13px 22px; cursor: pointer; text-decoration: none; box-shadow: 0 0 22px rgba(205, 168, 69, 0.35); }
 .chq-hub .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 11px; color: var(--muted); letter-spacing: 0.5px; }
 .chq-hub .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .chq-hub .legend .dot { width: 10px; height: 10px; border-radius: 50%; }
@@ -359,7 +364,8 @@
 .chq-hub .today-hud .h b { font-family: var(--font-cinzel), "Cinzel", serif; color: var(--gold-bright); font-weight: 700; font-size: 15px; }
 .chq-hub .today-hud .flame { color: var(--ember-bright); }
 .chq-hub .today-hud .sep { flex: 1; }
-.chq-hub .today-hero { position: relative; flex: 1; min-height: 58vh; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
+.chq-hub .today-hero { position: relative; flex: 1; min-height: 40vh; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
+.chq-hub .today-first .today-hero { min-height: 72vh; }
 .chq-hub .today-hero .bg { position: absolute; inset: 0; }
 .chq-hub .today-hero .bg img { width: 100%; height: 100%; object-fit: cover; }
 .chq-hub .today-hero .bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(56% 64% at 50% 42%, rgba(8, 5, 12, 0.12), transparent 60%), radial-gradient(120% 100% at 50% 122%, rgba(0, 0, 0, 0.82), transparent 56%), linear-gradient(180deg, rgba(8, 5, 12, 0.3), rgba(8, 5, 12, 0.5)); }
@@ -372,6 +378,65 @@
 .chq-hub .today-coach { display: flex; align-items: center; gap: 12px; font-size: 13px; line-height: 1.5; color: var(--muted); padding: 0 4px; }
 .chq-hub .today-coach img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; object-position: center top; border: 1px solid var(--gold-dim); flex-shrink: 0; }
 .chq-hub .today-coach b { color: var(--gold-bright); }
+.chq-hub .today-hud .flame.out { color: var(--muted); }
+
+/* ---- daily missions (the workbench under the cathedral) ---- */
+.chq-hub .today-missions { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.chq-hub .m-card {
+  position: relative; display: flex; align-items: center; gap: 14px; padding: 16px 18px;
+  border: 1px solid var(--line-soft); border-radius: 14px; text-decoration: none;
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 12px 30px rgba(0, 0, 0, 0.3);
+  transition: 0.15s; overflow: hidden;
+}
+/* subtle material grain — texture from the asset inventory, never a flat slab */
+.chq-hub .m-card::after { content: ""; position: absolute; inset: 0; background: url("/assets/textures/obsidian.webp") center/420px; opacity: 0.05; pointer-events: none; }
+.chq-hub .m-card:hover { transform: translateY(-2px); border-color: var(--line); box-shadow: 0 0 18px rgba(205, 168, 69, 0.14), 0 14px 32px rgba(0, 0, 0, 0.35); }
+.chq-hub .m-glyph { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 17px; color: var(--gold-bright); background: rgba(205, 168, 69, 0.08); box-shadow: inset 0 0 0 1px var(--line-soft); }
+.chq-hub .m-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.chq-hub .m-title { font-size: 14px; font-weight: 700; color: var(--parchment); }
+.chq-hub .m-desc { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+.chq-hub .m-meta { font-size: 11px; color: var(--faint); letter-spacing: 0.04em; margin-top: 2px; }
+.chq-hub .m-xp { align-self: flex-start; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--gold-bright); background: rgba(205, 168, 69, 0.1); border: 1px solid var(--line-soft); border-radius: 999px; padding: 3px 9px; flex-shrink: 0; }
+.chq-hub .m-card.done { opacity: 0.78; }
+.chq-hub .m-card.done .m-glyph { color: #6fd89a; background: rgba(111, 216, 154, 0.08); }
+.chq-hub .m-card.done .m-xp { color: #6fd89a; background: rgba(111, 216, 154, 0.08); }
+
+/* daily ritual — staggered reveal on entry (juice on the moment, not the inputs) */
+.chq-hub .today-v2 > * { animation: chq-hub-rise 0.5s ease both; }
+.chq-hub .today-v2 > *:nth-child(2) { animation-delay: 0.05s; }
+.chq-hub .today-v2 > *:nth-child(3) { animation-delay: 0.12s; }
+.chq-hub .today-v2 > *:nth-child(4) { animation-delay: 0.2s; }
+.chq-hub .today-v2 > *:nth-child(5) { animation-delay: 0.26s; }
+@media (prefers-reduced-motion: reduce) { .chq-hub .today-v2 > * { animation: none; } }
+
+/* ---- how-it-works (first-visit concept onboarding) ---- */
+.hiw-overlay {
+  position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center;
+  padding: 20px; background: rgba(6, 4, 10, 0.78); backdrop-filter: blur(4px);
+}
+.hiw-panel {
+  max-width: 720px; width: 100%; max-height: 90dvh; overflow-y: auto;
+  border: 1px solid var(--line, rgba(205, 168, 69, 0.28)); border-radius: 18px; padding: 30px 32px;
+  background: linear-gradient(180deg, #1e1730, #171120);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  text-align: center; color: #ece3cf;
+  animation: chq-hub-rise 0.4s ease both;
+}
+.hiw-eyebrow { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #cda845; font-weight: 600; }
+.hiw-panel h2 { font-family: var(--font-cinzel), "Cinzel", serif; font-weight: 700; font-size: 30px; margin: 8px 0 22px; background: linear-gradient(180deg, #f1d680, #cda845); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.hiw-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; list-style: none; padding: 0; margin: 0 0 20px; counter-reset: hiw; }
+.hiw-steps li { position: relative; border: 1px solid rgba(205, 168, 69, 0.14); border-radius: 14px; padding: 18px 14px 16px; background: rgba(255, 255, 255, 0.02); }
+.hiw-glyph { display: block; font-size: 26px; line-height: 1; margin-bottom: 10px; color: #f1d680; }
+.hiw-step-n { position: absolute; top: 10px; left: 12px; font-size: 10px; font-weight: 700; color: #6f6757; }
+.hiw-steps h3 { font-family: var(--font-cinzel), "Cinzel", serif; font-size: 15px; font-weight: 600; color: #f1d680; margin-bottom: 6px; }
+.hiw-steps p { font-size: 12.5px; line-height: 1.5; color: #9c9484; }
+.hiw-promise { font-size: 13px; color: #ece3cf; margin-bottom: 22px; }
+.hiw-actions { display: flex; align-items: center; justify-content: center; gap: 16px; }
+.hiw-actions .btn-gold { margin-top: 0; border: 0; cursor: pointer; font-weight: 700; font-size: 15px; color: #2a2008; padding: 13px 28px; border-radius: 999px; background: linear-gradient(180deg, #f1d680, #cda845); box-shadow: 0 6px 20px rgba(205, 168, 69, 0.35); }
+.hiw-skip { background: none; border: 0; cursor: pointer; font-size: 13px; color: #6f6757; text-decoration: underline; }
+.hiw-skip:hover { color: #9c9484; }
+@media (prefers-reduced-motion: reduce) { .hiw-panel { animation: none; } }
 
 /* ============ INSIGHTS — analytics ============ */
 .chq-hub .insights { padding: 26px 30px 40px; display: flex; flex-direction: column; gap: 18px; }
@@ -381,7 +446,7 @@
 .chq-hub .ins-card .ct { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-dim); font-weight: 600; }
 .chq-hub .ins-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 16px; }
 .chq-hub .ins-iq .big { font-family: var(--font-cinzel), "Cinzel", serif; font-weight: 700; font-size: 44px; color: var(--gold-bright); line-height: 1; margin-top: 6px; }
-.chq-hub .ins-iq .big small { font-family: var(--font-inter), Inter, sans-serif; font-size: 12px; color: var(--muted); font-weight: 500; margin-left: 8px; }
+.chq-hub .ins-iq .big small { font-family: var(--font-manrope), Manrope, sans-serif; font-size: 12px; color: var(--muted); font-weight: 500; margin-left: 8px; }
 .chq-hub .ins-chart { width: 100%; height: 96px; margin-top: 12px; display: block; }
 .chq-hub .elo-row { display: flex; align-items: center; gap: 14px; }
 .chq-hub .elo-row img { width: 48px; height: 48px; object-fit: contain; }

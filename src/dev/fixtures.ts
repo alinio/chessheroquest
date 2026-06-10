@@ -258,6 +258,18 @@ export interface DemoPlayer {
   openings: DemoOpening[];
 }
 
+/** Demo cockpit data for /dev/screens/today (mirrors TodayData in TodayScreen). */
+export const DEMO_TODAY = {
+  streakDays: 7,
+  xp: 2240,
+  dueDrills: 8,
+  eloGoal: 1500,
+  eloPct: 74,
+  strongest: "Ruy Lopez" as string | null,
+  recommended: { slug: "queens-gambit-declined", name: "Queen's Gambit Declined" },
+  weakest: { slug: "sicilian-dragon", name: "Sicilian Dragon" },
+};
+
 export const DEMO_PLAYER: DemoPlayer = {
   name: "Alex",
   archetype: "strategist",

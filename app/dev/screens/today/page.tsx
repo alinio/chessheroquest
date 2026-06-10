@@ -1,7 +1,7 @@
 "use client";
 import { AppShell } from "@/src/ui/shell/AppShell";
 import { TodayScreen } from "@/src/ui/today/TodayScreen";
-import { DEMO_PLAYER } from "@/src/dev/fixtures";
+import { DEMO_PLAYER, DEMO_TODAY } from "@/src/dev/fixtures";
 import { getArchetypeSigil, getArchetypeArt } from "@/src/lib/assets";
 
 export default function Page() {
@@ -15,7 +15,7 @@ export default function Page() {
       streak={DEMO_PLAYER.streakDays}
       iq={DEMO_PLAYER.openingIq}
     >
-      <TodayScreen player={DEMO_PLAYER} />
+      <TodayScreen data={DEMO_TODAY} />
     </AppShell>
   );
 }
