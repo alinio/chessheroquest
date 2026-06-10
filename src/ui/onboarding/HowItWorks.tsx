@@ -46,6 +46,8 @@ export function HowItWorks() {
   }, []);
 
   useEffect(() => {
+    // Replay on demand: the rail's "How it works" links to /train?intro=1.
+    const forced = new URLSearchParams(window.location.search).get("intro") === "1";
     let seen = true;
     try {
       seen = window.localStorage.getItem(STORAGE_KEY) != null;
@@ -53,7 +55,7 @@ export function HowItWorks() {
       // Private mode without storage: skip the intro rather than loop it.
       seen = true;
     }
-    if (seen) return;
+    if (seen && !forced) return;
     // Reveal after first paint — avoids a synchronous setState-in-effect cascade.
     const t = window.setTimeout(() => setOpen(true), 80);
     return () => window.clearTimeout(t);

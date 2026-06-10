@@ -41,8 +41,7 @@ const QUEST_GLYPH: Record<Quest["type"], string> = {
 
 function questHref(q: Quest, data: TodayData): string {
   if (q.type === "weakness_battle" && data.weakest) return `/drill/${data.weakest.slug}`;
-  if (q.type === "boss_fight" && data.recommended)
-    return `/train/${data.recommended.slug}/learn`;
+  if (q.type === "boss_fight" && data.recommended) return `/boss/${data.recommended.slug}`;
   return "/review";
 }
 

@@ -18,6 +18,15 @@ export const OPENING_TO_PATH: Partial<Record<OpeningId, string>> = {
   scandinavian: "scandinavian-mainline",
   budapest: "budapest-gambit",
   englund: "englund-gambit",
+  scotch: "scotch-classical",
+  "smith-morra": "smith-morra-gambit",
+  "ruy-lopez": "ruy-lopez-closed",
+  "nimzo-indian": "nimzo-indian-rubinstein",
+  catalan: "catalan-open",
+  english: "english-four-knights",
+  petroff: "petroff-classical",
+  stafford: "stafford-gambit",
+  "blackmar-diemer": "blackmar-diemer-gambit",
 };
 
 /** Learn route for an opening, or null when no curated path exists yet. */
@@ -25,3 +34,11 @@ export function learnHref(id: OpeningId): string | null {
   const path = OPENING_TO_PATH[id];
   return path ? `/train/${path}/learn` : null;
 }
+
+/** Reverse lookup: curated path id → OpeningId. Evans Gambit is a second Italian path. */
+export const PATH_TO_OPENING: Record<string, OpeningId> = {
+  ...(Object.fromEntries(
+    Object.entries(OPENING_TO_PATH).map(([opening, path]) => [path, opening]),
+  ) as Record<string, OpeningId>),
+  "evans-gambit": "italian",
+};

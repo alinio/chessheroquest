@@ -22,10 +22,6 @@ export type RankTier = 1000 | 1200 | 1500 | 1800;
 export type RealmId = "ember-marches" | "obsidian-court" | "aegis-bastion" | "mirage-bazaar";
 
 export const ASSETS = {
-  brand: {
-    ogImage: `${BASE}/brand/og-image.png`,
-    appIcon: `${BASE}/brand/app-icon.png`,
-  },
   archetypes: {
     // Reusing the landing's canon archetype art + crests (no separate drop needed).
     portrait: {
@@ -174,6 +170,14 @@ export function getOpeningArt(id: OpeningId): { banner: string; emblem: string }
 export function getOpeningRealm(id: OpeningId): RealmId | null {
   return ASSETS.openings[id]?.realm ?? null;
 }
+
+/** Each archetype's home realm (canonical pairing — CLAUDE.md terminology). */
+export const ARCHETYPE_REALM: Record<Archetype, RealmId> = {
+  warrior: "ember-marches",
+  strategist: "obsidian-court",
+  defender: "aegis-bastion",
+  trickster: "mirage-bazaar",
+};
 
 /** The boss art for a realm (the Boss Fight of any opening in that realm). */
 export function getRealmBoss(realmId: RealmId): string {

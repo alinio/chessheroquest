@@ -3,7 +3,7 @@
  * §30) and advances the user's streak + XP. The streak logic is the pure domain
  * function; this just persists its result.
  */
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "@/src/data/db";
 import { trainingEvents, users } from "@/db/schema";
 import { recordActivity, type StreakState } from "@/src/domain/gamification/streak";
@@ -83,4 +83,15 @@ export async function recordTraining(
   await reconcileOpeningAchievements(userId);
 
   return { xp: newXp, streakCount: nextStreak.count };
+}
+
+/**
+ * Flat XP bonus for event victories (Guardian defeated). XP only — never IQ
+ * (LAW #1: the IQ moves exclusively with measured competence).
+ */
+export async function awardXpBonus(userId: string, amount: number): Promise<void> {
+  await db
+    .update(users)
+    .set({ xp: sql`${users.xp} + ${amount}`, updatedAt: new Date() })
+    .where(eq(users.id, userId));
 }

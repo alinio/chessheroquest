@@ -118,6 +118,87 @@ export const ENGLUND_GAMBIT: CuratedPath = {
   moves: ["d4", "e5", "dxe5", "Nc6", "Nf3", "Qe7", "Nc3", "Nxe5", "Nxe5", "Qxe5"],
 };
 
+export const SCOTCH_CLASSICAL: CuratedPath = {
+  id: "scotch-classical",
+  name: "Scotch Game — Classical",
+  eco: "C45",
+  archetype: "warrior",
+  description: "Open the centre on move three and fight for the initiative with active pieces.",
+  moves: ["e4", "e5", "Nf3", "Nc6", "d4", "exd4", "Nxd4", "Bc5", "Be3", "Qf6"],
+};
+
+export const SMITH_MORRA_GAMBIT: CuratedPath = {
+  id: "smith-morra-gambit",
+  name: "Smith-Morra Gambit — Accepted",
+  eco: "B21",
+  archetype: "warrior",
+  description: "Give a pawn against the Sicilian for open lines and fast, aggressive development.",
+  moves: ["e4", "c5", "d4", "cxd4", "c3", "dxc3", "Nxc3", "Nc6", "Nf3", "d6"],
+};
+
+export const RUY_LOPEZ_CLOSED: CuratedPath = {
+  id: "ruy-lopez-closed",
+  name: "Ruy Lopez — Closed",
+  eco: "C84",
+  archetype: "strategist",
+  description: "The Spanish torture: pressure the e5 pawn and outmaneuver slowly, piece by piece.",
+  moves: ["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4", "Nf6", "O-O", "Be7"],
+};
+
+export const NIMZO_INDIAN_RUBINSTEIN: CuratedPath = {
+  id: "nimzo-indian-rubinstein",
+  name: "Nimzo-Indian — Rubinstein",
+  eco: "E40",
+  archetype: "strategist",
+  description: "Pin the knight with Bb4 and fight for control of e4 without committing pawns early.",
+  moves: ["d4", "Nf6", "c4", "e6", "Nc3", "Bb4", "e3", "O-O", "Bd3", "d5"],
+};
+
+export const CATALAN_OPEN: CuratedPath = {
+  id: "catalan-open",
+  name: "Catalan — Mainline",
+  eco: "E01",
+  archetype: "strategist",
+  description: "Fianchetto the king's bishop and squeeze the queenside down the long diagonal.",
+  moves: ["d4", "Nf6", "c4", "e6", "g3", "d5", "Nf3", "Be7", "Bg2", "O-O"],
+};
+
+export const ENGLISH_FOUR_KNIGHTS: CuratedPath = {
+  id: "english-four-knights",
+  name: "English Opening — Four Knights",
+  eco: "A28",
+  archetype: "strategist",
+  description: "A reversed Sicilian: flexible development first, then strike at the centre on your terms.",
+  moves: ["c4", "e5", "Nc3", "Nf6", "Nf3", "Nc6", "g3", "d5", "cxd5", "Nxd5"],
+};
+
+export const PETROFF_CLASSICAL: CuratedPath = {
+  id: "petroff-classical",
+  name: "Petroff Defense — Classical",
+  eco: "C42",
+  archetype: "defender",
+  description: "Answer the attack on e5 with a counterattack on e4 — symmetry as a shield.",
+  moves: ["e4", "e5", "Nf3", "Nf6", "Nxe5", "d6", "Nf3", "Nxe4", "d4", "d5"],
+};
+
+export const STAFFORD_GAMBIT: CuratedPath = {
+  id: "stafford-gambit",
+  name: "Stafford Gambit — Mainline",
+  eco: "C42",
+  archetype: "trickster",
+  description: "Sacrifice a pawn in the Petroff to lay vicious traps around the enemy king.",
+  moves: ["e4", "e5", "Nf3", "Nf6", "Nxe5", "Nc6", "Nxc6", "dxc6", "d3", "Bc5"],
+};
+
+export const BLACKMAR_DIEMER_GAMBIT: CuratedPath = {
+  id: "blackmar-diemer-gambit",
+  name: "Blackmar-Diemer Gambit — Accepted",
+  eco: "D00",
+  archetype: "warrior",
+  description: "Offer a pawn after 1.d4 to open the f-file and attack from the very first moves.",
+  moves: ["d4", "d5", "e4", "dxe4", "Nc3", "Nf6", "f3", "exf3", "Nxf3", "g6"],
+};
+
 export const STARTER_PATHS: CuratedPath[] = [
   ITALIAN_GIUOCO_PIANISSIMO,
   SCANDINAVIAN_MAINLINE,
@@ -131,4 +212,13 @@ export const STARTER_PATHS: CuratedPath[] = [
   FRENCH_DEFENSE,
   BUDAPEST_GAMBIT,
   ENGLUND_GAMBIT,
+  SCOTCH_CLASSICAL,
+  SMITH_MORRA_GAMBIT,
+  RUY_LOPEZ_CLOSED,
+  NIMZO_INDIAN_RUBINSTEIN,
+  CATALAN_OPEN,
+  ENGLISH_FOUR_KNIGHTS,
+  PETROFF_CLASSICAL,
+  STAFFORD_GAMBIT,
+  BLACKMAR_DIEMER_GAMBIT,
 ];

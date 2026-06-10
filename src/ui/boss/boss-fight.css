@@ -63,7 +63,8 @@
 .chq-boss .helper { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); margin-bottom: 26px; }
 
 .chq-boss .btn-gold {
-  border: 0; cursor: pointer; font-family: var(--font-inter), "Inter", sans-serif; font-weight: 700; font-size: 17px; color: #2a2008;
+  display: inline-block; text-decoration: none; text-align: center;
+  border: 0; cursor: pointer; font-family: var(--font-manrope), "Manrope", sans-serif; font-weight: 700; font-size: 17px; color: #2a2008;
   padding: 16px 44px; border-radius: 999px; background: linear-gradient(180deg, var(--gold-bright), var(--gold));
   box-shadow: 0 8px 26px rgba(205, 168, 69, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
@@ -73,3 +74,22 @@
 .chq-boss .center > * { animation: chq-boss-rise 0.55s ease both; }
 @keyframes chq-boss-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .chq-boss .center > * { animation: none; } }
+
+/* ---- the duel itself (board = clean workbench, epic stays around it) ---- */
+.chq-boss .duel { position: relative; z-index: 2; width: 100%; max-width: 520px; padding: 0 18px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.chq-boss .duel-head { text-align: center; }
+.chq-boss .duel-head .dh-name { display: block; font-size: 22px; font-weight: 700; color: var(--accent-bright); letter-spacing: 1px; text-shadow: 0 2px 18px rgba(0, 0, 0, 0.7); }
+.chq-boss .duel-head .dh-meta { display: block; margin-top: 4px; font-size: 12px; letter-spacing: 0.08em; color: var(--parchment); text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8); }
+.chq-boss .duel-head .dh-meta b { color: var(--gold-bright); }
+.chq-boss .duel-board { width: 100%; border-radius: 10px; overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(205, 168, 69, 0.25); transition: box-shadow 0.2s; }
+.chq-boss .duel-board.correct { box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 24px rgba(63, 179, 113, 0.55), 0 0 0 2px rgba(63, 179, 113, 0.7); }
+.chq-boss .duel-board.wrong { box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 24px rgba(209, 73, 91, 0.55), 0 0 0 2px rgba(209, 73, 91, 0.7); animation: chq-boss-shake 0.3s; }
+@keyframes chq-boss-shake { 0%, 100% { transform: none; } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+.chq-boss .duel-dots { display: flex; gap: 8px; }
+.chq-boss .ddot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); box-shadow: inset 0 0 0 1px rgba(205, 168, 69, 0.3); }
+.chq-boss .ddot.hit { background: linear-gradient(180deg, var(--gold-bright), var(--gold)); box-shadow: 0 0 8px rgba(241, 214, 128, 0.6); }
+.chq-boss .duel-verdict { text-align: center; }
+.chq-boss .duel-verdict .dv-text { color: var(--parchment); font-size: 14px; margin: 8px 0 16px; }
+.chq-boss .dv-actions { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 10px; }
+.chq-boss .win-seal { width: 110px; height: 110px; object-fit: contain; margin: 6px auto 12px; filter: drop-shadow(0 0 22px rgba(241, 214, 128, 0.55)); animation: chq-boss-rise 0.7s ease both; }
+@media (prefers-reduced-motion: reduce) { .chq-boss .duel-board.wrong { animation: none; } .chq-boss .win-seal { animation: none; } }

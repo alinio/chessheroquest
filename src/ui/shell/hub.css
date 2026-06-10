@@ -215,11 +215,30 @@
 .chq-hub .today > *:nth-child(4) { animation-delay: 0.2s; }
 @keyframes chq-hub-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
+/* ---- bottom tab bar (mobile only — thumb zone, LAW #4) ---- */
+.chq-hub .tabbar {
+  display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+  background: rgba(10, 8, 18, 0.94); backdrop-filter: blur(8px);
+  border-top: 1px solid var(--line-soft);
+}
+.chq-hub .tabbar .tab {
+  flex: 1; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  color: var(--muted); text-decoration: none; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; border-radius: 10px;
+}
+.chq-hub .tabbar .tab svg { width: 20px; height: 20px; }
+.chq-hub .tabbar .tab.active { color: var(--gold-bright); }
+.chq-hub .realm-crest.crown { color: var(--gold-bright); box-shadow: none; }
+.chq-hub .realm-crest.crown svg { width: 18px; height: 18px; }
+
 @media (max-width: 880px) {
   .chq-hub { padding: 0; }
   .chq-hub .app { border-radius: 0; border: 0; }
   .chq-hub .rail { display: none; }
   .chq-hub .grid { grid-template-columns: 1fr; }
+  .chq-hub .tabbar { display: flex; }
+  /* keep content clear of the fixed tab bar */
+  .chq-hub .frame { padding-bottom: 72px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .chq-hub .today > * { animation: none; }
