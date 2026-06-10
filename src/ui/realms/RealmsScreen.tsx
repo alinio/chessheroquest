@@ -4,6 +4,7 @@
  * Enter CTA. Rendered inside AppShell (active = Quest). Data-driven.
  */
 import type { CSSProperties } from "react";
+import Link from "next/link";
 import "@/src/ui/shell/hub.css";
 import { getArchetypeSigil } from "@/src/lib/assets";
 import type { RealmEntry } from "@/src/dev/fixtures";
@@ -36,7 +37,9 @@ export function RealmsScreen({ realms }: { realms: RealmEntry[] }) {
             </div>
 
             <div className="rc-foot">
-              <button className="btn-ghost" type="button">{r.current ? "Continue →" : "Enter realm →"}</button>
+              <Link className="btn-ghost" href={`/quest?realm=${r.id}`} style={{ textDecoration: "none", display: "inline-block" }}>
+                {r.current ? "Continue →" : "Enter realm →"}
+              </Link>
             </div>
           </section>
         ))}
