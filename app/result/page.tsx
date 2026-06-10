@@ -1,11 +1,13 @@
 /**
- * /result — Module 4: the Chess DNA payoff. Reads the persisted M2 (Opening IQ +
- * per-opening) and M3 (archetype + match% + reasons) results, renders the full
- * profile + a pixel-exact 1080×1350 shareable DNA card, and routes on to Hero
- * Select (M5). Runnable standalone with flagged sample data.
+ * /result — Chess DNA reveal (S2). Immersive, no shell.
+ * TODO(real-data): map the persisted M2 (Opening IQ + per-opening) + M3 (archetype +
+ * match% + traits) into DnaFixture; fall back to sample when no test taken. The legacy
+ * ResultScreen (real profile + 1080×1350 share card + Save) is preserved in
+ * src/ui/result/ResultScreen — port Share/Download/Save wiring onto this screen.
  */
 import type { Metadata } from "next";
-import { ResultScreen } from "@/src/ui/result/ResultScreen";
+import { DnaResultsScreen } from "@/src/ui/result/DnaResultsScreen";
+import { DEMO_DNA } from "@/src/dev/fixtures";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -14,5 +16,5 @@ export const metadata: Metadata = {
 };
 
 export default function ResultPage() {
-  return <ResultScreen />;
+  return <DnaResultsScreen dna={DEMO_DNA} />;
 }

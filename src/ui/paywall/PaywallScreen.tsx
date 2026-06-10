@@ -95,7 +95,7 @@ export function PaywallScreen() {
         <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 12, alignItems: "center", marginTop: 40 }}>
           <h1 className="chq-display chq-gold-text" style={{ fontSize: 28, fontWeight: 700 }}>You&apos;re Pro ✦</h1>
           <p style={{ color: "var(--chq-text-2)", fontSize: 14 }}>All heroes, worlds, and Hard mode are unlocked.</p>
-          <Button variant="primary" onClick={() => router.push("/hero-select")}>Continue →</Button>
+          <Button variant="primary" onClick={() => router.push("/welcome")}>Continue →</Button>
         </div>
       </Shell>
     );

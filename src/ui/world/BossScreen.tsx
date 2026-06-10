@@ -8,6 +8,7 @@ import type { CSSProperties } from "react";
 import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
 import { GradientDefs, LogoMark, ProgressBar, ShieldIcon, PassportSeal } from "@/src/ui/design-system/icons";
+import { ASSETS } from "@/src/lib/assets";
 import { Button } from "@/src/ui/design-system/Button";
 import { TestBoard } from "@/src/ui/design-system/TestBoard";
 import { GUARDIANS, GUARDIAN_TREES, guardianChallenges, DIFFICULTY, type Difficulty } from "@/src/domain/world/guardians";
@@ -298,11 +299,13 @@ function BossFrame({ children, dim }: { children: React.ReactNode; dim?: boolean
     <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh", position: "relative", display: "flex", flexDirection: "column" }}>
       <GradientDefs />
       <AccountBoot />
-      {/* dimmed Guardian art backdrop */}
+      {/* arena backdrop + Guardian character over it */}
       <div aria-hidden="true" style={{ position: "fixed", inset: 0, zIndex: 0, overflow: "hidden" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/art/bosses/boss-warrior-italian.png" alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: dim ? 0.18 : 0.4 }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,10,.7), rgba(8,8,10,.92))" }} />
+        <img src={ASSETS.backgrounds.bossArena} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: dim ? 0.5 : 0.85 }} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/art/bosses/boss-warrior-italian.png" alt="" style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", maxHeight: "66%", maxWidth: "78%", objectFit: "contain", opacity: dim ? 0.22 : 0.55 }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,10,.55), rgba(8,8,10,.9))" }} />
       </div>
       <header style={{ position: "relative", zIndex: 1, height: 56, display: "flex", alignItems: "center", gap: 8, padding: "0 20px" }}>
         <LogoMark size={24} />

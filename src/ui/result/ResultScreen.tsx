@@ -15,6 +15,7 @@ import { roadToElo, provisionalTopPercent } from "@/src/domain/recommend/road-to
 import { useDnaTest } from "@/src/ui/dna-test/useDnaTest";
 import { useStyleQuiz } from "@/src/ui/style-quiz/useStyleQuiz";
 import { SaveProgress } from "@/src/ui/account/SaveProgress";
+import { ASSETS, getRankInsignia } from "@/src/lib/assets";
 import { DnaShareCard } from "./DnaShareCard";
 
 function useHydrated() {
@@ -39,15 +40,20 @@ const SAMPLE = {
 
 function Shell({ children }: { children: ReactNode }) {
   return (
-    <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
+    <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", position: "relative" }}>
       <GradientDefs />
-      <header style={{ height: 56, flexShrink: 0, display: "flex", alignItems: "center", gap: 8, padding: "0 20px", borderBottom: "1px solid var(--chq-line)" }}>
+      <div aria-hidden="true" style={{ position: "fixed", inset: 0, zIndex: 0 }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={ASSETS.backgrounds.resultsReveal} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,10,.6), rgba(8,8,10,.85))" }} />
+      </div>
+      <header style={{ position: "relative", zIndex: 1, height: 56, flexShrink: 0, display: "flex", alignItems: "center", gap: 8, padding: "0 20px", borderBottom: "1px solid var(--chq-line)" }}>
         <LogoMark size={26} />
         <span className="chq-display chq-gold-text" style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".08em" }}>
           Your Chess DNA
         </span>
       </header>
-      <main style={{ flex: 1, width: "100%", maxWidth: 480, margin: "0 auto", padding: "24px 20px 48px" }}>{children}</main>
+      <main style={{ position: "relative", zIndex: 1, flex: 1, width: "100%", maxWidth: 480, margin: "0 auto", padding: "24px 20px 48px" }}>{children}</main>
     </div>
   );
 }
@@ -205,9 +211,13 @@ export function ResultScreen() {
 
       {/* Road to Elo */}
       <section style={{ marginTop: 28 }}>
-        <p className="chq-display" style={{ fontSize: 13, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--chq-gold-3)", borderBottom: "1px solid var(--chq-line)", paddingBottom: 8 }}>
-          Your Road to Elo
-        </p>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid var(--chq-line)", paddingBottom: 8 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={getRankInsignia(1000)} alt="" width={34} height={34} style={{ display: "block" }} />
+          <p className="chq-display" style={{ fontSize: 13, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--chq-gold-3)", margin: 0 }}>
+            Your Road to Elo
+          </p>
+        </div>
         <p style={{ color: "var(--chq-text-muted)", fontSize: 12, margin: "8px 0 12px" }}>
           Train these next in {world.name}:
         </p>

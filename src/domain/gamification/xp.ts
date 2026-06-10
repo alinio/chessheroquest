@@ -8,6 +8,8 @@ export const XP_REWARDS = {
   questComplete: 50,
   weaknessBattle: 40,
   bossDefeated: 150,
+  /** The realm gauntlet — all five openings proven back-to-back. */
+  kingdomConquered: 400,
   dnaTest: 100,
 } as const;
 

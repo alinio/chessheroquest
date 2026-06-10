@@ -35,6 +35,25 @@ spacing: [4, 8, 12, 16, 24, 32, 48]
 
 A premium RPG of chess mastery. Deep inked backgrounds, localized golden light, heraldry and prestige. **Dark, golden, noble** — never cartoonish, never grim/horror (audience skews young). The unforgettable element: the **Opening IQ** as a heroic, glowing, living gold number.
 
+## The two registers: cathedral vs workbench
+
+Every screen belongs to ONE of two visual registers — never a 50/50 blend:
+
+- **Cathedral** (full-bleed illustration, emotion, Cinzel oversized, particles, epic motion): arrival, DNA card reveal, realm conquered, boss victory, paywall, share cards. These are the screenshot screens.
+- **Workbench** (density, data, speed; `bg-abyss` + cards, gold reserved for achievements, zero full-page illustration): drilling, Insights, Passport grid, settings. The player comes to work; the UI gets out of the way.
+- **Today/Train is the ONE sanctioned hybrid**: a cathedral band (realm illustration, the day's single directive) above a workbench row (the 3 daily missions with real XP). Nothing else mixes registers.
+
+Mediocre decoration everywhere tires without ever awing — concentrate the epic.
+
+## Content voice: the coach-herald
+
+Every line of copy = frank diagnosis (the coach) + the world's vocabulary (the herald). Never one without the other.
+
+1. **Every number carries a consequence.** Never "86% accuracy" alone — always "86% · +3 pts this week" or "41% — that's ~2 lost games in 5."
+2. **CTAs are personalized orders, never generic.** "Fix my Sicilian", "Seal the Italian Game", "Face the Guardian". Ban bare "Continue/Start/Learn more" wherever a target can be named.
+3. **Fantasy names the containers, never the chess.** Realms, Guardians, Passport, seals = lore. Openings keep their real names (Sicilian Defense, never "Dragon's Blade"). Chess truth stays pure (LAW #2).
+4. **Honesty is the differentiator.** "Tracked from your synced real games — proof it's working." The product dares to be measured on real play; say so often.
+
 ## The board rule (most important)
 
 **The board stays clean, legible and serious — the epic treatment goes around it, never on it.** No ornate squares, no fantasy piece sets that hurt recognition. Board = workbench (use `board-light`/`board-dark`, classic legible pieces, gold move-hints). Everything else (HUD, map, cards, ranks) carries the fantasy mood.
@@ -46,6 +65,8 @@ Dominant dark surfaces + **gold** as the single prestige accent (IQ, "conquered"
 ## Typography
 
 Cinzel for display impact (ranks, kingdom names, "Boss Defeated") — used sparingly and always legible. Manrope for all functional UI and body. The Opening IQ uses display weight in gold, oversized, with a soft glow — it must feel like treasure.
+
+**Discipline rule (when everything is prestigious, nothing is):** Cinzel is reserved for the *world's proper nouns* — realm names, opening names, ranks, archetypes — and hero numbers (IQ, seal count). Buttons, nav, stat labels, meta text are ALWAYS Manrope. Never Inter, never a silent system-font fallback. One glowing IQ per screen maximum — the topbar chip never glows.
 
 ## Components
 
@@ -60,6 +81,10 @@ High-impact moments, not scattered jitter:
 - **Streak:** flame grows at milestones.
 - **Drilling — restraint:** correct/wrong feedback is quick & clean (color + icon), **never a long animation that slows input**. Juice lives on rewards & transitions, not on every move.
 CSS-first for mobile performance; respect `prefers-reduced-motion`.
+
+## Assets (production bar)
+
+Détourage: every crest/badge/seal/medallion/node art MUST have a clean alpha channel (they sit on dark surfaces — an opaque square is a defect). Formats: real WebP/AVIF, never a renamed PNG; backgrounds exist in a portrait variant for mobile (no 60% crop + upscale). Weight: no decorative image > 300KB shipped; `_raw/` masters never live under `public/`. Run `assets:cutout` + `assets:optimize` before shipping new art.
 
 ## Guardrails
 

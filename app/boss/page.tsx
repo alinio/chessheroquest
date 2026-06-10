@@ -1,13 +1,9 @@
 /**
- * /boss — Module 7: the seed opening's Opening Guardian fight. Medium validates &
- * conquers the opening (seal + mastery + XP); Easy = tutorial; Hard = Pro mastery.
- * ?opening= selects the Guardian.
+ * /boss — index redirects to Today (duels are per-opening at /boss/[slug];
+ * the fixture preview lives in /dev/screens).
  */
-import type { Metadata } from "next";
-import { BossScreen } from "@/src/ui/world/BossScreen";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "Opening Guardian — ChessHeroQuest", robots: { index: false } };
-
-export default function BossPage() {
-  return <BossScreen />;
+export default function BossIndexPage() {
+  redirect("/train");
 }

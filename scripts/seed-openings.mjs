@@ -24,6 +24,23 @@ const PATHS = [
   { slug: "french-defense", name: "French Defense — Classical", archetype: "defender", eco: "C11", description: "A sturdy pawn chain.", moves: ["e4", "e6", "d4", "d5", "Nc3", "Nf6", "Bg5", "Be7", "e5", "Nfd7"] },
   { slug: "budapest-gambit", name: "Budapest Gambit", archetype: "trickster", eco: "A52", description: "A surprise gambit against 1.d4.", moves: ["d4", "Nf6", "c4", "e5", "dxe5", "Ng4", "Nf3", "Nc6", "Bf4", "Bb4"] },
   { slug: "englund-gambit", name: "Englund Gambit", archetype: "trickster", eco: "A40", description: "A cheeky 1...e5 against 1.d4.", moves: ["d4", "e5", "dxe5", "Nc6", "Nf3", "Qe7", "Nc3", "Nxe5", "Nxe5", "Qxe5"] },
+  { slug: "scotch-classical", name: "Scotch Game — Classical", archetype: "warrior", eco: "C45", description: "Open the centre with an early d4.", moves: ["e4", "e5", "Nf3", "Nc6", "d4", "exd4", "Nxd4", "Bc5", "Be3", "Qf6"] },
+  { slug: "smith-morra-gambit", name: "Smith-Morra Gambit — Accepted", archetype: "warrior", eco: "B21", description: "A pawn for fast, furious development.", moves: ["e4", "c5", "d4", "cxd4", "c3", "dxc3", "Nxc3", "Nc6", "Nf3", "d6"] },
+  { slug: "ruy-lopez-closed", name: "Ruy Lopez — Closed", archetype: "strategist", eco: "C84", description: "The Spanish bishop pressures c6.", moves: ["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Ba4", "Nf6", "O-O", "Be7"] },
+  { slug: "nimzo-indian-rubinstein", name: "Nimzo-Indian — Rubinstein", archetype: "strategist", eco: "E40", description: "Pin the knight, fight for e4.", moves: ["d4", "Nf6", "c4", "e6", "Nc3", "Bb4", "e3", "O-O", "Bd3", "d5"] },
+  { slug: "catalan-open", name: "Catalan — Mainline", archetype: "strategist", eco: "E01", description: "The g2 bishop cuts the board in half.", moves: ["d4", "Nf6", "c4", "e6", "g3", "d5", "Nf3", "Be7", "Bg2", "O-O"] },
+  { slug: "english-four-knights", name: "English Opening — Four Knights", archetype: "strategist", eco: "A28", description: "Command the centre from the wing.", moves: ["c4", "e5", "Nc3", "Nf6", "Nf3", "Nc6", "g3", "d5", "cxd5", "Nxd5"] },
+  { slug: "petroff-classical", name: "Petroff Defense — Classical", archetype: "defender", eco: "C42", description: "Answer every strike with its reflection.", moves: ["e4", "e5", "Nf3", "Nf6", "Nxe5", "d6", "Nf3", "Nxe4", "d4", "d5"] },
+  { slug: "stafford-gambit", name: "Stafford Gambit — Mainline", archetype: "trickster", eco: "C42", description: "A knight as a gift — and a trap.", moves: ["e4", "e5", "Nf3", "Nf6", "Nxe5", "Nc6", "Nxc6", "dxc6", "d3", "Bc5"] },
+  { slug: "blackmar-diemer-gambit", name: "Blackmar-Diemer Gambit — Accepted", archetype: "warrior", eco: "D00", description: "Two pawns for an open f-file on fire.", moves: ["d4", "d5", "e4", "dxe4", "Nc3", "Nf6", "f3", "exf3", "Nxf3", "g6"] },
+  { slug: "italian-two-knights", name: "Italian Game — Two Knights, Ng5", archetype: "warrior", eco: "C58", description: "The sharpest Italian.", moves: ["e4", "e5", "Nf3", "Nc6", "Bc4", "Nf6", "Ng5", "d5", "exd5", "Na5"] },
+  { slug: "ruy-lopez-exchange", name: "Ruy Lopez — Exchange", archetype: "strategist", eco: "C68", description: "Trade on c6, win the long game.", moves: ["e4", "e5", "Nf3", "Nc6", "Bb5", "a6", "Bxc6", "dxc6", "O-O", "f6"] },
+  { slug: "scotch-mieses", name: "Scotch Game — Mieses", archetype: "warrior", eco: "C45", description: "Chase the knight with e5.", moves: ["e4", "e5", "Nf3", "Nc6", "d4", "exd4", "Nxd4", "Nf6", "Nxc6", "bxc6", "e5", "Qe7", "Qe2", "Nd5"] },
+  { slug: "sicilian-dragon-yugoslav", name: "Sicilian Dragon — vs the Yugoslav", archetype: "warrior", eco: "B76", description: "Castle into the storm.", moves: ["e4", "c5", "Nf3", "d6", "d4", "cxd4", "Nxd4", "Nf6", "Nc3", "g6", "Be3", "Bg7", "f3", "O-O"] },
+  { slug: "queens-gambit-accepted", name: "Queen's Gambit — Accepted", archetype: "strategist", eco: "D26", description: "Reclaim c4 with tempo.", moves: ["d4", "d5", "c4", "dxc4", "Nf3", "Nf6", "e3", "e6", "Bxc4", "c5"] },
+  { slug: "london-vs-kings-indian", name: "London System — vs the King's Indian setup", archetype: "strategist", eco: "A48", description: "The wall vs the fianchetto.", moves: ["d4", "Nf6", "Nf3", "g6", "Bf4", "Bg7", "e3", "O-O", "Be2", "d6"] },
+  { slug: "caro-kann-advance", name: "Caro-Kann — vs the Advance", archetype: "defender", eco: "B12", description: "Free the bishop before the chain closes.", moves: ["e4", "c6", "d4", "d5", "e5", "Bf5", "Nf3", "e6", "Be2", "Nd7"] },
+  { slug: "french-advance", name: "French Defense — vs the Advance", archetype: "defender", eco: "C02", description: "Attack the chain at its base.", moves: ["e4", "e6", "d4", "d5", "e5", "c5", "c3", "Nc6", "Nf3", "Qb6"] },
 ];
 
 function fenAfter(moves, ply) {

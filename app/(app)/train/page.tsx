@@ -1,109 +1,70 @@
 /**
- * /train — the Openings hub (precursor to the World Map). Each line shows its
- * mastery state (the kingdom colour: leak → review → solid → gold/conquered),
- * derived from coverage + FSRS retention. Opens Learn or Drill.
+ * /train — Today / Train dashboard (the daily loop). Server component: loads
+ * the user's REAL progression (IQ, streak, due cards, focus openings) and
+ * feeds the cockpit. New users (no DNA Test yet) get the first-quest prompt.
  */
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { auth } from "@/src/lib/auth";
-import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
-import type { Archetype } from "@/src/domain/repertoire/types";
-import type { MasteryState } from "@/src/domain/mastery";
+import { getProgress } from "@/src/data/repos/progress";
 import { getOpeningMastery } from "@/src/data/repos/openings";
+import { isStreakAlive } from "@/src/domain/gamification/streak";
+import { pickFocusOpenings } from "@/src/domain/gamification/focus";
+import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
+import { TodayScreen, type TodayData } from "@/src/ui/today/TodayScreen";
 
-const ARCHETYPE_LABEL: Record<Archetype, string> = {
-  warrior: "Warrior",
-  strategist: "Strategist",
-  defender: "Defender",
-  trickster: "Trickster",
-};
-
-// State always carries an icon + label, never colour alone (DESIGN.md §9).
-const STATE_META: Record<MasteryState, { label: string; icon: string; bar: string; text: string }> = {
-  leak: { label: "Leak", icon: "▲", bar: "bg-state-leak", text: "text-state-leak" },
-  review: { label: "Review", icon: "◆", bar: "bg-state-review", text: "text-state-review" },
-  solid: { label: "Solid", icon: "●", bar: "bg-state-solid", text: "text-state-solid" },
-  gold: { label: "Conquered", icon: "★", bar: "bg-gold", text: "text-gold" },
-};
-
-export default async function TrainHubPage() {
+export default async function TodayPage() {
   const session = await auth();
-  const mastery = session?.user?.id ? await getOpeningMastery(session.user.id) : {};
+  if (!session?.user?.id) redirect("/signin");
 
-  const total = STARTER_PATHS.length;
-  const conquered = STARTER_PATHS.filter((p) => mastery[p.id]?.state === "gold").length;
+  const progress = await getProgress(session.user.id);
+  if (!progress) {
+    return (
+      <main className="today-v2 today-first">
+        <section className="today-hero">
+          <div className="bg">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/assets/backgrounds/today-hero-bg.webp" alt="" />
+          </div>
+          <div className="focal">
+            <p className="eyebrow gold">Your quest begins</p>
+            <h1 className="serif">Take the Chess DNA Test</h1>
+            <p className="sub">
+              8 positions reveal how you really play — your archetype, your Opening IQ,
+              and exactly where you&apos;re losing games.
+            </p>
+            <Link className="btn-gold cta" href="/dna-test">Start the test →</Link>
+          </div>
+        </section>
+      </main>
+    );
+  }
 
-  return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-5 px-4 py-6">
-      <header className="text-center">
-        <p className="font-display text-gold text-xs uppercase tracking-[0.3em]">Openings</p>
-        <h1 className="font-display text-text-hi text-2xl font-bold">Choose a line</h1>
-      </header>
+  const mastery = await getOpeningMastery(session.user.id);
+  const refs = STARTER_PATHS.map((p) => ({
+    slug: p.id,
+    name: p.name,
+    state: mastery[p.id]?.state ?? ("leak" as const),
+  }));
+  const focus = pickFocusOpenings(refs);
+  const strongest =
+    refs.find((r) => r.state === "gold")?.name ?? focus.boss?.name ?? null;
 
-      {/* Opening Passport — the collection completion drive (§28.2). */}
-      <section className="bg-surface rounded-card p-4">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-text-mid">Opening Passport</span>
-          <span className="text-gold tabular-nums">{conquered}/{total} conquered</span>
-        </div>
-        <div className="bg-raised mt-2 h-2 w-full overflow-hidden rounded-chip">
-          <div
-            className="bg-gold h-full rounded-chip"
-            style={{ width: `${total ? (conquered / total) * 100 : 0}%` }}
-          />
-        </div>
-      </section>
+  const data: TodayData = {
+    streakDays: isStreakAlive(
+      { count: progress.streakCount, lastActiveDay: progress.streakLastActiveDay },
+      new Date(),
+    )
+      ? progress.streakCount
+      : 0,
+    xp: progress.xp,
+    dueDrills: progress.dueCount,
+    eloGoal: progress.eloGoal,
+    eloPct: Math.round(Math.min(1, progress.iq / 1000) * 100),
+    strongest,
+    recommended: focus.boss ? { slug: focus.boss.slug, name: focus.boss.name } : null,
+    weakest: focus.weakest ? { slug: focus.weakest.slug, name: focus.weakest.name } : null,
+  };
 
-      <div className="flex flex-col gap-3">
-        {STARTER_PATHS.map((p) => {
-          const m = mastery[p.id];
-          const total = m?.total ?? p.moves.length;
-          const studied = m?.studied ?? 0;
-          const state = m?.state ?? "leak";
-          const meta = STATE_META[state];
-          const pct = total === 0 ? 0 : Math.round((studied / total) * 100);
-
-          return (
-            <div key={p.id} className="bg-surface border-hairline rounded-card border p-4">
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="font-display text-text-hi truncate">{p.name}</p>
-                  <p className="text-text-low text-xs">
-                    {p.eco} · {ARCHETYPE_LABEL[p.archetype]}
-                  </p>
-                </div>
-                <span
-                  className={`shrink-0 text-xs font-semibold ${meta.text} ${
-                    state === "gold" ? "chq-app-stamp" : ""
-                  }`}
-                >
-                  <span aria-hidden>{meta.icon} </span>
-                  {meta.label}
-                </span>
-              </div>
-
-              <div className="bg-raised mt-3 h-1.5 w-full overflow-hidden rounded-chip">
-                <div className={`h-full rounded-chip ${meta.bar}`} style={{ width: `${pct}%` }} />
-              </div>
-              <p className="text-text-low mt-1 text-xs tabular-nums">{studied}/{total} positions</p>
-
-              <div className="mt-3 flex gap-2">
-                <Link
-                  href={`/train/${p.id}`}
-                  className="rounded-chip bg-gold text-abyss inline-flex min-h-[44px] flex-1 items-center justify-center text-sm font-semibold"
-                >
-                  Learn
-                </Link>
-                <Link
-                  href={`/drill/${p.id}`}
-                  className="rounded-chip border-hairline text-text-mid inline-flex min-h-[44px] flex-1 items-center justify-center border text-sm"
-                >
-                  Drill
-                </Link>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </main>
-  );
+  return <TodayScreen data={data} />;
 }

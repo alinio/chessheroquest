@@ -1,27 +1,39 @@
 /**
- * /train/[slug] — Learn one curated line (the board line trainer). The coach
- * panel is available on demand (cached AI, LAW #2).
+ * /train/[slug] — Opening detail (banner + crest + REAL mastery + Learn/Drill +
+ * Guardian entry). Lives under /train so the active tab is Train. The slug is
+ * an OpeningId (art registry); training routes resolve via OPENING_TO_PATH.
  */
 import { notFound } from "next/navigation";
-import { LineTrainer } from "@/src/ui/board/LineTrainer";
+import { auth } from "@/src/lib/auth";
+import { getOpeningMastery } from "@/src/data/repos/openings";
+import { OpeningDetailScreen, type OpeningLineView, type OpeningMasteryView } from "@/src/ui/opening/OpeningDetailScreen";
+import { OPENING_NAMES, ASSETS, type OpeningId } from "@/src/lib/assets";
+import { OPENING_TO_PATH, OPENING_LINES } from "@/src/lib/opening-paths";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 
-export default async function TrainLinePage({
+export default async function OpeningDetailPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const path = STARTER_PATHS.find((p) => p.id === slug);
-  if (!path) notFound();
+  if (!(slug in ASSETS.openings)) notFound();
+  const id = slug as OpeningId;
 
-  return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-6">
-      <header className="text-center">
-        <p className="font-display text-gold text-xs uppercase tracking-[0.3em]">Learn</p>
-        <h1 className="font-display text-text-hi text-2xl font-bold">Play the line</h1>
-      </header>
-      <LineTrainer path={path} />
-    </main>
-  );
+  // Real coverage for this opening's curated lines (when signed in + started).
+  let mastery: OpeningMasteryView | null = null;
+  let lines: OpeningLineView[] = [];
+  const session = await auth();
+  const pathId = OPENING_TO_PATH[id];
+  if (session?.user?.id && pathId) {
+    const all = await getOpeningMastery(session.user.id);
+    mastery = all[pathId] ?? null;
+    lines = (OPENING_LINES[id] ?? []).map((lineId) => ({
+      id: lineId,
+      name: STARTER_PATHS.find((p) => p.id === lineId)?.name ?? lineId,
+      mastery: all[lineId] ?? null,
+    }));
+  }
+
+  return <OpeningDetailScreen openingId={id} name={OPENING_NAMES[id]} mastery={mastery} lines={lines} />;
 }

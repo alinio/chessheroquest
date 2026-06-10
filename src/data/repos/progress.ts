@@ -84,6 +84,32 @@ export async function getProgress(userId: string): Promise<UserProgress | null> 
   };
 }
 
+export interface LinkedAccounts {
+  lichess: string | null;
+  chesscom: string | null;
+}
+
+/** Linked platform usernames (game sync — public usernames, no tokens). */
+export async function getLinkedAccounts(userId: string): Promise<LinkedAccounts> {
+  const rows = await db
+    .select({ lichess: users.lichessUsername, chesscom: users.chesscomUsername })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  return rows[0] ?? { lichess: null, chesscom: null };
+}
+
+/** The user's Opening-IQ history, oldest → newest (the Insights trend line). */
+export async function getIqTrend(userId: string, limit = 12): Promise<number[]> {
+  const rows = await db
+    .select({ value: openingIqSnapshots.value })
+    .from(openingIqSnapshots)
+    .where(eq(openingIqSnapshots.userId, userId))
+    .orderBy(desc(openingIqSnapshots.createdAt))
+    .limit(limit);
+  return rows.map((r) => r.value).reverse();
+}
+
 /** The user's latest DNA result (the full shareable object), or null. */
 export async function getLatestDnaResult(userId: string): Promise<DnaResult | null> {
   const rows = await db

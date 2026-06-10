@@ -3,7 +3,7 @@
  * §30) and advances the user's streak + XP. The streak logic is the pure domain
  * function; this just persists its result.
  */
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "@/src/data/db";
 import { trainingEvents, users } from "@/db/schema";
 import { recordActivity, type StreakState } from "@/src/domain/gamification/streak";
@@ -83,4 +83,42 @@ export async function recordTraining(
   await reconcileOpeningAchievements(userId);
 
   return { xp: newXp, streakCount: nextStreak.count };
+}
+
+export interface TrainingStats {
+  /** % correct over the last 7 days, or null when no answers yet. */
+  accuracy: number | null;
+  drillsThisWeek: number;
+  /** All-time answered positions (drill + review + sparring). */
+  cardsReviewed: number;
+}
+
+/** Real Insights numbers from the training_events log (never fabricated). */
+export async function getTrainingStats(userId: string): Promise<TrainingStats> {
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const rows = await db
+    .select({ correct: trainingEvents.correct, createdAt: trainingEvents.createdAt, mode: trainingEvents.mode })
+    .from(trainingEvents)
+    .where(eq(trainingEvents.userId, userId));
+
+  const answered = rows.filter((r) => r.mode !== "dna_test" && r.correct !== null);
+  const week = answered.filter((r) => r.createdAt >= weekAgo);
+  const weekCorrect = week.filter((r) => r.correct).length;
+
+  return {
+    accuracy: week.length > 0 ? Math.round((weekCorrect / week.length) * 100) : null,
+    drillsThisWeek: week.length,
+    cardsReviewed: answered.length,
+  };
+}
+
+/**
+ * Flat XP bonus for event victories (Guardian defeated). XP only — never IQ
+ * (LAW #1: the IQ moves exclusively with measured competence).
+ */
+export async function awardXpBonus(userId: string, amount: number): Promise<void> {
+  await db
+    .update(users)
+    .set({ xp: sql`${users.xp} + ${amount}`, updatedAt: new Date() })
+    .where(eq(users.id, userId));
 }

@@ -11,6 +11,7 @@ import { Button } from "@/src/ui/design-system/Button";
 import { TestBoard } from "@/src/ui/design-system/TestBoard";
 import { EXPLORER_TREES, lineForTrack, candidatesAt, type Candidate, type ExplorerOpening } from "@/src/domain/world/explorer";
 import { MoveExplorerList, type ExplorerRow } from "./MoveExplorerList";
+import { CoachAvatar } from "@/src/ui/coach/CoachAvatar";
 import { useWorldProgress } from "./useWorldProgress";
 import { useSrs } from "./useSrs";
 
@@ -189,7 +190,7 @@ export function LearnScreen() {
                 <span className="chq-display" style={{ fontSize: 18, color: "var(--chq-gold-3)" }}>{mainCandidate.node.san}</span>
                 {mainCandidate.node.isCritical && <span style={{ ...eyebrow, fontSize: 9, color: "#08080A", background: "var(--chq-gold-gradient)", padding: "3px 7px", borderRadius: "var(--chq-r-pill)", fontWeight: 700 }}>Critical</span>}
               </div>
-              <p style={{ color: "var(--chq-text-2)", fontSize: 14, lineHeight: 1.5, marginTop: 6 }}>{mainCandidate.node.explain}</p>
+              {mainCandidate.node.explain && <div style={{ marginTop: 10 }}><CoachAvatar size={40} message={mainCandidate.node.explain} /></div>}
               {nudge && <p style={{ color: "var(--chq-state-leak, #d1495b)", fontSize: 13, marginTop: 8 }}>That move isn&apos;t in this line — try a move below, or drag {mainCandidate.node.san}.</p>}
             </div>
           ) : (
