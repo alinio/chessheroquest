@@ -95,10 +95,14 @@ export const DEMO_DNA: DnaFixture = {
   topPercent: 57,
   matchPercent: 78,
   traits: ["You build up before you strike", "You prize a small, lasting edge"],
-  best: "Italian Game",
+  best: "Ruy Lopez", // must match the live app's "strongest" (kills the DNA↔app contradiction)
   weakness: "Sicilian Defense",
   sample: true,
 };
+// NOTE: DNA iq/top% (428 / 57%) are the FIRST-TEST snapshot; Today shows the grown
+// values (742 / 12%) — a time progression, not a contradiction. The strength/weakness
+// opening must NOT differ, hence best = "Ruy Lopez" everywhere.
+// TODO(real-data): derive DNA + Today + Arrival from ONE persisted result source.
 
 /** Demo boss for /dev/screens/boss-fight (Aldovrandi · Ember Marches). */
 export const DEMO_BOSS: BossFixture = {

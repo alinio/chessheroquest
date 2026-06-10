@@ -62,8 +62,8 @@ export function OpeningDetailScreen({ openingId, name }: { openingId: OpeningId;
           <div className="boss-inner">
             <div>
               <p className="eyebrow gold">Boss Fight</p>
-              <h3 className="serif">Face the {realmShort} Guardian</h3>
-              <p className="muted">Defeat the Guardian to seal {title} in your Passport.</p>
+              <h3 className="serif">Face the Opening Guardian</h3>
+              <p className="muted">Win one game in {title} vs our engine to <b style={{ color: "var(--gold-bright)" }}>seal</b> it in your Passport.</p>
             </div>
             <button className="btn-gold" type="button">Enter →</button>
           </div>

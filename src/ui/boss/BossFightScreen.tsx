@@ -40,6 +40,7 @@ export function BossFightScreen({ boss }: { boss: BossFixture }) {
           <p className="subtitle">{boss.subtitle}</p>
           <p className="desc">{boss.description}</p>
           <p className="taunt">&ldquo;{boss.taunt}&rdquo;</p>
+          <p className="howto">Play the <b>{boss.opening}</b> against our engine — win to <b>seal</b> it in your Passport.</p>
 
           <div className="diff">
             <button type="button" className={`pill${diff === "easy" ? " sel" : ""}`} onClick={() => setDiff("easy")}>Easy</button>
