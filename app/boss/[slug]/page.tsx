@@ -6,6 +6,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { auth } from "@/src/lib/auth";
+import { getOpeningMastery } from "@/src/data/repos/openings";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 import { GUARDIANS } from "@/src/domain/world/guardians";
 import { PATH_TO_OPENING } from "@/src/lib/opening-paths";
@@ -31,6 +32,11 @@ export default async function GuardianDuelPage({
   if (!guardian) notFound();
 
   const session = await auth();
+  // Real mastery of this line → the single contextual victory CTA
+  // (not gold yet → "Drill to gold", gold → next step).
+  const masteryState = session?.user?.id
+    ? ((await getOpeningMastery(session.user.id))[path.id]?.state ?? null)
+    : null;
 
   return (
     <GuardianDuel
@@ -39,6 +45,7 @@ export default async function GuardianDuelPage({
       realm={ASSETS.openings[openingId].realm}
       openingName={OPENING_NAMES[openingId]}
       userId={session?.user?.id}
+      masteryState={masteryState}
     />
   );
 }

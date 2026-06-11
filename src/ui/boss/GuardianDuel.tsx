@@ -14,10 +14,13 @@ import { Chess } from "chess.js";
 import type { PieceDropHandlerArgs } from "react-chessboard";
 import "./boss-fight.css";
 import { Board } from "@/src/ui/board/Board";
+import { ModeChip } from "@/src/ui/board/ModeChip";
+import { NotationStrip } from "@/src/ui/board/NotationStrip";
 import { ASSETS, type RealmId } from "@/src/lib/assets";
 import { IconCrown } from "@/src/ui/shell/icons";
 import { DIFFICULTY, PATH_SIDE, pathChallenges, type Guardian } from "@/src/domain/world/guardians";
 import type { CuratedPath } from "@/src/domain/repertoire/types";
+import type { MasteryState } from "@/src/domain/mastery";
 import { fenAfter } from "@/src/domain/repertoire/line";
 import { XP_REWARDS } from "@/src/domain/gamification/xp";
 
@@ -41,12 +44,15 @@ export function GuardianDuel({
   realm,
   openingName,
   userId,
+  masteryState = null,
 }: {
   path: CuratedPath;
   guardian: Guardian;
   realm: RealmId;
   openingName: string;
   userId?: string;
+  /** Real mastery of this line (drives the single contextual victory CTA). */
+  masteryState?: MasteryState | null;
 }) {
   const side = PATH_SIDE[path.id] ?? "white";
   const allowed = DIFFICULTY.medium.mistakesAllowed;
@@ -58,6 +64,10 @@ export function GuardianDuel({
   const [boardFen, setBoardFen] = useState(fenAfter(path, 0));
   const [mistakes, setMistakes] = useState(0);
   const [flash, setFlash] = useState<"idle" | "correct" | "wrong">("idle");
+  /** Plies the player slipped on — marked in the victory scoresheet. */
+  const [slips, setSlips] = useState<number[]>([]);
+  /** Pedagogical slip toast: the line's move + its idea, until it is played. */
+  const [slipToast, setSlipToast] = useState<{ san: string; idea: string | null } | null>(null);
   const attemptsRef = useRef<Attempt[]>([]);
   const turnStartRef = useRef(0);
   const postedRef = useRef(false);
@@ -117,14 +127,25 @@ export function GuardianDuel({
       if (!correct) {
         setFlash("wrong");
         window.setTimeout(() => setFlash("idle"), 600);
+        setSlips((s) => (s.includes(ply) ? s : [...s, ply]));
         setMistakes((m) => {
           const next = m + 1;
-          if (next > allowed) setPhase("lost");
+          if (next > allowed) {
+            setPhase("lost");
+          } else {
+            // Forgiven — but teach: the line's move + its idea, and the player
+            // must PLAY it to continue (the board only accepts the line).
+            setSlipToast({
+              san: path.moves[ply]!,
+              idea: path.comments?.[ply] ?? null,
+            });
+          }
           return next;
         });
         return false; // snap back — the exam takes the line's move only
       }
 
+      setSlipToast(null);
       setFlash("correct");
       window.setTimeout(() => setFlash("idle"), 400);
       setBoardFen(game.fen());
@@ -141,6 +162,8 @@ export function GuardianDuel({
     setPly(0);
     setBoardFen(fenAfter(path, 0));
     setFlash("idle");
+    setSlips([]);
+    setSlipToast(null);
     setPhase("duel");
   }
 
@@ -181,7 +204,15 @@ export function GuardianDuel({
                 You command <b>{side === "white" ? "White" : "Black"}</b> · {answered}/{totalChallenges} moves ·{" "}
                 {mistakes > allowed ? "no mistakes left" : `${allowed - mistakes} slip allowed`}
               </span>
+              <span className="dh-mode"><ModeChip mode="exam" /></span>
             </div>
+            {phase === "duel" && slipToast && (
+              <div className="slip-toast" role="alert">
+                <b>Slip forgiven.</b> The line plays <b>{slipToast.san}</b>
+                {slipToast.idea ? <> — {slipToast.idea}</> : "."} Play it to continue.
+                One more slip and the duel is lost.
+              </div>
+            )}
             <div className={`duel-board ${flash}`}>
               <Board
                 position={boardFen}
@@ -195,6 +226,8 @@ export function GuardianDuel({
                 <span key={i} className={`ddot${i < answered ? " hit" : ""}`} />
               ))}
             </div>
+            {/* the duel's game sheet — moves actually played so far */}
+            <NotationStrip sans={path.moves} currentPly={ply} variant="scoresheet" />
 
             {phase === "lost" && (
               <div className="duel-verdict">
@@ -219,9 +252,30 @@ export function GuardianDuel({
               The <b style={{ color: "var(--gold-bright, #f1d680)" }}>{openingName}</b> bends the knee.
               {userId ? ` +${XP_REWARDS.bossDefeated} XP — drill it to gold to stamp the seal in your Passport.` : " Sign in to record your victories."}
             </p>
+            {/* The full line you just proved — any slip marked in red. */}
+            <div className="win-sheet">
+              <NotationStrip
+                sans={path.moves}
+                currentPly={path.moves.length}
+                variant="scoresheet"
+                slips={slips}
+              />
+              {slips.length > 0 && (
+                <p className="win-slipnote">
+                  Your slip is marked — that move is where the line escapes you.
+                </p>
+              )}
+            </div>
+            {/* ONE contextual CTA: the next real step for THIS line. */}
             <div className="dv-actions">
-              <Link className="btn-gold" href="/quest">Back to the realm →</Link>
-              <Link className="retreat" href="/train">Today&apos;s training</Link>
+              {masteryState === "gold" ? (
+                <Link className="btn-gold" href="/quest">Back to the realm →</Link>
+              ) : (
+                <>
+                  <Link className="btn-gold" href={`/drill/${path.id}`}>Drill to gold →</Link>
+                  <Link className="retreat" href="/quest">Back to the realm</Link>
+                </>
+              )}
             </div>
           </div>
         )}
