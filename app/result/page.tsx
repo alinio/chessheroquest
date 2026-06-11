@@ -1,13 +1,10 @@
 /**
- * /result — Chess DNA reveal (S2). Immersive, no shell.
- * TODO(real-data): map the persisted M2 (Opening IQ + per-opening) + M3 (archetype +
- * match% + traits) into DnaFixture; fall back to sample when no test taken. The legacy
- * ResultScreen (real profile + 1080×1350 share card + Save) is preserved in
- * src/ui/result/ResultScreen — port Share/Download/Save wiring onto this screen.
+ * /result — the profile reveal: test + quiz → YOUR Chess DNA (real data from
+ * both stores; sample fallback only when nothing was taken). The funnel step
+ * between the quiz and /hero-select — its primary CTA carries the player there.
  */
 import type { Metadata } from "next";
-import { DnaResultsScreen } from "@/src/ui/result/DnaResultsScreen";
-import { DEMO_DNA } from "@/src/dev/fixtures";
+import { ResultScreen } from "@/src/ui/result/ResultScreen";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -16,5 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function ResultPage() {
-  return <DnaResultsScreen dna={DEMO_DNA} />;
+  return <ResultScreen />;
 }

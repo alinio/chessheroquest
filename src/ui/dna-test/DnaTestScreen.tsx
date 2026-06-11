@@ -18,7 +18,6 @@ import { DNA_TEST_BANK, TEST_LENGTH } from "@/src/domain/dna-test/bank";
 import type { TestPosition } from "@/src/domain/dna-test/types";
 import { track } from "@/src/analytics/events";
 import { AnalyticsBoot } from "@/src/ui/analytics/AnalyticsBoot";
-import { SaveProgress } from "@/src/ui/account/SaveProgress";
 import { useDnaTest } from "./useDnaTest";
 
 function useReducedMotion() {
@@ -279,11 +278,12 @@ export function DnaTestScreen() {
             <p style={{ color: "var(--chq-text-2)", fontSize: 13, lineHeight: 1.6 }}>
               {result.positionsAnswered} positions · strongest: <b style={{ color: "var(--chq-text-1)" }}>{result.strongestFamily}</b> · weakest: <b style={{ color: "var(--chq-text-1)" }}>{result.weakestFamily}</b>
             </p>
-            <div style={{ display: "flex", gap: 10, marginTop: 6, flexWrap: "wrap", justifyContent: "center" }}>
-              <Button variant="primary" onClick={() => router.push("/style-quiz")}>Continue → Style Quiz</Button>
-              <Button variant="ghost" onClick={reset}>Retake the test</Button>
+            {/* ONE job: carry momentum into the Style Quiz (?fresh=1 resets any
+                stale quiz state). Email capture lives AFTER the payoff (/result);
+                retake lives on the Profile — never right after finishing. */}
+            <div style={{ marginTop: 6 }}>
+              <Button variant="primary" onClick={() => router.push("/style-quiz?fresh=1")}>Continue → Style Quiz</Button>
             </div>
-            <div style={{ marginTop: 12, width: "100%" }}><SaveProgress /></div>
           </div>
         </OrnateFrame>
       </TestShell>

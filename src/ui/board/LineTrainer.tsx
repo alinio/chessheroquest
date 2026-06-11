@@ -4,6 +4,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { Chess } from "chess.js";
 import type { CSSProperties } from "react";
 import type { PieceDropHandlerArgs } from "react-chessboard";
+import Link from "next/link";
 import { Board } from "./Board";
 import type { CuratedPath } from "@/src/domain/repertoire/types";
 import { expectedMoveAt } from "@/src/domain/repertoire/line";
@@ -119,6 +120,36 @@ export function LineTrainer({ path }: { path: CuratedPath }) {
         </p>
       </div>
 
+      {/* GUIDED mode: Learn SHOWS each move + its idea BEFORE you play it
+          (memorising from scratch is Drill's job). Nobody is left guessing. */}
+      {!done ? (
+        <div className="border-gold/40 bg-raised/60 rounded-lg border px-4 py-3" aria-live="polite">
+          {ply === 0 && (
+            <p className="text-text-low mb-1 text-xs tracking-wide uppercase">
+              You play both sides to learn the line — {total} moves, guided.
+            </p>
+          )}
+          <p className="text-sm leading-relaxed">
+            <span className="text-text-low">Move {ply + 1}/{total} · play</span>{" "}
+            <b className="text-gold text-base">{expectedMoveAt(path, ply)}</b>
+            {path.comments?.[ply] && <span className="text-text-mid"> — {path.comments[ply]}</span>}
+          </p>
+        </div>
+      ) : (
+        <div className="border-state-solid/40 bg-raised/60 rounded-lg border px-4 py-3">
+          <p className="text-state-solid text-sm font-semibold">✓ Line learned.</p>
+          <p className="text-text-mid mt-1 text-sm">
+            Now make it stick: drill it from memory — that&apos;s what moves it toward gold.
+          </p>
+          <Link
+            href={`/drill/${path.id}`}
+            className="rounded-chip bg-gold text-abyss mt-3 inline-flex min-h-[44px] items-center px-5 text-sm font-semibold"
+          >
+            Drill this line →
+          </Link>
+        </div>
+      )}
+
       {/* Board — spans the width on mobile (DESIGN.md §8) */}
       <div className="w-full max-w-[min(92vw,520px)] self-center">
         <Board
@@ -129,23 +160,15 @@ export function LineTrainer({ path }: { path: CuratedPath }) {
         />
       </div>
 
-      {/* The idea behind the move just played (authored pedagogy, per ply). */}
-      {ply > 0 && path.comments?.[ply - 1] && (
-        <p className="text-text-mid border-hairline rounded-lg border px-3 py-2 text-sm leading-relaxed" aria-live="polite">
-          <span className="text-gold font-semibold">{path.moves[ply - 1]}</span>{" "}
-          — {path.comments[ply - 1]}
-        </p>
-      )}
-
       {/* Feedback (quick + clean, no slow animation) + thumb-zone control */}
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm" aria-live="polite">
           {done ? (
             <span className="text-state-solid">✓ Line complete</span>
           ) : feedback === "wrong" ? (
-            <span className="text-state-leak">✗ Off the line — try again</span>
+            <span className="text-state-leak">✗ Not that one — play {expectedMoveAt(path, ply)} (shown above)</span>
           ) : (
-            <span className="text-text-mid">Your move: find the line.</span>
+            <span className="text-text-mid">Make the move on the board.</span>
           )}
         </p>
         <div className="flex shrink-0 gap-2">
@@ -154,14 +177,14 @@ export function LineTrainer({ path }: { path: CuratedPath }) {
             onClick={askCoach}
             className="rounded-chip bg-gold text-abyss min-h-[44px] px-4 py-2 text-sm font-semibold"
           >
-            Coach
+            Ask the coach why
           </button>
           <button
             type="button"
             onClick={reset}
             className="rounded-chip border-hairline text-text-mid min-h-[44px] border px-4 py-2 text-sm"
           >
-            Recommencer
+            Restart
           </button>
         </div>
       </div>

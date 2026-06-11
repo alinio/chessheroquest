@@ -6,7 +6,9 @@ import { toPng } from "html-to-image";
 import { track } from "@/src/lib/track";
 import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
+import Image from "next/image";
 import { GradientDefs, LogoMark, OpeningIQGauge } from "@/src/ui/design-system/icons";
+import { BRAND_LOGO } from "@/src/ui/design-system/art";
 import { OrnateFrame } from "@/src/ui/design-system/OrnateFrame";
 import { Button } from "@/src/ui/design-system/Button";
 import { HERO_ACCENTS, type HeroKey } from "@/src/ui/design-system/tokens";
@@ -47,11 +49,8 @@ function Shell({ children }: { children: ReactNode }) {
         <PictureBg landscape={ASSETS.backgrounds.resultsReveal} portrait={ASSETS.backgrounds.resultsRevealPortrait} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,10,.6), rgba(8,8,10,.85))" }} />
       </div>
-      <header style={{ position: "relative", zIndex: 1, height: 56, flexShrink: 0, display: "flex", alignItems: "center", gap: 8, padding: "0 20px", borderBottom: "1px solid var(--chq-line)" }}>
-        <LogoMark size={26} />
-        <span className="chq-display chq-gold-text" style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".08em" }}>
-          Your Chess DNA
-        </span>
+      <header style={{ position: "relative", zIndex: 1, minHeight: 100, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: "12px 20px", borderBottom: "1px solid var(--chq-line)" }}>
+        <Image src={BRAND_LOGO} alt="ChessHeroQuest" width={1478} height={418} priority style={{ height: 72, width: "auto" }} />
       </header>
       <main style={{ position: "relative", zIndex: 1, flex: 1, width: "100%", maxWidth: 480, margin: "0 auto", padding: "24px 20px 48px" }}>{children}</main>
     </div>

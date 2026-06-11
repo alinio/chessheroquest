@@ -9,6 +9,7 @@ import { auth } from "@/src/lib/auth";
 import { getProgress } from "@/src/data/repos/progress";
 import { isStreakAlive } from "@/src/domain/gamification/streak";
 import { AppShell } from "@/src/ui/shell/AppShell";
+import { PendingDnaSync } from "@/src/ui/PendingDnaSync";
 import { ARCHETYPE_REALM, REALM_NAMES, getArchetypeSigil, getArchetypeArt } from "@/src/lib/assets";
 import "@/src/ui/animations.css";
 import "@/src/ui/shell/hub.css";
@@ -26,6 +27,10 @@ export default async function AppLayout({
   const realm = archetype ? ARCHETYPE_REALM[archetype] : null;
 
   return (
+    <>
+    {/* Anonymous funnel carry-over: attach a stashed DNA result to the account
+        on ANY hub entry (it used to live only on /dashboard — now a redirect). */}
+    <PendingDnaSync />
     <AppShell
       realmName={realm ? REALM_NAMES[realm] : "ChessHeroQuest"}
       realmCrest={archetype ? getArchetypeSigil(archetype) : null}
@@ -44,5 +49,6 @@ export default async function AppLayout({
     >
       {children}
     </AppShell>
+    </>
   );
 }

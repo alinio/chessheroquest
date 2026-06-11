@@ -5,6 +5,21 @@
  * cached AI explanation summoned during Learn/Drill. The board stays clean; the
  * coaching lives around it.
  */
+
+/**
+ * The cached explanations sometimes carry raw markdown (# headers, **bold**).
+ * Render them as clean short paragraphs — never a wall of symbols.
+ */
+function cleanCounsel(raw: string): string[] {
+  return raw
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/^#+\s*/gm, "")
+    .split(/\n{2,}|(?<=[.!?])\s{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .slice(0, 4);
+}
+
 export function CoachSheet({
   open,
   loading,
@@ -46,9 +61,15 @@ export function CoachSheet({
             ✕
           </button>
         </div>
-        <p className="mt-2 text-sm leading-relaxed" aria-live="polite">
-          {loading ? "The mentor is considering…" : (text ?? "")}
-        </p>
+        <div className="mt-2 flex flex-col gap-2" aria-live="polite">
+          {loading ? (
+            <p className="text-sm leading-relaxed">The mentor is considering…</p>
+          ) : (
+            cleanCounsel(text ?? "").map((p, i) => (
+              <p key={i} className="text-sm leading-relaxed">{p}</p>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

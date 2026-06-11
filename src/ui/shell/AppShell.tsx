@@ -63,8 +63,8 @@ export function AppShell({
         {/* LEFT RAIL (desktop) */}
         <aside className="rail">
           <div className="brand">
-            <span className="crown"><IconCrown /></span>
-            <span className="wordmark">ChessHeroQuest</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/logo.png" alt="ChessHeroQuest" style={{ height: 42, width: "auto" }} />
           </div>
           {PRIMARY.map(({ key, label, Icon }) => (
             <Link key={key} href={`/${key}`} className={`nav-item${current === key ? " active" : ""}`} aria-current={current === key ? "page" : undefined}>
@@ -96,8 +96,17 @@ export function AppShell({
               <span className="realm-name serif">{realmName}</span>
             </div>
             <div className="topbar-right">
-              {streak != null && <span className="chip streak"><IconFlame />{streak}</span>}
-              {iq != null && <span className="chip iq">{iq} IQ</span>}
+              {/* Labeled chips — a chess player never has to guess a number. */}
+              {streak != null && (
+                <span className="chip streak" title="Training streak — consecutive days trained">
+                  <IconFlame />{streak}<small>day streak</small>
+                </span>
+              )}
+              {iq != null && (
+                <span className="chip iq" title="Opening IQ (0–1000) — rises only when your real opening skill rises">
+                  {iq}<small>Opening IQ</small>
+                </span>
+              )}
               {heroAvatar && (
                 <span className="hero-av">
                   {/* eslint-disable-next-line @next/next/no-img-element */}

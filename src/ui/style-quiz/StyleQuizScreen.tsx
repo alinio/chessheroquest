@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
-import { GradientDefs, LogoMark } from "@/src/ui/design-system/icons";
-import { OrnateFrame } from "@/src/ui/design-system/OrnateFrame";
+import { GradientDefs } from "@/src/ui/design-system/icons";
+import { BRAND_LOGO } from "@/src/ui/design-system/art";
 import { Button } from "@/src/ui/design-system/Button";
-import { HERO_ACCENTS } from "@/src/ui/design-system/tokens";
 import { QUIZ_QUESTIONS } from "@/src/domain/style-quiz/questions";
 import type { QuizQuestion } from "@/src/domain/style-quiz/types";
 import { useStyleQuiz } from "./useStyleQuiz";
@@ -40,11 +40,8 @@ function QuizShell({ children }: { children: ReactNode }) {
   return (
     <div className={`chq-root ${inter.variable}`} style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}>
       <GradientDefs />
-      <header style={{ height: 56, flexShrink: 0, display: "flex", alignItems: "center", gap: 8, padding: "0 20px", borderBottom: "1px solid var(--chq-line)" }}>
-        <LogoMark size={26} />
-        <span className="chq-display chq-gold-text" style={{ fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".08em" }}>
-          Chess DNA · Style
-        </span>
+      <header style={{ minHeight: 100, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: "12px 20px", borderBottom: "1px solid var(--chq-line)" }}>
+        <Image src={BRAND_LOGO} alt="ChessHeroQuest" width={1478} height={418} priority style={{ height: 72, width: "auto" }} />
       </header>
       <main style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%", padding: "24px 20px" }}>
         {children}
@@ -135,7 +132,26 @@ export function StyleQuizScreen() {
   const back = useStyleQuiz((s) => s.back);
   const reset = useStyleQuiz((s) => s.reset);
 
-  if (!mounted) {
+  // Fresh arrival from the DNA test (?fresh=1): clear any stale persisted run so
+  // the player is ALWAYS asked the questions — never shown last week's result.
+  const [freshHandled, setFreshHandled] = useState(false);
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("fresh") === "1") {
+      reset();
+      window.history.replaceState(null, "", "/style-quiz");
+    }
+    // Deferred — avoids a synchronous setState-in-effect cascade.
+    const t = window.setTimeout(() => setFreshHandled(true), 0);
+    return () => window.clearTimeout(t);
+  }, [reset]);
+
+  // Quiz done → straight to the profile reveal (/result carries the funnel:
+  // test + quiz → profile → hero-select). No duplicate card, no retake here.
+  useEffect(() => {
+    if (mounted && freshHandled && finished && result) router.replace("/result");
+  }, [mounted, freshHandled, finished, result, router]);
+
+  if (!mounted || !freshHandled) {
     return (
       <QuizShell>
         <span style={{ color: "var(--chq-text-muted)" }}>Loading…</span>
@@ -144,40 +160,9 @@ export function StyleQuizScreen() {
   }
 
   if (finished && result) {
-    const accent = HERO_ACCENTS[result.primary];
     return (
       <QuizShell>
-        <OrnateFrame variant="hero" hero={result.primary} style={{ maxWidth: 420, width: "100%" }}>
-          <div style={{ padding: 28, textAlign: "center", display: "flex", flexDirection: "column", gap: 12, alignItems: "center" }}>
-            <p style={eyebrow}>Your Chess DNA</p>
-            <h1 className="chq-display" style={{ fontSize: 28, fontWeight: 700, color: accent.base, margin: 0, textTransform: "uppercase" }}>
-              The {accent.label.replace("Aggressive ", "")}
-            </h1>
-            <p style={{ ...eyebrow, color: "var(--chq-text-2)" }}>
-              {result.matchPercent}% match{result.secondary ? ` · also ${HERO_ACCENTS[result.secondary].label}` : ""}
-            </p>
-            {result.reasons.length > 0 && (
-              <ul style={{ listStyle: "none", padding: 0, margin: "4px 0", display: "flex", flexDirection: "column", gap: 6 }}>
-                {result.reasons.map((r) => (
-                  <li key={r} style={{ color: "var(--chq-text-2)", fontSize: 14 }}>
-                    <span style={{ color: accent.base }}>◆</span> {r}
-                  </li>
-                ))}
-              </ul>
-            )}
-            <p style={{ color: "var(--chq-text-muted)", fontSize: 12, lineHeight: 1.6 }}>
-              See your full Chess DNA — Opening IQ, this archetype, and your Road to Elo. Saved on this device.
-            </p>
-            <div style={{ display: "flex", gap: 10, marginTop: 4, flexWrap: "wrap", justifyContent: "center" }}>
-              <Button variant="primary" onClick={() => router.push("/result")}>
-                See your Chess DNA →
-              </Button>
-              <Button variant="ghost" onClick={reset}>
-                Retake the quiz
-              </Button>
-            </div>
-          </div>
-        </OrnateFrame>
+        <span style={{ color: "var(--chq-text-muted)" }}>Revealing your Chess DNA…</span>
       </QuizShell>
     );
   }

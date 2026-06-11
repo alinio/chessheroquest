@@ -21,6 +21,13 @@ export const metadata: Metadata = {
 
 const REALM_IDS: readonly RealmId[] = ["ember-marches", "obsidian-court", "aegis-bastion", "mirage-bazaar"];
 
+const ENDBOSS_ART: Record<RealmId, string> = {
+  "ember-marches": "/art/bosses/endboss-warrior.webp",
+  "obsidian-court": "/art/bosses/endboss-strategist.webp",
+  "aegis-bastion": "/art/bosses/endboss-defender.webp",
+  "mirage-bazaar": "/art/bosses/endboss-trickster.webp",
+};
+
 export default async function RealmGauntletPage({
   params,
 }: {
@@ -47,6 +54,10 @@ export default async function RealmGauntletPage({
     return (
       <div className="chq-boss" style={{ ["--accent" as string]: "#cda845", ["--accent-bright" as string]: "#f1d680" }}>
         <div className="stage">
+          <div className="bg">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={ENDBOSS_ART[realm]} alt="" />
+          </div>
           <div className="glow" />
           <div className="center">
             <p className="eyebrow">The Gauntlet · {realmName}</p>
