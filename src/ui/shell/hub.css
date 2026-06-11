@@ -416,6 +416,29 @@
 .chq-hub .today-coach b { color: var(--gold-bright); }
 .chq-hub .today-hud .flame.out { color: var(--muted); }
 
+/* ---- hero split 55/45 — directive text | the day's board (board = button) ---- */
+.chq-hub .today-hero .hero-split {
+  position: relative; z-index: 1; width: 100%;
+  display: grid; grid-template-columns: 55fr 45fr; align-items: center; gap: 22px;
+  padding: 28px 30px 46px;
+}
+.chq-hub .today-hero .hero-split .focal { text-align: left; max-width: none; padding: 0; }
+.chq-hub .today-hero .hero-split h1 { font-size: 38px; }
+.chq-hub .hero-board { display: block; justify-self: center; text-decoration: none; width: 100%; max-width: 380px; }
+.chq-hub .hero-board .board-frame { transition: box-shadow 0.2s; }
+.chq-hub .hero-board:hover .board-frame {
+  box-shadow: 0 0 0 2px rgba(241, 214, 128, 0.65), 0 0 34px rgba(205, 168, 69, 0.4), 0 22px 50px rgba(0, 0, 0, 0.55);
+}
+@media (max-width: 880px) {
+  .chq-hub .today-hero .hero-split { grid-template-columns: 1fr; justify-items: center; gap: 18px; padding: 24px 18px 52px; }
+  .chq-hub .today-hero .hero-split .focal { text-align: center; }
+  .chq-hub .today-hero .hero-split h1 { font-size: 32px; }
+  .chq-hub .hero-board { max-width: min(78vw, 340px); }
+}
+
+/* mission card mini-board — the REAL position the mission trains (else glyph) */
+.chq-hub .m-board { width: 96px; flex-shrink: 0; display: block; }
+
 /* ---- daily missions (the workbench under the cathedral) ---- */
 .chq-hub .today-missions { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
 .chq-hub .m-card {

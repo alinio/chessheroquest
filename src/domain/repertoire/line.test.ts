@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { Chess } from "chess.js";
 import { STARTER_PATHS } from "./starter-paths";
-import { isPathLegal, fenAfter, expectedMoveAt } from "./line";
+import { isPathLegal, fenAfter, expectedMoveAt, moveSquaresAt, plyOfFen } from "./line";
 
 describe("curated starter paths", () => {
   it("are ALL fully legal (engine = truth, even for hand-curated content)", () => {
@@ -45,5 +45,19 @@ describe("line helpers", () => {
 
   it("isPathLegal returns false for an illegal line", () => {
     expect(isPathLegal({ ...p, moves: ["e4", "e4"] })).toBe(false);
+  });
+
+  it("moveSquaresAt resolves the from/to squares of each ply via chess.js", () => {
+    // Italian: ply 0 = e4 (e2→e4), ply 2 = Nf3 (g1→f3).
+    expect(moveSquaresAt(p, 0)).toEqual({ from: "e2", to: "e4" });
+    expect(moveSquaresAt(p, 2)).toEqual({ from: "g1", to: "f3" });
+    expect(() => moveSquaresAt(p, p.moves.length)).toThrow(RangeError);
+  });
+
+  it("plyOfFen re-anchors a FEN back into its line (and -1 off-path)", () => {
+    for (const ply of [0, 1, p.moves.length]) {
+      expect(plyOfFen(p, fenAfter(p, ply))).toBe(ply);
+    }
+    expect(plyOfFen(p, "8/8/8/8/8/8/8/K6k w - - 0 1")).toBe(-1);
   });
 });

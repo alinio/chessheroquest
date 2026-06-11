@@ -4,6 +4,9 @@
  * DEV-ONLY — never imported by production flows.
  */
 import type { Archetype, RealmId, OpeningId } from "@/src/lib/assets";
+import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
+import { fenAfter, moveSquaresAt } from "@/src/domain/repertoire/line";
+import { PATH_SIDE } from "@/src/domain/world/guardians";
 
 /** Demo analytics for /dev/screens/insights (mirrors InsightsData in InsightsScreen). */
 export const DEMO_INSIGHTS = {
@@ -233,6 +236,16 @@ export interface DemoPlayer {
 }
 
 /** Demo cockpit data for /dev/screens/today (mirrors TodayData in TodayScreen). */
+/* Demo boards derive from the REAL curated paths via fenAfter (LAW #2 — even
+   fixtures never hand-write a position). */
+const demoDuePath = STARTER_PATHS.find((p) => p.id === "sicilian-dragon")!;
+const demoBossPath = STARTER_PATHS.find((p) => p.id === "queens-gambit-declined")!;
+const demoTabiya = (p: typeof demoDuePath) => ({
+  fen: fenAfter(p, p.moves.length),
+  orientation: PATH_SIDE[p.id] ?? ("white" as const),
+  lastMove: moveSquaresAt(p, p.moves.length - 1),
+});
+
 export const DEMO_TODAY = {
   streakDays: 7,
   xp: 2240,
@@ -242,6 +255,13 @@ export const DEMO_TODAY = {
   strongest: "Ruy Lopez" as string | null,
   recommended: { slug: "queens-gambit-declined", name: "Queen's Gambit Declined" },
   weakest: { slug: "sicilian-dragon", name: "Sicilian Dragon" },
+  // the day's board: a mid-line due card from the weakest line
+  dueFen: fenAfter(demoDuePath, 5),
+  dueOrientation: PATH_SIDE[demoDuePath.id] ?? ("white" as const),
+  dueLineName: demoDuePath.name,
+  dueLastMove: moveSquaresAt(demoDuePath, 4),
+  weaknessBoard: demoTabiya(demoDuePath),
+  bossBoard: demoTabiya(demoBossPath),
 };
 
 export const DEMO_PLAYER: DemoPlayer = {
