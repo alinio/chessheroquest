@@ -384,7 +384,7 @@ function Faq() {
 
 /* What you'll get — icon-led, concise; each icon maps cleanly to the feature. */
 const FEATURES = [
-  { Icon: Dna, title: "Discover your Chess DNA", copy: "20 positions, 2 minutes → your playstyle + a 0–1000 Opening IQ." },
+  { Icon: Dna, title: "Discover your Chess DNA", copy: "8 positions, 2 minutes → your playstyle + a 0–1000 Opening IQ." },
   { Icon: BookOpen, title: "Learn every line", copy: "Walk each opening move by move, with the idea behind every move." },
   { Icon: Repeat, title: "Drill to mastery", copy: "Spaced-repetition drills lock every line into memory for good." },
   { Icon: Swords, title: "Beat the Guardians", copy: "A themed boss per opening — survive the line to conquer it." },

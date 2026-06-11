@@ -82,7 +82,9 @@ export function ResultScreen() {
   const isSample = !dna || !quiz;
   const iq = dna?.openingIq ?? SAMPLE.iq;
   const strongest = dna?.strongestFamily ?? SAMPLE.strongest;
-  const weakest = dna?.weakestFamily ?? SAMPLE.weakest;
+  // null weakest on a REAL result = flawless run (never re-brand it with sample data)
+  const weakest = dna ? dna.weakestFamily : SAMPLE.weakest;
+  const weakestLabel = weakest ?? "None found — flawless run";
   const archetype: HeroKey = quiz?.primary ?? SAMPLE.archetype;
   const matchPercent = quiz?.matchPercent ?? SAMPLE.matchPercent;
   const reasons = quiz?.reasons?.length ? quiz.reasons : SAMPLE.reasons;
@@ -182,7 +184,7 @@ export function ResultScreen() {
           <div style={{ display: "flex", gap: 10, width: "100%", marginTop: 4 }}>
             {[
               ["Best Opening", strongest],
-              ["Biggest Weakness", weakest],
+              ["Biggest Weakness", weakestLabel],
             ].map(([l, v]) => (
               <div key={l} style={{ flex: 1, background: "var(--chq-raised)", borderRadius: "var(--chq-r-frame)", padding: "12px 10px" }}>
                 <div style={{ ...eyebrow, fontSize: 10, color: "var(--chq-text-muted)" }}>{l}</div>
@@ -246,7 +248,7 @@ export function ResultScreen() {
             archetypeLabel={`The ${label}`}
             accent={accent.base}
             strongestOpening={strongest}
-            weakestOpening={weakest}
+            weakestOpening={weakestLabel}
             tagline={tagline}
           />
         </div>

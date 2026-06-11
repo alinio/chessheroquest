@@ -55,7 +55,7 @@ function DiscoverScreen() {
       </p>
       <div className="mt-2 flex justify-center">
         <span className="rounded-chip border border-gold/40 bg-gold/10 px-3 py-1 text-[0.62rem] font-semibold text-gold">
-          20 positions · ~2 min · no signup
+          8 positions · ~2 min · no signup
         </span>
       </div>
     </Screen>

@@ -18,7 +18,7 @@ import {
 import type { Answer, TestPosition } from "./types";
 
 describe("DNA test bank (chess truth — no fabricated FENs/moves)", () => {
-  it("every seed position is a legal, consistent, single-best puzzle", () => {
+  it("every seed position is a legal, consistent puzzle (every main line is correct)", () => {
     expect(DNA_TEST_BANK.length).toBeGreaterThan(0);
     for (const p of DNA_TEST_BANK) {
       // FEN parses
@@ -31,13 +31,20 @@ describe("DNA test bank (chess truth — no fabricated FENs/moves)", () => {
       // 2–4 options
       expect(p.options.length).toBeGreaterThanOrEqual(2);
       expect(p.options.length).toBeLessThanOrEqual(4);
-      // skill = exactly one best at 0cp; style = no best (no right answer)
+      // CHESS-TRUTH BAR (Marc audit): skill = AT LEAST one best, every best at
+      // 0cp (multiple established main lines are ALL correct); style = no best
+      // and every option at 0cp (a style fork must have no wrong answer).
       const best = p.options.filter((o) => o.isBest);
       if (p.questionType === "skill") {
-        expect(best).toHaveLength(1);
-        expect(best[0]!.centipawnLoss).toBe(0);
+        expect(best.length).toBeGreaterThanOrEqual(1);
+        for (const b of best) expect(b.centipawnLoss).toBe(0);
+        // non-best options must actually be worse — never a disguised main line
+        for (const o of p.options) {
+          if (!o.isBest) expect(o.centipawnLoss).toBeGreaterThan(0);
+        }
       } else {
         expect(best).toHaveLength(0);
+        for (const o of p.options) expect(o.centipawnLoss).toBe(0);
       }
       // every option is a legal move from the position
       for (const o of p.options) {

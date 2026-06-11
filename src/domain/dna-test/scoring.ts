@@ -65,6 +65,13 @@ export function familyPerformance(answers: readonly Answer[]): FamilyPerformance
     .sort((a, b) => b.avgQuality - a.avgQuality);
 }
 
+/**
+ * A family only counts as the "biggest weakness" when the player actually
+ * dropped quality there (Marc audit P0#4: a perfect run must NEVER brand a
+ * correct main-line answer as a leak).
+ */
+const WEAKNESS_QUALITY_BAR = 0.95;
+
 /** Assemble the full result from the recorded answers. Pure (no Date). */
 export function buildResult(answers: readonly Answer[]): TestResult {
   const rawAccuracy = aggregateAccuracy(answers);
@@ -72,6 +79,7 @@ export function buildResult(answers: readonly Answer[]): TestResult {
     .filter((a) => a.questionType === "skill")
     .reduce((m, a) => Math.max(m, a.difficulty), 0);
   const byFamily = familyPerformance(answers);
+  const weakest = byFamily.length > 0 ? byFamily[byFamily.length - 1]! : null;
   return {
     answers: [...answers],
     positionsAnswered: answers.length,
@@ -80,6 +88,6 @@ export function buildResult(answers: readonly Answer[]): TestResult {
     openingIq: provisionalOpeningIq(rawAccuracy, difficultyReached),
     byFamily,
     strongestFamily: byFamily.length > 0 ? byFamily[0]!.family : null,
-    weakestFamily: byFamily.length > 0 ? byFamily[byFamily.length - 1]!.family : null,
+    weakestFamily: weakest && weakest.avgQuality < WEAKNESS_QUALITY_BAR ? weakest.family : null,
   };
 }

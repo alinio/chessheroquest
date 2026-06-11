@@ -56,7 +56,7 @@ export const HOW_IT_WORKS = {
       n: 1,
       phase: "Discover",
       title: "Take the free Chess DNA Test",
-      body: "Get your Opening IQ and your Chess DNA — 20 positions, about 2 minutes, no signup to begin.",
+      body: "Get your Opening IQ and your Chess DNA — 8 sharp positions, about 2 minutes, no signup to begin.",
     },
     {
       n: 2,

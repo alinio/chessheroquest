@@ -72,7 +72,7 @@ function TestShell({ children }: { children: ReactNode }) {
 function ContextPanel({ position, answered, chosenIdx }: { position: TestPosition; answered: boolean; chosenIdx: number | null }) {
   const isSkill = position.questionType === "skill";
   const chosen = chosenIdx != null ? position.options[chosenIdx] : undefined;
-  const best = position.options.find((o) => o.isBest);
+  const bests = position.options.filter((o) => o.isBest);
 
   return (
     <OrnateFrame style={{ width: "100%", maxWidth: 340 }}>
@@ -100,11 +100,13 @@ function ContextPanel({ position, answered, chosenIdx }: { position: TestPositio
             {/* skill verdict / style note */}
             {isSkill ? (
               <p style={{ fontSize: 13, fontWeight: 600, color: chosen?.isBest ? "var(--chq-state-solid, #3fb371)" : "var(--chq-state-leak, #d1495b)" }}>
-                {chosen?.isBest ? "✓ Best move" : `✗ Best was ${best?.san ?? "—"}`}
+                {chosen?.isBest
+                  ? "✓ Main line"
+                  : `✗ Main line${bests.length > 1 ? "s" : ""} here: ${bests.map((b) => b.san).join(" / ") || "—"}`}
               </p>
             ) : (
               <p style={{ fontSize: 13, fontWeight: 600, color: "var(--chq-gold-3)" }}>
-                ◆ Your style — both are main-line theory, no wrong answer.
+                ◆ Your style — every option here is main-line theory, no wrong answer.
               </p>
             )}
             <p style={{ color: "var(--chq-text-1)", fontSize: 13.5, lineHeight: 1.55 }}>
@@ -275,8 +277,17 @@ export function DnaTestScreen() {
             <p style={eyebrow}>Test complete</p>
             <p style={{ ...eyebrow, color: "var(--chq-text-2)" }}>Provisional Opening IQ</p>
             <div className="chq-display chq-gold-text" style={{ fontSize: 72, fontWeight: 700, lineHeight: 1 }}>{result.openingIq}</div>
+            {/* First meeting with the IQ — say what the number means (Marc audit P1#7). */}
+            <p style={{ ...eyebrow, fontSize: 10, color: "var(--chq-text-muted)" }}>
+              Scale 0–1000 · opening theory + accuracy · rises only when your real skill does
+            </p>
             <p style={{ color: "var(--chq-text-2)", fontSize: 13, lineHeight: 1.6 }}>
-              {result.positionsAnswered} positions · strongest: <b style={{ color: "var(--chq-text-1)" }}>{result.strongestFamily}</b> · weakest: <b style={{ color: "var(--chq-text-1)" }}>{result.weakestFamily}</b>
+              {result.positionsAnswered} positions · strongest: <b style={{ color: "var(--chq-text-1)" }}>{result.strongestFamily}</b>
+              {result.weakestFamily ? (
+                <> · weakest: <b style={{ color: "var(--chq-text-1)" }}>{result.weakestFamily}</b></>
+              ) : (
+                <> · no leak found — flawless run</>
+              )}
             </p>
             {/* ONE job: carry momentum into the Style Quiz (?fresh=1 resets any
                 stale quiz state). Email capture lives AFTER the payoff (/result);
