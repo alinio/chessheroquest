@@ -422,7 +422,9 @@ export function HeroSelectScreen() {
   const quiz = useStyleQuiz((s) => s.result);
   const isPro = useEntitlement((s) => s.isPro);
   const selectHero = useHeroSelect((s) => s.selectHero);
-  const [tier, setTier] = useState<Tier>("premium");
+  // New users land on FREE (the headline promises "free to start" — the
+  // premium upsell comes after the first Learn/Drill payoff, never as a trap).
+  const [tier, setTier] = useState<Tier>("free");
   const [plan, setPlan] = useState<PlanKey>("yearly");
 
   useEffect(() => { track("hero_view"); }, []);
