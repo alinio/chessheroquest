@@ -155,7 +155,7 @@ export function ProductDemoS3() {
           {/* ---- TEST ---- */}
           <Layer show={stage === 0}>
             <p className="text-[0.6rem] uppercase tracking-[0.2em] text-text-low">
-              Position {advanced ? 8 : 7} / 20
+              Position {advanced ? 8 : 7} / 8
             </p>
             <div className="mt-2">
               <MiniBoard

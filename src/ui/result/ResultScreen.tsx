@@ -13,6 +13,8 @@ import { Button } from "@/src/ui/design-system/Button";
 import { HERO_ACCENTS, type HeroKey } from "@/src/ui/design-system/tokens";
 import { roadToElo, provisionalTopPercent } from "@/src/domain/recommend/road-to-elo";
 import { useDnaTest } from "@/src/ui/dna-test/useDnaTest";
+import { DNA_TEST_BANK } from "@/src/domain/dna-test/bank";
+import { PENDING_DNA_KEY } from "@/src/ui/PendingDnaSync";
 import { useStyleQuiz } from "@/src/ui/style-quiz/useStyleQuiz";
 import { ASSETS, getRankInsignia } from "@/src/lib/assets";
 import { PictureBg } from "@/src/ui/PictureBg";
@@ -64,6 +66,47 @@ export function ResultScreen() {
   useEffect(() => {
     track("result_viewed");
   }, []);
+
+  // F1 FIX: stash the REAL result for account attachment. PendingDnaSync (hub
+  // layout) POSTs it to /api/dna-test after signup — without this, every new
+  // account was asked to retake the test it just finished.
+  useEffect(() => {
+    if (!mounted || !dna || !quiz) return;
+    try {
+      const skill = dna.answers.filter((a) => a.questionType === "skill");
+      const weakPos = dna.weakestFamily
+        ? DNA_TEST_BANK.find((p) => p.openingFamily === dna.weakestFamily)
+        : undefined;
+      const byFam = (f: string | null) =>
+        f ? dna.byFamily.find((x) => x.family === f) : undefined;
+      const payload = {
+        archetype: quiz.primary,
+        core: dna.rawAccuracy,
+        initialIq: dna.openingIq,
+        rank: "provisional",
+        percentile: provisionalTopPercent(dna.openingIq),
+        strongestArchetype: quiz.primary,
+        weakestArchetype: quiz.secondary ?? quiz.primary,
+        recommendedPathId: roadToElo(quiz.primary, dna.weakestFamily)[0]?.id ?? "italian",
+        answered: dna.positionsAnswered,
+        correctCount: skill.filter((a) => a.quality >= 0.95).length,
+        strongestFamily: dna.strongestFamily ?? undefined,
+        weakestFamily: dna.weakestFamily,
+        strongestPct: dna.strongestFamily
+          ? Math.round((byFam(dna.strongestFamily)?.avgQuality ?? 1) * 100)
+          : undefined,
+        weakestPct: dna.weakestFamily
+          ? Math.round((byFam(dna.weakestFamily)?.avgQuality ?? 0) * 100)
+          : undefined,
+        weakFen: weakPos?.fen,
+        weakOrientation: weakPos?.sideToMove,
+        weakEco: weakPos?.eco,
+      };
+      window.localStorage.setItem(PENDING_DNA_KEY, JSON.stringify(payload));
+    } catch {
+      // Storage unavailable — signup still works, just without the seed.
+    }
+  }, [mounted, dna, quiz]);
 
   if (!mounted) {
     return (

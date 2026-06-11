@@ -73,9 +73,6 @@ export function TodayScreen({ data }: { data: TodayData }) {
 
       {/* thin HUD — streak + level only (the canonical IQ lives in the top bar) */}
       <div className="today-hud">
-        <span className={`h flame${data.streakDays === 0 ? " out" : ""}`}>
-          🔥 {data.streakDays === 0 ? "Streak lost — relight it today" : `${data.streakDays} day${data.streakDays === 1 ? "" : "s"}`}
-        </span>
         <span className="h">
           Level <b>{level.level}</b> · {level.into}/{level.needed} XP
         </span>

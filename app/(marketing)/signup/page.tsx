@@ -36,7 +36,7 @@ export default function SignUpPage() {
     const signInRes = await signIn("credentials", { email, password, redirect: false });
     setLoading(false);
     if (signInRes?.error) router.push("/signin");
-    else router.push("/dashboard");
+    else router.push("/welcome"); // the coach greets every new account (free included)
   }
 
   return (

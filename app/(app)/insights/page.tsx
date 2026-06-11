@@ -46,8 +46,8 @@ export default async function InsightsPage() {
     .map((p) => ({ name: p.name, m: mastery[p.id] }))
     .filter((x): x is { name: string; m: NonNullable<typeof x.m> } => Boolean(x.m && x.m.studied > 0))
     .sort((a, b) => STATE_ORDER[a.m.state] - STATE_ORDER[b.m.state] || a.m.studied / a.m.total - b.m.studied / b.m.total)
+    .filter((x) => x.m.state === "leak" || x.m.state === "review")
     .slice(0, 3)
-    .filter((x) => x.m.state !== "gold")
     .map((x) => ({ name: x.name, state: x.m.state, studied: x.m.studied, total: x.m.total }));
 
   const data: InsightsData = {

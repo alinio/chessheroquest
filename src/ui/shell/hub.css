@@ -239,7 +239,13 @@
   .chq-hub .grid { grid-template-columns: 1fr; }
   .chq-hub .tabbar { display: flex; }
   /* keep content clear of the fixed tab bar */
-  .chq-hub .frame { padding-bottom: 72px; }
+  .chq-hub .frame { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 480px) {
+  /* chips must never overflow a phone header */
+  .chq-hub .chip small { display: none; }
+  .chq-hub .chip { padding: 5px 9px; font-size: 12px; }
+  .chq-hub .realm-name { max-width: 34vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 @media (prefers-reduced-motion: reduce) {
   .chq-hub .today > * { animation: none; }
@@ -502,6 +508,7 @@
 .chq-hub .weak-row .wl span { color: var(--muted); }
 .chq-hub .wbar { height: 7px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); overflow: hidden; box-shadow: inset 0 0 0 1px var(--line-soft); }
 .chq-hub .wbar span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #b5485f, #e0726b); }
+.chq-hub .wbar.review span { background: linear-gradient(90deg, #b07a2a, #e0a13b); }
 .chq-hub .btn-ghost.sm { font-size: 12px; padding: 8px 14px; }
 @media (max-width: 980px) { .chq-hub .ins-grid, .chq-hub .ins-two { grid-template-columns: 1fr; } }
 

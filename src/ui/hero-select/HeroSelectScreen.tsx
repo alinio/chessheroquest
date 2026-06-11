@@ -68,7 +68,7 @@ function AnalyticsPanel() {
     <div style={{ position: "relative", overflow: "hidden", borderRadius: "var(--chq-r-card)", border: "1px solid var(--chq-gold-4)", background: "var(--chq-raised)", padding: "20px 22px", height: "100%" }}>
       <div style={{ position: "relative" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ ...eyebrow, fontSize: 10, color: "var(--chq-gold-3)" }}>The payoff</span>
+          <span style={{ ...eyebrow, fontSize: 10, color: "var(--chq-gold-3)" }}>The payoff — illustration</span>
           <span style={{ fontSize: 11, color: "#2FB67A", display: "inline-flex", alignItems: "center", gap: 5 }}>● Lichess + Chess.com synced</span>
         </div>
 
@@ -301,18 +301,6 @@ function HeroCard({ archetype, recommended, matchPercent, tier, onEnter, onGoPre
 }
 
 /* TODO: replace with real testimonials before public launch (illustrative for now). */
-const TESTIMONIALS = [
-  { name: "Maya R.", role: "Rapid · 1480", photo: "https://randomuser.me/api/portraits/women/68.jpg", quote: "I used to freeze the second my opponent left book. Now I actually have a plan — I went from blundering around move 6 to reaching middlegames I understand. +180 rating in a single month." },
-  { name: "Daniel K.", role: "Club player", photo: "https://randomuser.me/api/portraits/men/32.jpg", quote: "What finally clicked is the *why*. The Guardian boss fights force you to understand the ideas, not just memorise moves, so the theory holds up when a real game goes off-script." },
-  { name: "Priya S.", role: "Blitz · 1620", photo: "https://randomuser.me/api/portraits/women/44.jpg", quote: "The Caro-Kann was my worst opening for years. Two weeks of the spaced-repetition drills and it's now the one I'm most confident in. I'm a proud Defender main now." },
-  { name: "Tom B.", role: "Beginner", photo: "https://randomuser.me/api/portraits/men/75.jpg", quote: "As a total beginner I was terrified of openings. Chess DNA pegged me as a Trickster and handed me a Scandinavian full of traps — I win short games against people rated way above me." },
-  { name: "Lena M.", role: "Rapid · 1750", photo: "https://randomuser.me/api/portraits/women/65.jpg", quote: "Spaced repetition is the cheat code nobody talks about. My openings are basically on autopilot now, which frees up all my clock and brain for the actual fight." },
-  { name: "Carlos V.", role: "Hit 1500", photo: "https://randomuser.me/api/portraits/men/51.jpg", quote: "Cracked 1500 for the first time after months stuck. The Road-to-Elo picks told me exactly which lines to drill for my level instead of wasting time on stuff I'd never face." },
-  { name: "Aiko T.", role: "Blitz · 1900", photo: "https://randomuser.me/api/portraits/women/29.jpg", quote: "The Lichess sync was eye-opening — it showed the exact openings where I was hemorrhaging rating. I fixed two of them in a fortnight and the graph finally started climbing." },
-  { name: "Sam O.", role: "Casual", photo: "https://randomuser.me/api/portraits/men/12.jpg", quote: "Honestly more fun than grinding puzzles. The world map and boss fights give me a reason to come back every day, and I'm improving without it feeling like homework." },
-  { name: "Grace W.", role: "New to chess", photo: "https://randomuser.me/api/portraits/women/90.jpg", quote: "I genuinely didn't know what to play on move one. Now I have a clear plan for both colours and I don't panic anymore. It made chess feel approachable for the first time." },
-  { name: "Noah F.", role: "Rapid · 1340", photo: "https://randomuser.me/api/portraits/men/3.jpg", quote: "Beat my older brother for the first time in years — he played something dodgy and I punished it straight from a line I'd drilled. He asked what I'd been using. 😏" },
-];
 
 const FAQ = [
   { q: "Is it really free?", a: "Yes — take the Chess DNA Test and play your first opening (Learn, Drill & its Opening Guardian) with no signup." },
@@ -323,45 +311,6 @@ const FAQ = [
   { q: "Can I cancel?", a: "Yes, cancel anytime. Lifetime is a one-time payment with no renewals." },
 ];
 
-function ReviewCard({ t }: { t: (typeof TESTIMONIALS)[number] }) {
-  return (
-    <article style={{ width: 360, flexShrink: 0, background: "var(--chq-panel)", border: "1px solid var(--chq-line)", borderRadius: "var(--chq-r-card)", padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
-      <header style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={t.photo} alt="" width={48} height={48} loading="lazy" style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", border: "1px solid var(--chq-gold-4)" }} />
-        <div>
-          <p style={{ color: "var(--chq-text-1)", fontWeight: 600, fontSize: 15, margin: 0 }}>{t.name}</p>
-          <p style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)", margin: "2px 0 0" }}>{t.role}</p>
-        </div>
-        <span style={{ marginLeft: "auto", color: "var(--chq-gold-3)", fontSize: 13, letterSpacing: 1 }}>★★★★★</span>
-      </header>
-      <p style={{ color: "var(--chq-text-2)", fontSize: 14, lineHeight: 1.6, margin: 0 }}>“{t.quote}”</p>
-    </article>
-  );
-}
-
-function Testimonials() {
-  const rowA = TESTIMONIALS.slice(0, 5);
-  const rowB = TESTIMONIALS.slice(5);
-  return (
-    <section style={{ margin: "80px auto 0", maxWidth: 1320 }}>
-      <div style={{ textAlign: "center", marginBottom: 24, padding: "0 20px" }}>
-        <p style={{ ...eyebrow, color: "var(--chq-gold-3)" }}>Heroes who climbed</p>
-        <h2 className="chq-display chq-gold-text" style={{ fontSize: 24, fontWeight: 700, margin: "6px 0 0" }}>Players are winning more</h2>
-      </div>
-      <div className="chq-marquee">
-        <div className="chq-marquee-track" style={{ padding: "4px 20px" }}>
-          {[...rowA, ...rowA].map((t, i) => <ReviewCard key={i} t={t} />)}
-        </div>
-      </div>
-      <div className="chq-marquee" style={{ marginTop: 16 }}>
-        <div className="chq-marquee-track rev" style={{ padding: "4px 20px" }}>
-          {[...rowB, ...rowB].map((t, i) => <ReviewCard key={i} t={t} />)}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function Faq() {
   return (
@@ -450,6 +399,12 @@ export function HeroSelectScreen() {
     track("hero_selected", { hero: a, recommended: a === recommended });
     track("checkout_start", { plan });
     const acct = await fetchAccount();
+    // F3: never open a checkout without an account — a paid entitlement must
+    // have an owner, and post-payment must never hit a login wall.
+    if (!acct.email) {
+      router.push("/signup");
+      return;
+    }
     const ok = await openCheckout(toProPlan(plan), acct.email ?? null, async () => {
       await syncEntitlement();
       selectHero(a);
@@ -496,7 +451,6 @@ export function HeroSelectScreen() {
       </div>
 
       <WhatYouUnlock />
-      <Testimonials />
       <Faq />
     </Shell>
   );

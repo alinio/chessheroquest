@@ -35,13 +35,6 @@ export interface InsightsData {
   weaknesses: InsightsWeakness[];
 }
 
-const STATE_LABEL: Record<MasteryState, string> = {
-  leak: "Leak",
-  review: "Review",
-  solid: "Solid",
-  gold: "Gold",
-};
-
 function iqPaths(trend: number[]) {
   const W = 100, H = 40;
   const min = Math.min(...trend), max = Math.max(...trend);
@@ -75,7 +68,7 @@ export function InsightsScreen({
           <p className="big">
             {data.openingIq}
             <small style={data.iqDelta > 0 ? { color: "#6fd89a" } : undefined}>
-              {data.iqDelta > 0 ? `+${data.iqDelta} over this window` : data.iqDelta < 0 ? `${data.iqDelta} over this window` : "your baseline — drill to move it"}
+              {data.iqDelta > 0 ? `+${data.iqDelta} since your first test` : data.iqDelta < 0 ? `${data.iqDelta} since your first test` : "your baseline — drill to move it"}
             </small>
           </p>
           <svg className="ins-chart" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
@@ -92,16 +85,29 @@ export function InsightsScreen({
 
         {/* Road to Elo */}
         <section className="ins-card">
-          <p className="ct">Road to Elo · {data.eloGoal}</p>
+          <p className="ct">Opening readiness · for {data.eloGoal}</p>
           <div className="elo-row" style={{ marginTop: 12 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={getRankInsignia(data.eloGoal)} alt="" />
             <div style={{ flex: 1 }}>
-              <div><span className="num">{data.roadPct}%</span> <span style={{ color: "var(--muted)", fontSize: 13 }}>of the road</span></div>
-              <div className="bar" style={{ marginTop: 8 }}><span style={{ width: `${data.roadPct}%` }} /></div>
-              <p style={{ color: "var(--faint)", fontSize: 11, marginTop: 8 }}>
-                Openings at this IQ are worth an estimated +{data.projectedGain} Elo of practical strength.
-              </p>
+              {data.roadPct >= 100 ? (
+                <>
+                  <div style={{ color: "#6fd89a", fontWeight: 700, fontSize: 16 }}>Openings ready for {data.eloGoal} ✓</div>
+                  <p style={{ color: "var(--muted)", fontSize: 12.5, lineHeight: 1.55, marginTop: 6 }}>
+                    Your openings won&apos;t be what holds you back on the road to {data.eloGoal} —
+                    keep them sharp and let your games catch up.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div><span className="num">{data.roadPct}%</span> <span style={{ color: "var(--muted)", fontSize: 13 }}>ready</span></div>
+                  <div className="bar" style={{ marginTop: 8 }}><span style={{ width: `${data.roadPct}%` }} /></div>
+                  <p style={{ color: "var(--faint)", fontSize: 11, marginTop: 8 }}>
+                    Your openings cover {data.roadPct}% of what a {data.eloGoal} player needs —
+                    worth an estimated +{data.projectedGain} Elo of practical strength.
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </section>
@@ -122,18 +128,18 @@ export function InsightsScreen({
 
         {/* weaknesses from real FSRS mastery */}
         <section className="ins-card">
-          <p className="ct">Focus — weakest openings</p>
+          <p className="ct">Fix first</p>
           {data.weaknesses.length === 0 ? (
             <p style={{ color: "var(--muted)", fontSize: 13, lineHeight: 1.55, marginTop: 8 }}>
-              Drill your first lines and your leaks will surface here.
+              No leaks today — every line you&apos;ve studied is holding. The next seal is waiting in your Passport.
             </p>
           ) : (
             data.weaknesses.map((w) => {
               const pct = w.total > 0 ? Math.round((w.studied / w.total) * 100) : 0;
               return (
                 <div className="weak-row" key={w.name}>
-                  <div className="wl">{w.name}<span>{STATE_LABEL[w.state]} · {w.studied}/{w.total} positions</span></div>
-                  <div className="wbar"><span style={{ width: `${Math.max(pct, 4)}%` }} /></div>
+                  <div className="wl">{w.name}<span>{w.state === "leak" ? `Leak · ${w.studied}/${w.total} positions hold` : `Fading · review due`}</span></div>
+                  <div className={`wbar ${w.state}`}><span style={{ width: `${Math.max(pct, 4)}%` }} /></div>
                 </div>
               );
             })

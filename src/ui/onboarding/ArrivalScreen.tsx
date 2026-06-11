@@ -53,7 +53,7 @@ export function ArrivalScreen({
               </div>
               <p className="board-cap">
                 <span className="turn">White to play</span><br />
-                The <b>{arrival.weakness}</b> · {arrival.weaknessLine}. You score just <b>{arrival.weaknessWin}%</b> as White from here — the fork most players fumble.
+                The <b>{arrival.weakness}</b>{arrival.weaknessLine ? <> · {arrival.weaknessLine}</> : null}. You scored <b>{arrival.weaknessWin}%</b> on it in your test — the line most players fumble.
               </p>
             </div>
 
@@ -74,7 +74,7 @@ export function ArrivalScreen({
 
               <div className="sess">
                 <div className="k">Your first session — start with the gap</div>
-                <div className="v"><b>{arrival.firstSessionLines} key lines</b> of the {arrival.weaknessLine} · ~{arrival.firstSessionMin} min</div>
+                <div className="v"><b>{arrival.firstSessionLines} key lines</b> of the {arrival.weakness} · ~{arrival.firstSessionMin} min</div>
               </div>
 
               <button className="cta" type="button" onClick={onStart}>Fix my {shortWeak} →</button>

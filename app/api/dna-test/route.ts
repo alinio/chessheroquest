@@ -20,6 +20,14 @@ const BodySchema = z.object({
   recommendedPathId: z.string(),
   answered: z.number().int().min(0),
   correctCount: z.number().int().min(0),
+  // New-flow extras (optional, kept in the raw jsonb — feed /welcome's real diagnosis)
+  strongestFamily: z.string().optional(),
+  weakestFamily: z.string().nullable().optional(),
+  strongestPct: z.number().min(0).max(100).optional(),
+  weakestPct: z.number().min(0).max(100).optional(),
+  weakFen: z.string().optional(),
+  weakOrientation: z.enum(["white", "black"]).optional(),
+  weakEco: z.string().optional(),
 });
 
 export async function POST(request: Request) {
