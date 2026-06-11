@@ -1,0 +1,87 @@
+/* Shared board chrome — MiniBoard, NotationStrip, ModeChip.
+   Self-contained (lives inside .chq-hub, .chq-boss and plain Tailwind screens
+   alike), so every value carries a literal fallback of the DESIGN.md tokens. */
+
+/* ---- MiniBoard — read-only position preview; the board IS the button ---- */
+.chq-miniboard { position: relative; display: block; width: 100%; }
+.chq-miniboard > * { pointer-events: none; } /* clicks fall through to the wrapping Link */
+.chq-miniboard--hero { max-width: 380px; }
+.chq-miniboard--card { max-width: 96px; }
+.chq-miniboard--chip { max-width: 72px; }
+.chq-miniboard .board-frame {
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(205, 168, 69, 0.28), 0 10px 26px rgba(0, 0, 0, 0.45);
+}
+.chq-miniboard--hero .board-frame {
+  border-radius: 10px;
+  box-shadow: 0 0 0 1px rgba(205, 168, 69, 0.35), 0 22px 50px rgba(0, 0, 0, 0.55);
+}
+.chq-miniboard .mb-caption {
+  margin-top: 8px;
+  font-family: var(--font-manrope), "Manrope", system-ui, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--color-text-mid, #b9b6ac);
+  text-align: center;
+}
+.chq-miniboard .mb-caption b { color: var(--color-gold-bright, #f4ce6a); font-weight: 700; }
+
+/* ---- NotationStrip — the line as a ribbon of SAN ---- */
+.chq-notation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 9px;
+  margin: 0;
+  font-family: var(--font-manrope), "Manrope", system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-mid, #b9b6ac);
+}
+.chq-notation .mv { white-space: nowrap; }
+.chq-notation .mv .num { opacity: 0.6; margin-right: 1px; }
+.chq-notation .mv.played { color: var(--color-text-hi, #f3eee2); }
+.chq-notation .mv.current { color: var(--color-gold-bright, #f4ce6a); font-weight: 700; }
+.chq-notation .mv.future { color: var(--color-text-low, #7c7e8c); opacity: 0.55; }
+.chq-notation .mv.slip { color: var(--color-state-leak, #d1495b); text-decoration: underline; text-underline-offset: 3px; }
+.chq-notation .ellipsis { color: var(--color-text-low, #7c7e8c); opacity: 0.7; }
+/* scoresheet: the duel's game sheet — a quiet parchment ledger */
+.chq-notation--scoresheet {
+  border: 1px solid rgba(205, 168, 69, 0.22);
+  border-radius: 10px;
+  padding: 8px 12px;
+  background: rgba(10, 8, 14, 0.55);
+}
+
+/* ---- ModeChip — the mode contract in 200ms, always above the board ---- */
+.chq-modechip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-manrope), "Manrope", system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  border-radius: 999px;
+  padding: 7px 13px;
+  border: 1px solid;
+}
+.chq-modechip b { font-weight: 800; letter-spacing: 0.16em; }
+.chq-modechip--guided {
+  color: var(--color-gold-bright, #f4ce6a);
+  border-color: rgba(227, 178, 60, 0.45);
+  background: rgba(227, 178, 60, 0.08);
+}
+.chq-modechip--recall {
+  color: #aab2c5;
+  border-color: rgba(170, 178, 197, 0.35);
+  background: rgba(170, 178, 197, 0.07);
+}
+.chq-modechip--exam {
+  color: var(--accent-bright, var(--color-state-leak, #d1495b));
+  border-color: color-mix(in srgb, var(--accent, var(--color-state-leak, #d1495b)) 50%, transparent);
+  background: color-mix(in srgb, var(--accent, var(--color-state-leak, #d1495b)) 10%, transparent);
+}
