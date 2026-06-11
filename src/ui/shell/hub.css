@@ -368,12 +368,33 @@
 .chq-hub .map-bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(85% 85% at 50% 40%, transparent 58%, rgba(8, 5, 12, 0.42)); }
 .chq-hub .map .path { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .chq-hub .map .path path { stroke: var(--accent, #cda845); filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent, #cda845) 65%, transparent)); }
-/* small dismissible coachmark (no full-screen intro over the nodes) */
-.chq-hub .coachmark { position: absolute; top: 12px; left: 12px; z-index: 5; max-width: 252px; display: flex; gap: 10px; align-items: flex-start; background: rgba(12, 9, 18, 0.86); border: 1px solid var(--line); border-radius: 12px; padding: 11px 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); }
-.chq-hub .coachmark p { font-size: 12px; line-height: 1.45; color: var(--parchment); }
-.chq-hub .coachmark p b { color: var(--gold-bright); }
-.chq-hub .coachmark button { background: none; border: 0; color: var(--faint); cursor: pointer; font-size: 15px; line-height: 1; padding: 2px; flex-shrink: 0; }
-.chq-hub .coachmark button:hover { color: var(--parchment); }
+/* ---- node dossier — the chess behind the medallion (replaces the coachmark) ---- */
+.chq-hub .map-wrap { position: relative; flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.chq-hub .map-wrap .map { flex: 1; }
+.chq-hub .dossier {
+  position: absolute; top: 14px; right: 14px; z-index: 6; width: 252px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  background: rgba(12, 9, 18, 0.92); border: 1px solid var(--line); border-radius: 14px;
+  padding: 16px 16px 18px; box-shadow: 0 14px 38px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+.chq-hub .dossier .d-close { position: absolute; top: 8px; right: 10px; background: none; border: 0; color: var(--faint); cursor: pointer; font-size: 15px; line-height: 1; padding: 4px; }
+.chq-hub .dossier .d-close:hover { color: var(--parchment); }
+.chq-hub .dossier .d-board { display: block; width: 140px; }
+.chq-hub .dossier.locked .d-board { filter: grayscale(0.7) brightness(0.7); }
+.chq-hub .dossier .d-name { font-size: 17px; font-weight: 700; color: var(--gold-bright); line-height: 1.2; margin-top: 2px; }
+.chq-hub .dossier.locked .d-name { color: var(--muted); }
+.chq-hub .dossier .d-meta { font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.chq-hub .dossier .d-cta { margin-top: 6px; font-size: 13px; padding: 11px 18px; text-decoration: none; }
+.chq-hub .dossier .btn-gold.d-cta { margin-top: 6px; }
+.chq-hub .dossier .d-lock { font-size: 12.5px; line-height: 1.5; color: var(--parchment); }
+@media (max-width: 880px) {
+  /* mobile: the dossier becomes a block UNDER the map, full width */
+  .chq-hub .dossier { position: static; width: 100%; margin-top: 12px; }
+}
+/* nodes are buttons now (they open their dossier) — keep the medallion look */
+.chq-hub button.qnode { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; }
+.chq-hub .qnode.open .qname { border-color: color-mix(in srgb, var(--accent, #cda845) 75%, transparent); box-shadow: 0 0 16px color-mix(in srgb, var(--accent, #cda845) 40%, transparent); }
 .chq-hub .qnode .here { position: absolute; left: 50%; top: -20px; transform: translateX(-50%); white-space: nowrap; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ember-bright); font-weight: 700; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9); }
 .chq-hub .qnode { position: absolute; transform: translate(-50%, -50%); text-align: center; width: 120px; z-index: 2; }
 .chq-hub a.qnode { display: block; text-decoration: none; color: inherit; }

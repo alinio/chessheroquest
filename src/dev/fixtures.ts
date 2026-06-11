@@ -7,6 +7,7 @@ import type { Archetype, RealmId, OpeningId } from "@/src/lib/assets";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 import { fenAfter, moveSquaresAt } from "@/src/domain/repertoire/line";
 import { PATH_SIDE } from "@/src/domain/world/guardians";
+import { OPENING_TO_PATH, OPENING_LINES } from "@/src/lib/opening-paths";
 
 /** Demo analytics for /dev/screens/insights (mirrors InsightsData in InsightsScreen). */
 export const DEMO_INSIGHTS = {
@@ -127,6 +128,15 @@ export interface QuestNode {
   state: "conquered" | "available" | "locked";
   x: number; // % left
   y: number; // % top
+  /** Curated mainline id (training routes) — null when not curated yet. */
+  pathId?: string | null;
+  /** Lines at gold / total curated lines of this opening. */
+  linesDone?: number;
+  linesTotal?: number;
+  /** The line's tabiya (fenAfter over the full curated mainline). */
+  tabiyaFen?: string | null;
+  side?: "white" | "black";
+  lastMove?: { from: string; to: string } | null;
 }
 export interface QuestMapFixture {
   realm: RealmId;
@@ -141,17 +151,31 @@ export interface QuestMapFixture {
   continueId: OpeningId;
 }
 
+/** Dossier data for a quest node — REAL tabiya via fenAfter (LAW #2). */
+function nodeDossier(id: OpeningId, linesDone = 0) {
+  const pathId = OPENING_TO_PATH[id] ?? null;
+  const path = pathId ? STARTER_PATHS.find((p) => p.id === pathId) : undefined;
+  return {
+    pathId,
+    linesDone,
+    linesTotal: OPENING_LINES[id]?.length ?? 0,
+    tabiyaFen: path ? fenAfter(path, path.moves.length) : null,
+    side: path ? (PATH_SIDE[path.id] ?? ("white" as const)) : ("white" as const),
+    lastMove: path ? moveSquaresAt(path, path.moves.length - 1) : null,
+  };
+}
+
 /** Demo Quest Map — Ember Marches (Warrior). Positions from mockup-hub-rpg.html. */
 export const DEMO_QUEST: QuestMapFixture = {
   realm: "ember-marches",
   realmName: "Ember Marches",
   realmSub: "Realm of the Warrior",
   nodes: [
-    { id: "italian", name: "Italian Game", state: "conquered", x: 12, y: 86 },
-    { id: "scotch", name: "Scotch Game", state: "available", x: 28, y: 74 },
-    { id: "kings-gambit", name: "King's Gambit", state: "locked", x: 48, y: 67 },
-    { id: "smith-morra", name: "Smith-Morra Gambit", state: "locked", x: 36, y: 48 },
-    { id: "sicilian-dragon", name: "Sicilian Dragon", state: "locked", x: 60, y: 41 },
+    { id: "italian", name: "Italian Game", state: "conquered", x: 12, y: 86, ...nodeDossier("italian", 3) },
+    { id: "scotch", name: "Scotch Game", state: "available", x: 28, y: 74, ...nodeDossier("scotch") },
+    { id: "kings-gambit", name: "King's Gambit", state: "locked", x: 48, y: 67, ...nodeDossier("kings-gambit") },
+    { id: "smith-morra", name: "Smith-Morra Gambit", state: "locked", x: 36, y: 48, ...nodeDossier("smith-morra") },
+    { id: "sicilian-dragon", name: "Sicilian Dragon", state: "locked", x: 60, y: 41, ...nodeDossier("sicilian-dragon") },
   ],
   bossName: "Ignar",
   bossX: 50,

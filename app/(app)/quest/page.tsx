@@ -9,8 +9,10 @@ import { auth } from "@/src/lib/auth";
 import { getProgress } from "@/src/data/repos/progress";
 import { getOpeningMastery } from "@/src/data/repos/openings";
 import { ARCHETYPE_REALM, ASSETS, OPENING_NAMES, REALM_NAMES, type OpeningId, type RealmId } from "@/src/lib/assets";
-import { OPENING_TO_PATH } from "@/src/lib/opening-paths";
-import { KINGDOM_BOSSES } from "@/src/domain/world/guardians";
+import { OPENING_TO_PATH, OPENING_LINES } from "@/src/lib/opening-paths";
+import { KINGDOM_BOSSES, PATH_SIDE } from "@/src/domain/world/guardians";
+import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
+import { fenAfter, moveSquaresAt } from "@/src/domain/repertoire/line";
 import { QuestMapScreen } from "@/src/ui/quest/QuestMapScreen";
 import { EmptyKingdom } from "@/src/ui/shell/EmptyKingdom";
 import type { QuestMapFixture, QuestNode } from "@/src/dev/fixtures";
@@ -73,7 +75,23 @@ export default async function QuestPage({
     } else {
       nodeState = "locked";
     }
-    return { id, name: OPENING_NAMES[id], state: nodeState, x: NODE_POS[i]!.x, y: NODE_POS[i]!.y };
+    // Node dossier: the line's REAL tabiya (fenAfter over the curated
+    // mainline) + lines-at-gold count — the panel the map opens on.
+    const lineIds = OPENING_LINES[id] ?? [];
+    const path = pathId ? STARTER_PATHS.find((p) => p.id === pathId) : undefined;
+    return {
+      id,
+      name: OPENING_NAMES[id],
+      state: nodeState,
+      x: NODE_POS[i]!.x,
+      y: NODE_POS[i]!.y,
+      pathId: pathId ?? null,
+      linesDone: lineIds.filter((lid) => mastery[lid]?.state === "gold").length,
+      linesTotal: lineIds.length,
+      tabiyaFen: path ? fenAfter(path, path.moves.length) : null,
+      side: path ? (PATH_SIDE[path.id] ?? "white") : "white",
+      lastMove: path ? moveSquaresAt(path, path.moves.length - 1) : null,
+    };
   });
 
   const conquered = nodes.filter((n) => n.state === "conquered").length;
