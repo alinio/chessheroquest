@@ -5,9 +5,12 @@ import { Chess } from "chess.js";
 import type { PieceDropHandlerArgs } from "react-chessboard";
 import Link from "next/link";
 import { Board } from "@/src/ui/board/Board";
+import { ModeChip } from "@/src/ui/board/ModeChip";
+import { NotationStrip } from "@/src/ui/board/NotationStrip";
 import { CoachSheet } from "@/src/ui/screens/CoachSheet";
 import type { CuratedPath } from "@/src/domain/repertoire/types";
 import { fenAfter, expectedMoveAt } from "@/src/domain/repertoire/line";
+import { PATH_SIDE } from "@/src/domain/world/guardians";
 import { newCard, reviewCard } from "@/src/domain/srs/fsrs";
 
 interface DrillItem {
@@ -42,8 +45,11 @@ function formatInterval(ms: number): string {
   if (minutes < 60) return `${minutes} min`;
   const hours = Math.round(minutes / 60);
   if (hours < 24) return `${hours} h`;
-  return `${Math.round(hours / 24)} j`;
+  return `${Math.round(hours / 24)} d`;
 }
+
+/** How long the "✓ {san} — {idea}" encoding beat stays on screen. */
+const SUCCESS_BEAT_MS = 1100;
 
 /**
  * Drill one curated line: recall each move. Every position is graded through
@@ -52,6 +58,9 @@ function formatInterval(ms: number): string {
  */
 export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) {
   const items = useMemo(() => buildItems(path), [path]);
+  // The board NEVER flips mid-drill: you train the line from YOUR side of the
+  // repertoire (PATH_SIDE), exactly as you'll sit at the real board.
+  const side = PATH_SIDE[path.id] ?? "white";
   const [index, setIndex] = useState(0);
   const [feedback, setFeedback] = useState<Feedback>("idle");
   const [boardFen, setBoardFen] = useState(items[0]?.fen ?? "");
@@ -132,7 +141,8 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
       setFeedback(correct ? "correct" : "wrong");
 
       if (correct) {
-        window.setTimeout(() => commit(result), 700);
+        // Long enough to read the move's IDEA (encoding beat, spec §C-Drill).
+        window.setTimeout(() => commit(result), SUCCESS_BEAT_MS);
       } else {
         // Pause and coach: explain why the line's move is stronger. The verified
         // best move is GIVEN to the coach (LAW #2) — it never analyses for itself.
@@ -214,10 +224,18 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
           FSRS scheduled each position — correct answers wait longer, misses come back sooner.
         </p>
 
+        {/* One full pass unlocks the Guardian (gating: a complete drill pass,
+            not gold — spec §C). The duel is the next step; re-drilling stays. */}
+        <Link
+          href={`/boss/${path.id}`}
+          className="rounded-chip bg-gold text-abyss mx-auto flex min-h-[48px] items-center px-8 font-semibold"
+        >
+          Guardian unlocked — challenge him →
+        </Link>
         <button
           type="button"
           onClick={restart}
-          className="rounded-chip bg-gold text-abyss mx-auto min-h-[48px] px-8 font-semibold"
+          className="rounded-chip border-hairline text-text-mid mx-auto min-h-[44px] border px-8 text-sm"
         >
           Drill again
         </button>
@@ -230,33 +248,44 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
 
   if (!current) return null;
 
+  // During the success beat the played move already belongs to the path.
+  const pliesWalked = feedback === "correct" ? index + 1 : index;
+
   return (
     <section className="flex w-full flex-col gap-4">
       <div className="flex items-center justify-between">
-        <p className="text-text-mid text-sm">
-          {sideToMove(boardFen) === "white" ? "White" : "Black"} to play
-        </p>
+        <ModeChip mode="recall" />
         <p className="font-display text-gold text-sm tabular-nums">
           {index + 1}/{items.length}
         </p>
       </div>
 
+      {/* The path walked so far — a recall cue that never shows the answer. */}
+      <NotationStrip sans={path.moves} currentPly={pliesWalked} variant="path" />
+
       <div className="w-full max-w-[min(92vw,520px)] self-center">
         <Board
           position={boardFen}
           onPieceDrop={onPieceDrop}
-          orientation={sideToMove(current.fen)}
+          orientation={side}
           allowDragging={feedback === "idle"}
         />
       </div>
 
       <p className="min-h-[1.5rem] text-center text-sm" aria-live="polite">
         {feedback === "correct" ? (
-          <span className="text-state-solid">✓ Correct</span>
+          <span className="text-state-solid">
+            ✓ {current.expected}
+            {path.comments?.[current.ply] && (
+              <span className="text-text-mid"> — {path.comments[current.ply]}</span>
+            )}
+          </span>
         ) : feedback === "wrong" ? (
           <span className="text-state-leak">✗ Not the line — here&apos;s why</span>
         ) : (
-          <span className="text-text-low">Recall the move.</span>
+          <span className="text-text-low">
+            {sideToMove(boardFen) === "white" ? "White" : "Black"} to play — recall the move.
+          </span>
         )}
       </p>
 
