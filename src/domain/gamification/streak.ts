@@ -36,3 +36,13 @@ export function isStreakAlive(state: StreakState, now: Date): boolean {
   const today = dayIndex(now);
   return today === state.lastActiveDay || today === state.lastActiveDay + 1;
 }
+
+/**
+ * A streak worth rescuing: trained yesterday but not yet today, with at least
+ * `minCount` days banked. Drives the daily streak-rescue email — value, not
+ * manipulation (LAW #5): we only nudge when something real is at stake.
+ */
+export function isStreakAtRisk(state: StreakState, now: Date, minCount = 3): boolean {
+  if (state.lastActiveDay === null) return false;
+  return state.count >= minCount && dayIndex(now) === state.lastActiveDay + 1;
+}

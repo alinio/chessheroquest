@@ -1,0 +1,6 @@
+{
+  "crons": [
+    { "path": "/api/cron/streak-rescue", "schedule": "0 17 * * *" },
+    { "path": "/api/cron/weekly-report", "schedule": "0 16 * * 0" }
+  ]
+}
