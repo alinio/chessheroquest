@@ -14,7 +14,7 @@ import { signOut } from "next-auth/react";
 import "./hub.css";
 import {
   IconFlame, IconMap2, IconChartLine, IconAward, IconShield,
-  IconMap, IconLogout, IconCrown, IconSettings,
+  IconMap, IconLogout, IconSettings,
 } from "./icons";
 
 export type HubNav = "train" | "quest" | "insights" | "passport" | "profile";
@@ -74,7 +74,7 @@ export function AppShell({
           ))}
           <div className="rail-divider" />
           <Link href="/realms" className="nav-sub"><IconMap />Realms</Link>
-          <Link href="/train?intro=1" className="nav-sub"><IconSettings />How it works</Link>
+          <Link href="/train?intro=1" className="nav-sub" onClick={() => window.dispatchEvent(new Event("chq:intro"))}><IconSettings />How it works</Link>
           <div className="rail-spacer" />
           <button type="button" className="nav-sub" onClick={() => signOut({ callbackUrl: "/" })}>
             <IconLogout />Sign out
@@ -84,17 +84,16 @@ export function AppShell({
         {/* FRAME */}
         <div className="frame">
           <header className="topbar">
-            <div className="realm">
-              {realmCrest ? (
+            {/* Realm identity only when it exists — never a fake brand fallback. */}
+            {realmCrest && (
+              <div className="realm">
                 <span className="realm-crest">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={realmCrest} alt="" />
                 </span>
-              ) : (
-                <span className="realm-crest crown"><IconCrown /></span>
-              )}
-              <span className="realm-name serif">{realmName}</span>
-            </div>
+                <span className="realm-name serif">{realmName}</span>
+              </div>
+            )}
             <div className="topbar-right">
               {/* Labeled chips — a chess player never has to guess a number. */}
               {streak != null && (

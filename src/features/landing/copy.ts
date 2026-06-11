@@ -95,5 +95,6 @@ export const FOOTER = {
     { label: "Log in", href: "/signin" },
     { label: "Privacy", href: "/privacy" },
     { label: "Terms", href: "/terms" },
+    { label: "Refunds", href: "/refunds" },
   ],
 } as const;

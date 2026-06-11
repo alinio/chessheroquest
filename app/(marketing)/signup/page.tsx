@@ -9,7 +9,6 @@ export default function SignUpPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [birthYear, setBirthYear] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -19,8 +18,6 @@ export default function SignUpPage() {
     setError(null);
 
     const body: Record<string, unknown> = { email, password };
-    const yr = Number(birthYear);
-    if (birthYear && Number.isInteger(yr)) body.birthYear = yr;
 
     const res = await fetch("/api/auth/signup", {
       method: "POST",
@@ -71,16 +68,6 @@ export default function SignUpPage() {
           onChange={(e) => setPassword(e.target.value)}
           className="bg-surface border-hairline text-text-hi rounded-card min-h-[48px] border px-4"
         />
-        <input
-          type="number"
-          placeholder="Birth year (optional)"
-          value={birthYear}
-          onChange={(e) => setBirthYear(e.target.value)}
-          className="bg-surface border-hairline text-text-hi rounded-card min-h-[48px] border px-4"
-        />
-        <p className="text-text-low text-xs">
-          Birth year keeps young players safe — profiles stay private by default.
-        </p>
         {error && <p className="text-state-leak text-sm">{error}</p>}
         <button
           type="submit"

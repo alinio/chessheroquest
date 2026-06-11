@@ -9,6 +9,7 @@ import { getOpeningMastery } from "@/src/data/repos/openings";
 import { ARCHETYPE_REALM, ASSETS, type OpeningId, type RealmId } from "@/src/lib/assets";
 import { OPENING_TO_PATH } from "@/src/lib/opening-paths";
 import { RealmsScreen } from "@/src/ui/realms/RealmsScreen";
+import { EmptyKingdom } from "@/src/ui/shell/EmptyKingdom";
 import type { RealmEntry } from "@/src/dev/fixtures";
 
 const REALM_META: { id: RealmId; name: string; sub: string; archetype: RealmEntry["archetype"]; accent: string }[] = [
@@ -23,7 +24,14 @@ export default async function RealmsPage() {
   if (!session?.user?.id) redirect("/signin");
 
   const progress = await getProgress(session.user.id);
-  if (!progress) redirect("/train");
+  if (!progress) {
+    return (
+      <EmptyKingdom
+        section="Realms"
+        line="Four realms, one per playing style — each holds 5 openings to master. Your DNA test decides which realm is home."
+      />
+    );
+  }
 
   const mastery = await getOpeningMastery(session.user.id);
   const home = progress.archetype ? ARCHETYPE_REALM[progress.archetype] : null;

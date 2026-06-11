@@ -12,6 +12,7 @@ import { ARCHETYPE_REALM, ASSETS, OPENING_NAMES, REALM_NAMES, type OpeningId, ty
 import { OPENING_TO_PATH } from "@/src/lib/opening-paths";
 import { KINGDOM_BOSSES } from "@/src/domain/world/guardians";
 import { QuestMapScreen } from "@/src/ui/quest/QuestMapScreen";
+import { EmptyKingdom } from "@/src/ui/shell/EmptyKingdom";
 import type { QuestMapFixture, QuestNode } from "@/src/dev/fixtures";
 
 /** Canonical node layout (left%, top%) — the path climbs to the boss at the summit. */
@@ -41,7 +42,14 @@ export default async function QuestPage({
   if (!session?.user?.id) redirect("/signin");
 
   const progress = await getProgress(session.user.id);
-  if (!progress) redirect("/train"); // first-quest prompt lives there
+  if (!progress) {
+    return (
+      <EmptyKingdom
+        section="Quest"
+        line="The realm map charts your conquest of 5 openings, node by node, up to the Kingdom Boss. It unlocks once the DNA test has drawn your profile — about 2 minutes."
+      />
+    );
+  }
 
   const { realm: realmParam } = await searchParams;
   const home = progress.archetype ? ARCHETYPE_REALM[progress.archetype] : "obsidian-court";

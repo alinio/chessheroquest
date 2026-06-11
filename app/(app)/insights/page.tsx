@@ -12,6 +12,7 @@ import { getOpeningMastery } from "@/src/data/repos/openings";
 import { roadProgress, projectedEloGain, type EloGoal, ELO_GOALS } from "@/src/domain/gamification/road";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 import { InsightsScreen, type InsightsData, type InsightsWeakness } from "@/src/ui/insights/InsightsScreen";
+import { EmptyKingdom } from "@/src/ui/shell/EmptyKingdom";
 
 const STATE_ORDER = { leak: 0, review: 1, solid: 2, gold: 3 } as const;
 
@@ -20,7 +21,14 @@ export default async function InsightsPage() {
   if (!session?.user?.id) redirect("/signin");
 
   const progress = await getProgress(session.user.id);
-  if (!progress) redirect("/train"); // first-quest prompt lives there
+  if (!progress) {
+    return (
+      <EmptyKingdom
+        section="Insights"
+        line="Your Opening IQ trend, drill accuracy and real-game results live here. Take the DNA test to set your baseline — every number after that is earned."
+      />
+    );
+  }
 
   const [trend, stats, mastery, linked] = await Promise.all([
     getIqTrend(session.user.id),

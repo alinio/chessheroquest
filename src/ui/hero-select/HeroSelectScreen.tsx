@@ -422,9 +422,9 @@ export function HeroSelectScreen() {
   const quiz = useStyleQuiz((s) => s.result);
   const isPro = useEntitlement((s) => s.isPro);
   const selectHero = useHeroSelect((s) => s.selectHero);
-  // New users land on FREE (the headline promises "free to start" — the
-  // premium upsell comes after the first Learn/Drill payoff, never as a trap).
-  const [tier, setTier] = useState<Tier>("free");
+  // Product call (founder): land on PREMIUM by default — monetization-forward.
+  // Watch checkout_start vs bounce in analytics; Marc audit flagged friction here.
+  const [tier, setTier] = useState<Tier>("premium");
   const [plan, setPlan] = useState<PlanKey>("yearly");
 
   useEffect(() => { track("hero_view"); }, []);
@@ -441,7 +441,8 @@ export function HeroSelectScreen() {
   const enter = (a: Archetype) => {
     track("hero_selected", { hero: a, recommended: a === recommended });
     selectHero(a);
-    router.push("/world");
+    // Free path → CREATE the account (signup), never the returning-user login.
+    router.push("/signup");
   };
 
   // Premium: open Paddle directly for the selected plan (falls back to /paywall).

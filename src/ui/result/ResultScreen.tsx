@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { toPng } from "html-to-image";
 import { track } from "@/src/lib/track";
 import "@/src/ui/design-system/theme.css";
 import { inter } from "@/src/ui/design-system/fonts";
@@ -12,14 +11,11 @@ import { BRAND_LOGO } from "@/src/ui/design-system/art";
 import { OrnateFrame } from "@/src/ui/design-system/OrnateFrame";
 import { Button } from "@/src/ui/design-system/Button";
 import { HERO_ACCENTS, type HeroKey } from "@/src/ui/design-system/tokens";
-import { WORLDS } from "@/src/domain/recommend/worlds";
 import { roadToElo, provisionalTopPercent } from "@/src/domain/recommend/road-to-elo";
 import { useDnaTest } from "@/src/ui/dna-test/useDnaTest";
 import { useStyleQuiz } from "@/src/ui/style-quiz/useStyleQuiz";
-import { SaveProgress } from "@/src/ui/account/SaveProgress";
 import { ASSETS, getRankInsignia } from "@/src/lib/assets";
 import { PictureBg } from "@/src/ui/PictureBg";
-import { DnaShareCard } from "./DnaShareCard";
 
 function useHydrated() {
   return useSyncExternalStore(
@@ -64,8 +60,6 @@ export function ResultScreen() {
   const mounted = useHydrated();
   const dna = useDnaTest((s) => s.result);
   const quiz = useStyleQuiz((s) => s.result);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     track("result_viewed");
@@ -92,53 +86,7 @@ export function ResultScreen() {
   const accent = HERO_ACCENTS[archetype];
   const label = cleanLabel(archetype);
   const topPercent = provisionalTopPercent(iq);
-  const world = WORLDS[archetype];
   const recs = roadToElo(archetype, weakest);
-  const tagline = world.tagline;
-
-  async function exportCard(): Promise<string | null> {
-    if (!cardRef.current) return null;
-    await document.fonts.ready;
-    return toPng(cardRef.current, { width: 1080, height: 1350, pixelRatio: 1, cacheBust: true, backgroundColor: "#08080A" });
-  }
-
-  async function onDownload() {
-    setBusy(true);
-    try {
-      const url = await exportCard();
-      if (url) {
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "chess-dna.png";
-        a.click();
-      }
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function onShare() {
-    setBusy(true);
-    try {
-      const url = await exportCard();
-      if (!url) return;
-      const blob = await (await fetch(url)).blob();
-      const file = new File([blob], "chess-dna.png", { type: "image/png" });
-      const data = { files: [file], title: "My Chess DNA", text: `My Opening IQ is ${iq} — discover yours:` };
-      if (typeof navigator !== "undefined" && navigator.canShare?.(data)) {
-        await navigator.share(data);
-      } else {
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "chess-dna.png";
-        a.click();
-      }
-    } catch {
-      /* user cancelled / unsupported */
-    } finally {
-      setBusy(false);
-    }
-  }
 
   return (
     <Shell>
@@ -195,22 +143,7 @@ export function ResultScreen() {
         </div>
       </OrnateFrame>
 
-      {/* Share / download */}
-      <div style={{ display: "flex", gap: 10, marginTop: 16, justifyContent: "center" }}>
-        <Button variant="ghost" onClick={onShare} disabled={busy}>
-          Share
-        </Button>
-        <Button variant="ghost" onClick={onDownload} disabled={busy}>
-          {busy ? "Rendering…" : "Download card"}
-        </Button>
-      </div>
-
-      {/* Save your progress (after the payoff — not a blocker to starting). */}
-      <div style={{ marginTop: 16 }}>
-        <SaveProgress />
-      </div>
-
-      {/* Road to Elo */}
+      {/* Road to Elo — the plan, explained (founder: no share/save detours here). */}
       <section style={{ marginTop: 28 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid var(--chq-line)", paddingBottom: 8 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -219,16 +152,28 @@ export function ResultScreen() {
             Your Road to Elo
           </p>
         </div>
-        <p style={{ color: "var(--chq-text-muted)", fontSize: 12, margin: "8px 0 12px" }}>
-          Train these next in {world.name}:
+        <p style={{ color: "var(--chq-text-2)", fontSize: 13, lineHeight: 1.6, margin: "10px 0 12px" }}>
+          Your training plan: the first three openings to master, picked from your test and your
+          style. You&apos;ll learn them line by line in the game — in this order.
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {recs.map((r) => (
-            <div key={r.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--chq-panel)", border: "1px solid var(--chq-line)", borderRadius: "var(--chq-r-panel)", padding: "12px 14px" }}>
-              <span style={{ color: "var(--chq-text-1)", fontWeight: 600, fontSize: 15 }}>
-                {r.name} <span style={{ color: "var(--chq-text-muted)", fontWeight: 400, fontSize: 12 }}>{r.eco}</span>
+          {recs.map((r, i) => (
+            <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 12, background: "var(--chq-panel)", border: "1px solid var(--chq-line)", borderRadius: "var(--chq-r-panel)", padding: "12px 14px" }}>
+              <span className="chq-display" style={{ color: "var(--chq-gold-3)", fontSize: 18, fontWeight: 700, width: 22, flexShrink: 0, textAlign: "center" }}>{i + 1}</span>
+              <span style={{ flex: 1, minWidth: 0 }}>
+                <span style={{ display: "block", color: "var(--chq-text-1)", fontWeight: 600, fontSize: 15 }}>
+                  {r.name} <span style={{ color: "var(--chq-text-muted)", fontWeight: 400, fontSize: 12 }}>{r.eco}</span>
+                </span>
+                <span style={{ display: "block", color: "var(--chq-text-2)", fontSize: 12, marginTop: 2 }}>
+                  {r.reason !== "Core of your repertoire"
+                    ? r.reason
+                    : i === 0
+                      ? "Start here — the backbone of your repertoire"
+                      : i === 1
+                        ? "Your second weapon"
+                        : "Rounds out your base"}
+                </span>
               </span>
-              <span style={{ color: "var(--chq-text-2)", fontSize: 12 }}>{r.reason}</span>
             </div>
           ))}
         </div>
@@ -239,20 +184,6 @@ export function ResultScreen() {
         Meet your Hero →
       </Button>
 
-      {/* Offscreen 1080×1350 node for pixel-exact export */}
-      <div aria-hidden="true" style={{ position: "fixed", left: -100000, top: 0, pointerEvents: "none" }}>
-        <div ref={cardRef} className={inter.variable}>
-          <DnaShareCard
-            iq={iq}
-            topPercent={topPercent}
-            archetypeLabel={`The ${label}`}
-            accent={accent.base}
-            strongestOpening={strongest}
-            weakestOpening={weakestLabel}
-            tagline={tagline}
-          />
-        </div>
-      </div>
     </Shell>
   );
 }

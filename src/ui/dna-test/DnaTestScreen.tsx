@@ -295,6 +295,9 @@ export function DnaTestScreen() {
             <div style={{ marginTop: 6 }}>
               <Button variant="primary" onClick={() => router.push("/style-quiz?fresh=1")}>Continue → Style Quiz</Button>
             </div>
+            <button type="button" onClick={reset} style={{ background: "none", border: 0, cursor: "pointer", color: "var(--chq-text-muted)", fontSize: 12, textDecoration: "underline", marginTop: 4 }}>
+              Start a fresh test
+            </button>
           </div>
         </OrnateFrame>
       </TestShell>

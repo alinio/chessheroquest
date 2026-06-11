@@ -61,6 +61,13 @@ export function HowItWorks() {
     return () => window.clearTimeout(t);
   }, []);
 
+  // Rail "How it works" re-opens the intro even when already on /train.
+  useEffect(() => {
+    const onOpen = () => setOpen(true);
+    window.addEventListener("chq:intro", onOpen);
+    return () => window.removeEventListener("chq:intro", onOpen);
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
