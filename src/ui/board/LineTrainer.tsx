@@ -6,6 +6,8 @@ import type { CSSProperties } from "react";
 import type { PieceDropHandlerArgs } from "react-chessboard";
 import Link from "next/link";
 import { Board } from "./Board";
+import { ModeChip } from "./ModeChip";
+import { NotationStrip } from "./NotationStrip";
 import type { CuratedPath } from "@/src/domain/repertoire/types";
 import { expectedMoveAt } from "@/src/domain/repertoire/line";
 import { CoachSheet } from "@/src/ui/screens/CoachSheet";
@@ -118,6 +120,12 @@ export function LineTrainer({ path }: { path: CuratedPath }) {
         <p className="font-display text-gold shrink-0 text-sm tabular-nums">
           {Math.min(ply, total)}/{total}
         </p>
+      </div>
+
+      {/* GUIDED contract + the whole line as a ribbon — current move in gold */}
+      <div className="flex flex-col items-start gap-2">
+        <ModeChip mode="guided" />
+        <NotationStrip sans={path.moves} currentPly={ply} variant="full" />
       </div>
 
       {/* GUIDED mode: Learn SHOWS each move + its idea BEFORE you play it
