@@ -1,13 +1,15 @@
 /**
  * Opening detail — banner hero + détouré emblem crest + REAL mastery bar +
- * Learn/Drill actions + the Opening Guardian entry. Rendered inside
- * <AppShell active="quest">. Gold accent only — the banner carries identity.
+ * the Learn → Drill → Guardian ladder + the Opening Guardian entry. Rendered
+ * inside <AppShell active="quest">. Gold accent only — the banner carries
+ * identity. ONE gold button per screen: the computed next step; everything
+ * else is ghost (spec §C-loop: gating Learn ✓ → Drill ✓ → Guardian).
  */
 import "@/src/ui/shell/hub.css";
 import Link from "next/link";
 import { getOpeningArt, getOpeningRealm, getRealmBoss, REALM_NAMES, PLACEHOLDER, type OpeningId } from "@/src/lib/assets";
 import { OPENING_TO_PATH } from "@/src/lib/opening-paths";
-import { GUARDIANS } from "@/src/domain/world/guardians";
+import { GUARDIANS, PATH_SIDE } from "@/src/domain/world/guardians";
 import type { MasteryState } from "@/src/domain/mastery";
 
 const pretty = (id: string) => id.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
@@ -32,6 +34,36 @@ export interface OpeningLineView {
   mastery: OpeningMasteryView | null;
 }
 
+type Step = "learn" | "drill" | "guardian";
+
+/**
+ * Derive the ladder from the data we really have (no separate tracking yet):
+ * any studied position = Learn done; full coverage = Drill done; gold =
+ * the Guardian has been beaten AND the line retained.
+ */
+function deriveSteps(m: OpeningMasteryView | null | undefined) {
+  const learn = Boolean(m && m.studied > 0);
+  const drill = Boolean(m && m.total > 0 && m.studied >= m.total);
+  const guardian = Boolean(m && m.state === "gold");
+  const next: Step = !learn ? "learn" : !drill ? "drill" : "guardian";
+  return { learn, drill, guardian, next };
+}
+
+function Stepper({ m }: { m: OpeningMasteryView | null | undefined }) {
+  const s = deriveSteps(m);
+  const cls = (done: boolean, isNext: boolean) =>
+    `st${done ? " done" : ""}${isNext && !done ? " next" : ""}`;
+  return (
+    <span className="ol-step" aria-label="Line progress: Learn, Drill, Guardian">
+      <span className={cls(s.learn, s.next === "learn")}>Learn{s.learn ? " ✓" : ""}</span>
+      <span className="arr" aria-hidden="true">→</span>
+      <span className={cls(s.drill, s.next === "drill")}>Drill{s.drill ? " ✓" : ""}</span>
+      <span className="arr" aria-hidden="true">→</span>
+      <span className={cls(s.guardian, s.next === "guardian")}>Guardian{s.guardian ? " ✓" : ""}</span>
+    </span>
+  );
+}
+
 export function OpeningDetailScreen({
   openingId,
   name,
@@ -53,6 +85,8 @@ export function OpeningDetailScreen({
   const pathId = OPENING_TO_PATH[openingId];
   const guardian = GUARDIANS[openingId];
   const pct = mastery && mastery.total > 0 ? Math.round((mastery.studied / mastery.total) * 100) : 0;
+  const side = pathId ? (PATH_SIDE[pathId] ?? "white") : null;
+  const { next } = deriveSteps(mastery);
 
   return (
     <main className="opening">
@@ -73,6 +107,12 @@ export function OpeningDetailScreen({
         <div>
           <p className="eyebrow">{realmFull}</p>
           <h1 className="serif">{title}</h1>
+          {side && (
+            <span className="side-chip">
+              <span aria-hidden="true">{side === "white" ? "♔" : "♚"}</span>
+              You play {side === "white" ? "White" : "Black"}
+            </span>
+          )}
         </div>
       </div>
 
@@ -87,32 +127,66 @@ export function OpeningDetailScreen({
         </span>
       </div>
 
+      {/* ONE gold button — the computed next step; the rest stays ghost. */}
       <div className="actions">
         {pathId ? (
           <>
-            <Link className="btn-gold" href={`/train/${pathId}/learn`}>Learn the line →</Link>
-            <Link className="btn-ghost" href={`/drill/${pathId}`}>Drill</Link>
+            <Link
+              className={next === "learn" ? "btn-gold" : "btn-ghost"}
+              href={`/train/${pathId}/learn`}
+            >
+              {next === "learn" ? "Learn the line →" : "Learn"}
+            </Link>
+            <Link
+              className={next === "drill" ? "btn-gold" : "btn-ghost"}
+              href={`/drill/${pathId}`}
+            >
+              {next === "drill" ? "Drill it from memory →" : "Drill"}
+            </Link>
           </>
         ) : (
           <Link className="btn-gold" href="/train">Back to training →</Link>
         )}
       </div>
 
-      {/* CURATED LINES — every branch of this opening, with real mastery */}
+      {/* CURATED LINES — every branch, with its real Learn → Drill → Guardian ladder */}
       {lines.length > 1 && (
         <section className="op-lines">
           <p className="eyebrow gold">Lines</p>
           {lines.map((l) => {
             const sub = l.name.includes("—") ? l.name.split("—")[1]!.trim() : l.name;
+            const ls = deriveSteps(l.mastery);
             return (
               <div className="op-line" key={l.id}>
-                <span className="ol-name">{sub}</span>
+                <span className="ol-wrap">
+                  <span className="ol-name">{sub}</span>
+                  <Stepper m={l.mastery} />
+                </span>
                 <span className="ol-state">
                   {l.mastery ? `${STATE_LABEL[l.mastery.state].split(" — ")[0]} · ${l.mastery.studied}/${l.mastery.total}` : "Not started"}
                 </span>
                 <span className="ol-actions">
-                  <Link className="btn-ghost sm" href={`/train/${l.id}/learn`}>Learn</Link>
-                  <Link className="btn-ghost sm" href={`/drill/${l.id}`}>Drill</Link>
+                  {ls.next === "guardian" ? (
+                    <>
+                      <Link className="btn-ghost sm" href={`/drill/${l.id}`}>Drill</Link>
+                      <Link className="btn-gold sm" href={`/boss/${l.id}`}>Guardian →</Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        className={ls.next === "learn" ? "btn-gold sm" : "btn-ghost sm"}
+                        href={`/train/${l.id}/learn`}
+                      >
+                        Learn
+                      </Link>
+                      <Link
+                        className={ls.next === "drill" ? "btn-gold sm" : "btn-ghost sm"}
+                        href={`/drill/${l.id}`}
+                      >
+                        Drill
+                      </Link>
+                    </>
+                  )}
                 </span>
               </div>
             );
@@ -120,7 +194,7 @@ export function OpeningDetailScreen({
         </section>
       )}
 
-      {/* OPENING GUARDIAN ENTRY */}
+      {/* OPENING GUARDIAN ENTRY — gold only when the duel is the next step */}
       {realm && guardian && pathId && (
         <section className="boss">
           <div className="boss-bg">
@@ -133,7 +207,12 @@ export function OpeningDetailScreen({
               <h3 className="serif">{guardian.name} — {guardian.title}</h3>
               <p className="muted">Play your side of the {title} from memory — win to push it toward <b style={{ color: "var(--gold-bright)" }}>gold</b>.</p>
             </div>
-            <Link className="btn-gold" href={`/boss/${pathId}`}>Enter →</Link>
+            <Link
+              className={next === "guardian" ? "btn-gold" : "btn-ghost"}
+              href={`/boss/${pathId}`}
+            >
+              {next === "guardian" ? "Face the Guardian →" : "Enter →"}
+            </Link>
           </div>
         </section>
       )}
