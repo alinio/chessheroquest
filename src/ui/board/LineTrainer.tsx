@@ -129,15 +129,23 @@ export function LineTrainer({ path }: { path: CuratedPath }) {
         />
       </div>
 
+      {/* The idea behind the move just played (authored pedagogy, per ply). */}
+      {ply > 0 && path.comments?.[ply - 1] && (
+        <p className="text-text-mid border-hairline rounded-lg border px-3 py-2 text-sm leading-relaxed" aria-live="polite">
+          <span className="text-gold font-semibold">{path.moves[ply - 1]}</span>{" "}
+          — {path.comments[ply - 1]}
+        </p>
+      )}
+
       {/* Feedback (quick + clean, no slow animation) + thumb-zone control */}
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm" aria-live="polite">
           {done ? (
-            <span className="text-state-solid">✓ Ligne complétée</span>
+            <span className="text-state-solid">✓ Line complete</span>
           ) : feedback === "wrong" ? (
-            <span className="text-state-leak">✗ Pas la ligne — réessaie</span>
+            <span className="text-state-leak">✗ Off the line — try again</span>
           ) : (
-            <span className="text-text-mid">À toi de jouer : trouve le bon coup.</span>
+            <span className="text-text-mid">Your move: find the line.</span>
           )}
         </p>
         <div className="flex shrink-0 gap-2">

@@ -22,4 +22,10 @@ export interface CuratedPath {
    * Validated for legality via chess.js (see line.test.ts).
    */
   moves: string[];
+  /**
+   * Per-move pedagogy: comments[i] explains the IDEA of moves[i].
+   * Editorial content (same bar as the moves); length must equal moves.length.
+   */
+  comments?: string[];
 }
+
