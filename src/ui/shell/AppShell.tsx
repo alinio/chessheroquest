@@ -7,7 +7,7 @@
  */
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -27,6 +27,41 @@ const PRIMARY: { key: HubNav; label: string; Icon: typeof IconFlame }[] = [
   { key: "passport", label: "Passport", Icon: IconAward },
   { key: "profile", label: "Profile", Icon: IconShield },
 ];
+
+/**
+ * In-session chip motion: when a chip's value CHANGES (prev tracked via ref),
+ * count to the new value over 400ms and flash gold once. The initial mount
+ * never animates; prefers-reduced-motion jumps straight to the new value.
+ */
+function useChipPulse(value: number | null): { shown: number | null; pulse: number } {
+  const prevRef = useRef<number | null>(null);
+  const [anim, setAnim] = useState<number | null>(null);
+  const [pulse, setPulse] = useState(0);
+
+  useEffect(() => {
+    const prev = prevRef.current;
+    prevRef.current = value;
+    if (value == null || prev == null || prev === value) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    let first = true;
+    const t0 = performance.now();
+    const step = (t: number) => {
+      if (first) {
+        first = false;
+        setPulse((k) => k + 1); // ONE gold flash per change
+      }
+      const p = Math.min(1, (t - t0) / 400);
+      setAnim(Math.round(prev + (value - prev) * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(step);
+      else setAnim(null);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [value]);
+
+  return { shown: anim, pulse };
+}
 
 function deriveActive(pathname: string | null): HubNav {
   if (!pathname) return "train";
@@ -58,6 +93,10 @@ export function AppShell({
 }) {
   const pathname = usePathname();
   const current = active ?? deriveActive(pathname);
+
+  // Data-driven topbar motion: count-up + one gold flash when a value changes.
+  const streakChip = useChipPulse(streak);
+  const iqChip = useChipPulse(iq);
 
   // First-encounter nudges (spec §B5): ONE visible max, priority seal > IQ >
   // streak. The seal slot is consumed by the full-screen SealCelebration; the
@@ -115,8 +154,12 @@ export function AppShell({
               {/* Labeled chips — a chess player never has to guess a number. */}
               {streak != null && (
                 <span className="chq-nudge-anchor">
-                  <span className="chip streak" title="Training streak — consecutive days trained">
-                    <IconFlame />{streak}<small>day streak</small>
+                  <span
+                    key={`streak-${streakChip.pulse}`}
+                    className={`chip streak${streakChip.pulse > 0 ? " pulse" : ""}`}
+                    title="Training streak — consecutive days trained"
+                  >
+                    <IconFlame />{streakChip.shown ?? streak}<small>day streak</small>
                   </span>
                   {nudge === "streak" && (
                     <Nudge
@@ -129,8 +172,12 @@ export function AppShell({
               )}
               {iq != null && (
                 <span className="chq-nudge-anchor">
-                  <span className="chip iq" title="Opening IQ (0–1000) — rises only when your real opening skill rises">
-                    {iq}<small>Opening IQ</small>
+                  <span
+                    key={`iq-${iqChip.pulse}`}
+                    className={`chip iq${iqChip.pulse > 0 ? " pulse" : ""}`}
+                    title="Opening IQ (0–1000) — rises only when your real opening skill rises"
+                  >
+                    {iqChip.shown ?? iq}<small>Opening IQ</small>
                   </span>
                   {nudge === "iq" && (
                     <Nudge

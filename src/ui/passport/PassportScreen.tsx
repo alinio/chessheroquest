@@ -16,6 +16,7 @@ import {
   type OpeningId, type RealmId, type Archetype,
 } from "@/src/lib/assets";
 import { MiniBoard } from "@/src/ui/board/MiniBoard";
+import { BarFill } from "@/src/ui/components/BarFill";
 import type { MedallionState } from "@/src/domain/passport";
 
 const REALMS_ORDER: { id: RealmId; name: string; accent: string; archetype: Archetype }[] = [
@@ -127,7 +128,7 @@ export function PassportScreen({
         <div className="cover-meta">
           <p className="eyebrow">Opening Passport</p>
           <p className="big serif">{sealedCount} / {total} Sealed</p>
-          <div className="pbar"><span style={{ width: `${(sealedCount / total) * 100}%` }} /></div>
+          <div className="pbar"><BarFill pct={(sealedCount / total) * 100} /></div>
           <div className="seal-rule">
             <p className="sr-title">How a seal is earned</p>
             <ol>

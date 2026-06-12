@@ -10,6 +10,7 @@ import Link from "next/link";
 import "@/src/ui/shell/hub.css";
 import { ASSETS, getArchetypeSigil } from "@/src/lib/assets";
 import { MiniBoard } from "@/src/ui/board/MiniBoard";
+import { BarFill } from "@/src/ui/components/BarFill";
 import type { RealmEntry } from "@/src/dev/fixtures";
 
 export function RealmsScreen({ realms }: { realms: RealmEntry[] }) {
@@ -63,7 +64,7 @@ export function RealmsScreen({ realms }: { realms: RealmEntry[] }) {
 
               <div className="prog">
                 <div className="pl"><span><b>{r.sealed}</b> / {r.total} sealed</span><span>{Math.round((r.sealed / r.total) * 100)}%</span></div>
-                <div className="rbar"><span style={{ width: `${(r.sealed / r.total) * 100}%` }} /></div>
+                <div className="rbar"><BarFill pct={(r.sealed / r.total) * 100} /></div>
               </div>
 
               <div className="rc-foot">

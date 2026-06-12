@@ -111,6 +111,12 @@
 .chq-hub .chip small { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); font-weight: 600; margin-left: 2px; }
 .chq-hub .chip.streak { color: var(--ember-bright); }
 .chq-hub .chip.iq { color: var(--gold-bright); }
+/* One gold flash when a chip's value changes in session (key remount replays it). */
+@keyframes chq-chip-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(241, 214, 128, 0.55); }
+  100% { box-shadow: 0 0 0 10px rgba(241, 214, 128, 0); }
+}
+.chq-hub .chip.pulse { animation: chq-chip-pulse 0.6s ease-out 1; }
 .chq-hub .hero-av {
   width: 36px; height: 36px; border-radius: 50%; position: relative; flex-shrink: 0; overflow: visible;
   box-shadow: 0 0 0 2px var(--gold), 0 0 10px rgba(138, 123, 216, 0.4);
