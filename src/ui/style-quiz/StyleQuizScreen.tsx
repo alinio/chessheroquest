@@ -94,7 +94,7 @@ function QuestionView({
   return (
     <div style={{ width: "100%", maxWidth: 560, display: "flex", flexDirection: "column", alignItems: "center" }}>
       <p style={{ ...eyebrow, color: "var(--chq-text-2)", marginBottom: 10 }}>
-        Question {index + 1} / {total}
+        {question.kind === "archetype" ? "Your style" : "Your profile"} · {index + 1}/{total}
       </p>
       <Dots index={index} total={total} />
       <h2 className="chq-display" style={{ fontSize: 24, lineHeight: 1.2, color: "var(--chq-text-1)", textAlign: "center", maxWidth: 520, margin: "0 0 24px" }}>
@@ -131,6 +131,10 @@ export function StyleQuizScreen() {
   const select = useStyleQuiz((s) => s.select);
   const back = useStyleQuiz((s) => s.back);
   const reset = useStyleQuiz((s) => s.reset);
+
+  // Interlude after Q8: style answers are in; frame the 8 profile questions
+  // before they start (once per visit — local state, no persistence needed).
+  const [interludeDone, setInterludeDone] = useState(false);
 
   // Fresh arrival from the DNA test (?fresh=1): clear any stale persisted run so
   // the player is ALWAYS asked the questions — never shown last week's result.
@@ -172,6 +176,34 @@ export function StyleQuizScreen() {
     return (
       <QuizShell>
         <Button onClick={reset}>Restart</Button>
+      </QuizShell>
+    );
+  }
+
+  // First profile question reached → one-line interlude before continuing.
+  if (question.kind === "profile" && index === 8 && !interludeDone) {
+    return (
+      <QuizShell>
+        <div
+          style={{
+            width: "100%",
+            maxWidth: 460,
+            border: "1px solid var(--chq-line)",
+            borderRadius: "var(--chq-r-panel)",
+            background: "var(--chq-panel)",
+            padding: "26px 24px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 16,
+            textAlign: "center",
+          }}
+        >
+          <p style={{ color: "var(--chq-text-1)", fontSize: 15, lineHeight: 1.6, margin: 0 }}>
+            Style locked. 8 quick profile questions left — they tune your Road to Elo.
+          </p>
+          <Button onClick={() => setInterludeDone(true)}>Continue</Button>
+        </div>
       </QuizShell>
     );
   }

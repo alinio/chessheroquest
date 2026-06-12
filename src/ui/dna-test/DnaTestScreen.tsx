@@ -18,6 +18,7 @@ import { DNA_TEST_BANK, TEST_LENGTH } from "@/src/domain/dna-test/bank";
 import type { TestPosition } from "@/src/domain/dna-test/types";
 import { track } from "@/src/analytics/events";
 import { AnalyticsBoot } from "@/src/ui/analytics/AnalyticsBoot";
+import { useCountUp } from "@/src/ui/hooks/useCountUp";
 import { useDnaTest } from "./useDnaTest";
 
 function useReducedMotion() {
@@ -244,6 +245,9 @@ export function DnaTestScreen() {
   const answer = useDnaTest((s) => s.answer);
   const reset = useDnaTest((s) => s.reset);
 
+  // Score-screen IQ count-up (800ms; reduced-motion jumps to the value).
+  const scoreIq = useCountUp(result?.openingIq ?? 0, 800);
+
   useEffect(() => {
     if (finished && result) track("test_complete", { scoreRaw: result.openingIq });
   }, [finished, result]);
@@ -262,7 +266,7 @@ export function DnaTestScreen() {
             <p style={{ color: "var(--chq-text-2)", fontSize: 15, lineHeight: 1.6 }}>
               {TEST_LENGTH} positions · ~2 minutes · no signup. Read the position, choose — and learn something on every one.
             </p>
-            <Button onClick={() => { track("test_start"); start(); }} style={{ marginTop: 4 }}>Begin the test</Button>
+            <Button onClick={() => { track("test_start"); start(); }} style={{ marginTop: 4 }}>Show me position 1 →</Button>
           </div>
         </OrnateFrame>
       </TestShell>
@@ -276,7 +280,7 @@ export function DnaTestScreen() {
           <div style={{ padding: 28, textAlign: "center", display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
             <p style={eyebrow}>Test complete</p>
             <p style={{ ...eyebrow, color: "var(--chq-text-2)" }}>Provisional Opening IQ</p>
-            <div className="chq-display chq-gold-text" style={{ fontSize: 72, fontWeight: 700, lineHeight: 1 }}>{result.openingIq}</div>
+            <div className="chq-display chq-gold-text" style={{ fontSize: 72, fontWeight: 700, lineHeight: 1 }}>{scoreIq}</div>
             {/* First meeting with the IQ — say what the number means (Marc audit P1#7). */}
             <p style={{ ...eyebrow, fontSize: 10, color: "var(--chq-text-muted)" }}>
               Scale 0–1000 · opening theory + accuracy · rises only when your real skill does
@@ -292,8 +296,11 @@ export function DnaTestScreen() {
             {/* ONE job: carry momentum into the Style Quiz (?fresh=1 resets any
                 stale quiz state). Email capture lives AFTER the payoff (/result);
                 retake lives on the Profile — never right after finishing. */}
+            <p className="chq-display" style={{ fontSize: 17, lineHeight: 1.35, color: "var(--chq-text-1)", margin: "10px 0 0" }}>
+              Your IQ says how much you know. Now — how do you win?
+            </p>
             <div style={{ marginTop: 6 }}>
-              <Button variant="primary" onClick={() => router.push("/style-quiz?fresh=1")}>Continue → Style Quiz</Button>
+              <Button variant="primary" onClick={() => router.push("/style-quiz?fresh=1")}>Reveal my Chess DNA →</Button>
             </div>
             <button type="button" onClick={reset} style={{ background: "none", border: 0, cursor: "pointer", color: "var(--chq-text-muted)", fontSize: 12, textDecoration: "underline", marginTop: 4 }}>
               Start a fresh test
