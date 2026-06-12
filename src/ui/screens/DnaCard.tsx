@@ -4,24 +4,9 @@ import type { CSSProperties } from "react";
 import type { Archetype } from "@/src/domain/repertoire/types";
 import type { DnaResult } from "@/src/domain/dna/types";
 
-interface ArchetypeMeta {
-  label: string;
-  tagline: string;
-  colorVar: string;
-}
-
 /** Display metadata for each DNA tribe (master-vision §9 / DESIGN.md archetype colors). */
-const FALLBACK_META: ArchetypeMeta = { label: "Hero", tagline: "", colorVar: "var(--color-strategist)" };
-/** Safe lookup — stored archetype strings must never crash a page. */
-export function archetypeMeta(key: string | null | undefined): ArchetypeMeta {
-  return (key && ARCHETYPE_META[key as Archetype]) || FALLBACK_META;
-}
-export const ARCHETYPE_META: Record<Archetype, ArchetypeMeta> = {
-  warrior: { label: "Warrior", tagline: "Attack relentlessly", colorVar: "var(--color-warrior)" },
-  strategist: { label: "Strategist", tagline: "Outmaneuver, then crush", colorVar: "var(--color-strategist)" },
-  defender: { label: "Defender", tagline: "Unbreakable and patient", colorVar: "var(--color-defender)" },
-  trickster: { label: "Trickster", tagline: "Surprise and bewilder", colorVar: "var(--color-trickster)" },
-};
+export { ARCHETYPE_META, archetypeMeta, type ArchetypeMeta as ArchetypeMetaShape } from "@/src/ui/archetype-meta";
+import { archetypeMeta } from "@/src/ui/archetype-meta";
 
 /**
  * The shareable DNA Card — the first pride object (master-vision §11, §28.12).

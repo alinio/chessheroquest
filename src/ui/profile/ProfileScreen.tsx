@@ -11,7 +11,8 @@ import {
   getArchetypeArt, getOpeningArt, getRankInsignia, PLACEHOLDER, type Archetype, type OpeningId,
 } from "@/src/lib/assets";
 import type { DnaResult } from "@/src/domain/dna/types";
-import { DnaCard, archetypeMeta } from "@/src/ui/screens/DnaCard";
+import { DnaCard } from "@/src/ui/screens/DnaCard";
+import { archetypeMeta } from "@/src/ui/archetype-meta";
 import { ShareButton } from "@/src/ui/ShareButton";
 import { RoadGoalPicker } from "@/src/ui/RoadGoalPicker";
 import { SignOutButton } from "@/src/ui/SignOutButton";
