@@ -38,6 +38,11 @@ const TARGET = {
 const TODO = "// TODO";
 const SNAPSHOT_DATE = new Date().toISOString().slice(0, 10);
 const UA = "ChessHeroQuest-curation/1.0 (https://chessheroquest.com; alain@monkeoz.com)";
+// Required since 2026-02 — unauthenticated explorer requests get 401.
+const EXPLORER_HEADERS: Record<string, string> = {
+  "User-Agent": UA,
+  ...(process.env.LICHESS_API_TOKEN ? { Authorization: `Bearer ${process.env.LICHESS_API_TOKEN}` } : {}),
+};
 const RATING_BUCKETS = [1000, 1200, 1400, 1600, 1800, 2000, 2200, 2500];
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -82,18 +87,18 @@ interface ExplorerResp { white: number; draws: number; black: number; moves: Exp
 async function fetchExplorer(playUci: string[]): Promise<{ rated: ExplorerResp; masters: ExplorerResp | null } | null> {
   const play = playUci.join(",");
   const ratings = bandToRatings(TARGET.ratingBand);
-  const ratedUrl = `https://explorer.lichess.ovh/lichess?variant=standard&play=${play}&ratings=${ratings}&speeds=${TARGET.speeds}`;
-  const mastersUrl = `https://explorer.lichess.ovh/masters?play=${play}`;
+  const ratedUrl = `https://explorer.lichess.org/lichess?variant=standard&play=${play}&ratings=${ratings}&speeds=${TARGET.speeds}`;
+  const mastersUrl = `https://explorer.lichess.org/masters?play=${play}`;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const r1 = await fetch(ratedUrl, { headers: { "User-Agent": UA } });
+      const r1 = await fetch(ratedUrl, { headers: EXPLORER_HEADERS });
       await sleep(1100); // throttle ~1 req/sec
       if (r1.status === 429) { await sleep(60_000); continue; }
       if (!r1.ok) return null;
       const rated = (await r1.json()) as ExplorerResp;
       let masters: ExplorerResp | null = null;
       try {
-        const r2 = await fetch(mastersUrl, { headers: { "User-Agent": UA } });
+        const r2 = await fetch(mastersUrl, { headers: EXPLORER_HEADERS });
         await sleep(1100);
         if (r2.ok) masters = (await r2.json()) as ExplorerResp;
       } catch { /* masters optional */ }

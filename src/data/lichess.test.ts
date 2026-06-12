@@ -10,7 +10,7 @@ import {
 /**
  * Recorded fixture: a realistic Opening Explorer response for the position after
  * 1.e4 (Black to move), lichess DB. Lets us test parsing + ranking OFFLINE — the
- * live call to explorer.lichess.ovh is verified separately on a networked host.
+ * live call to explorer.lichess.org is verified separately on a networked host.
  */
 const FIXTURE = {
   white: 124033,
@@ -71,7 +71,7 @@ describe("Lichess Explorer — schema + ranking (offline fixture)", () => {
 
   it("builds a URL carrying the chosen audience filter", () => {
     const url = explorerUrl("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1");
-    expect(url).toContain("explorer.lichess.ovh/lichess");
+    expect(url).toContain("explorer.lichess.org/lichess");
     expect(url).toContain(`ratings=${EXPLORER_DEFAULTS.ratings.join("%2C")}`);
     expect(url).toContain("speeds=blitz%2Crapid");
   });

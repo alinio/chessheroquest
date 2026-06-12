@@ -45,7 +45,7 @@ const difficulty = (ply) => Math.min(5, Math.max(1, Math.ceil((ply + 1) / 2)));
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function explorerUrl(fen) {
-  const u = new URL("https://explorer.lichess.ovh/lichess");
+  const u = new URL("https://explorer.lichess.org/lichess");
   u.searchParams.set("variant", "standard");
   u.searchParams.set("fen", fen);
   u.searchParams.set("ratings", RATINGS.join(","));
@@ -90,7 +90,11 @@ for (const s of seeds) {
   let res;
   try {
     res = await fetch(explorerUrl(s.fen), {
-      headers: { "User-Agent": "ChessHeroQuest/0.1 (+https://chessheroquest.com)" },
+      headers: {
+        "User-Agent": "ChessHeroQuest/0.1 (+https://chessheroquest.com)",
+        // Required since 2026-02 — unauthenticated explorer requests get 401.
+        ...(process.env.LICHESS_API_TOKEN ? { Authorization: `Bearer ${process.env.LICHESS_API_TOKEN}` } : {}),
+      },
     });
   } catch (e) {
     console.warn(`fetch failed for ${s.id}: ${e.message} — skipping`);

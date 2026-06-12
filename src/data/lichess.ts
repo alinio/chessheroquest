@@ -8,12 +8,15 @@
  * shared, so cached marginal cost → ~0, and we respect Lichess rate limits +
  * attribution. The response is Zod-validated at this boundary.
  *
- * NOTE: live calls go out to explorer.lichess.ovh — verify from your machine /
- * Vercel. Parsing + ranking here are covered by an offline fixture test.
+ * NOTE: live calls go out to explorer.lichess.org (the hostname per the current
+ * Lichess API spec; the old explorer.lichess.ovh now 401s). Since the 2026-02
+ * OVH incident the explorer REQUIRES an OAuth bearer token — set
+ * LICHESS_API_TOKEN (free personal token, lichess.org/account/oauth/token).
+ * Parsing + ranking here are covered by an offline fixture test.
  */
 import { z } from "zod";
 
-const EXPLORER_BASE = "https://explorer.lichess.ovh/lichess";
+const EXPLORER_BASE = "https://explorer.lichess.org/lichess";
 
 /** Default audience filter (decision: lichess DB, 1000–1600, blitz+rapid). */
 export const EXPLORER_DEFAULTS = {
@@ -106,10 +109,13 @@ export async function fetchOpeningExplorer(
   fen: string,
   opts: ExplorerOptions = {},
 ): Promise<ExplorerResponse> {
+  const token = process.env.LICHESS_API_TOKEN;
   const res = await fetch(explorerUrl(fen, opts), {
     headers: {
       // Lichess asks API users to identify themselves.
       "User-Agent": "ChessHeroQuest/0.1 (+https://chessheroquest.com)",
+      // Required since 2026-02: unauthenticated explorer requests get 401.
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });
   if (!res.ok) {
