@@ -10,8 +10,11 @@ import { z } from "zod";
 import { auth } from "@/src/lib/auth";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 import { DIFFICULTY, PATH_SIDE, pathChallenges } from "@/src/domain/world/guardians";
+import { GUARDIANS } from "@/src/domain/world/guardians";
+import { PATH_TO_OPENING } from "@/src/lib/opening-paths";
 import { XP_REWARDS } from "@/src/domain/gamification/xp";
 import { recordTraining, awardXpBonus } from "@/src/data/repos/stats";
+import { recordGuardianVictory } from "@/src/data/repos/achievements";
 
 const BodySchema = z.object({
   pathId: z.string().min(1),
@@ -63,6 +66,12 @@ export async function POST(request: Request) {
 
   const outcome = await recordTraining(session.user.id, "sparring", parsed.data.attempts);
   await awardXpBonus(session.user.id, XP_REWARDS.bossDefeated);
+
+  // Mark the Guardian as defeated (idempotent) — with gold mastery this is
+  // what stamps the Passport seal (seal = gold AND Guardian beaten).
+  const openingId = PATH_TO_OPENING[path.id];
+  const guardian = openingId ? GUARDIANS[openingId] : undefined;
+  await recordGuardianVictory(session.user.id, path.id, guardian?.name ?? "Guardian");
 
   return NextResponse.json({
     ok: true,

@@ -1,0 +1,1 @@
+ALTER TYPE "public"."achievement_type" ADD VALUE 'guardian_defeated';

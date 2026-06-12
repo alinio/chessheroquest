@@ -285,21 +285,71 @@
   position: relative; border: 1px solid var(--line-soft); border-radius: 14px; padding: 18px 12px 14px; text-align: center;
   background: linear-gradient(180deg, rgba(30, 23, 48, 0.55), rgba(23, 17, 32, 0.55));
   display: flex; flex-direction: column; align-items: center; gap: 10px; transition: 0.15s;
+  text-decoration: none; color: inherit;
 }
 .chq-hub .op.sealed { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent), 0 0 22px color-mix(in srgb, var(--accent) 16%, transparent), 0 10px 26px rgba(0, 0, 0, 0.35); }
-.chq-hub .op.locked { opacity: 0.78; }
 .chq-hub .op:hover { transform: translateY(-3px); }
 .chq-hub .op-medal { width: 66px; height: 66px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.chq-hub .op.sealed .op-medal img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 12px color-mix(in srgb, var(--accent) 45%, transparent)); }
+.chq-hub .op-medal img { width: 100%; height: 100%; object-fit: contain; }
+.chq-hub .op.sealed .op-medal img,
+.chq-hub .op.ready .op-medal img { filter: drop-shadow(0 0 12px color-mix(in srgb, var(--accent) 45%, transparent)); }
 .chq-hub .op-name { font-size: 13px; font-weight: 600; color: var(--parchment); letter-spacing: 0.01em; }
-.chq-hub .op.locked .op-medal img { width: 100%; height: 100%; object-fit: contain; filter: grayscale(1) brightness(0.45); opacity: 0.5; }
-.chq-hub .op.locked .op-name { color: var(--faint); }
+/* Unexplored — greyed emblem, name only (no stamp, no numbers: nothing earned yet) */
+.chq-hub .op.unexplored { opacity: 0.78; }
+.chq-hub .op.unexplored .op-medal img { filter: grayscale(1) brightness(0.45); opacity: 0.5; }
+.chq-hub .op.unexplored .op-name { color: var(--faint); }
+/* In training — semi-colour emblem inside a real-coverage progress ring */
+.chq-hub .op.training .op-medal img { filter: saturate(0.45) brightness(0.8); }
+.chq-hub .op-ring {
+  --pct: 0;
+  padding: 4px; border-radius: 50%;
+  background: conic-gradient(var(--accent) calc(var(--pct) * 1%), rgba(255, 255, 255, 0.08) 0);
+}
+.chq-hub .op-ring--gold { background: conic-gradient(var(--gold-bright), var(--gold)); animation: chq-seal-pulse 2s ease-in-out infinite; }
+@keyframes chq-seal-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(241, 214, 128, 0); }
+  50% { box-shadow: 0 0 16px 2px rgba(241, 214, 128, 0.45); }
+}
+.chq-hub .op-progress { font-size: 11px; color: var(--muted); letter-spacing: 0.04em; display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+.chq-hub .op-progress.sealed { color: var(--gold-dim); }
+/* state chip — wording + colour, never colour alone */
+.chq-hub .op-chip { font-style: normal; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 2px 7px; border: 1px solid; }
+.chq-hub .op-chip--leak { color: #e0726b; border-color: rgba(224, 114, 107, 0.45); background: rgba(224, 114, 107, 0.08); }
+.chq-hub .op-chip--fading { color: #e0922b; border-color: rgba(224, 146, 43, 0.45); background: rgba(224, 146, 43, 0.08); }
+.chq-hub .op-chip--solid { color: #6fd89a; border-color: rgba(111, 216, 154, 0.4); background: rgba(111, 216, 154, 0.08); }
+.chq-hub .op-cta { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--gold-bright); }
 .chq-hub .seal { position: absolute; top: 9px; right: 9px; width: 30px; height: 30px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 .chq-hub .seal img { width: 100%; height: 100%; object-fit: contain; }
 .chq-hub .op.sealed .seal img { filter: drop-shadow(0 0 8px rgba(241, 214, 128, 0.7)); }
-.chq-hub .seal.locked img { filter: grayscale(1) brightness(0.6); opacity: 0.4; }
+/* the rule of the game, on the cover — 3 numbered steps */
+.chq-hub .seal-rule { margin-top: 12px; }
+.chq-hub .seal-rule .sr-title { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 6px; }
+.chq-hub .seal-rule ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.chq-hub .seal-rule li { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.chq-hub .seal-rule li b { color: var(--gold-bright); margin-right: 6px; font-weight: 700; }
+/* NEXT SEAL — the calculated banner: tabiya board · copy + CTA · Guardian portrait */
+.chq-hub .next-seal {
+  display: flex; align-items: center; gap: 22px; border: 1px solid rgba(205, 168, 69, 0.35); border-radius: 16px;
+  padding: 18px 22px; position: relative; overflow: hidden;
+  background: linear-gradient(135deg, rgba(46, 35, 14, 0.55), var(--panel) 55%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+.chq-hub .next-seal .ns-board { flex-shrink: 0; display: block; }
+.chq-hub .next-seal .ns-body { flex: 1; min-width: 0; }
+.chq-hub .next-seal .ns-body h3 { font-family: var(--font-cinzel), "Cinzel", serif; font-weight: 700; font-size: 22px; color: var(--gold-bright); margin: 6px 0 8px; }
+.chq-hub .next-seal .ns-sub { color: var(--muted); font-size: 14px; line-height: 1.55; margin-bottom: 14px; max-width: 460px; }
+.chq-hub .next-seal .ns-sub b { color: var(--parchment); }
+.chq-hub .next-seal .ns-guardian { width: 132px; height: 168px; flex-shrink: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--line-soft); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5); }
+.chq-hub .next-seal .ns-guardian img { width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 760px) {
+  .chq-hub .next-seal { flex-wrap: wrap; }
+  .chq-hub .next-seal .ns-guardian { display: none; }
+}
 @media (max-width: 980px) { .chq-hub .op-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 560px) { .chq-hub .op-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (prefers-reduced-motion: reduce) {
+  .chq-hub .op-ring--gold { animation: none; }
+}
 
 /* ============ OPENING DETAIL (mockup-opening-rpg.html) ============ */
 .chq-hub .opening { padding: 22px 30px 34px; display: flex; flex-direction: column; gap: 16px; }

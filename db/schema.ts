@@ -89,6 +89,9 @@ export const subscriptionStatusEnum = pgEnum("subscription_status", [
 export const achievementTypeEnum = pgEnum("achievement_type", [
   "opening_conquered",
   "collector",
+  // A Guardian duel won on a curated path (key = `guardian:<pathId>`). The
+  // Passport seal = gold mastery AND the Guardian defeated (target spec §C).
+  "guardian_defeated",
 ]);
 
 /* ------------------------------------------------------------------ users */
