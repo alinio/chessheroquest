@@ -1,7 +1,8 @@
 /**
- * Admin · User detail — READ-ONLY fiche (Phase A). Identity, entitlement,
- * progression (IQ trend, mastery, seals) and recent activity, all straight
- * from the DB. Mutating actions land in Phase B and are shown greyed-out.
+ * Admin · User detail — the fiche. Identity, entitlement, progression (IQ
+ * trend, mastery, seals), recent activity, plus the Phase B "Actions" card
+ * (grant/revoke premium, magic link, role, RGPD anonymize/delete) — every
+ * mutation lives in ./actions.ts behind requireAdmin + zod + audit.
  */
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -9,6 +10,7 @@ import { notFound } from "next/navigation";
 import { requireAdmin } from "@/src/lib/admin";
 import { getUserDetail } from "@/src/data/repos/admin";
 import { Sparkline } from "@/src/ui/admin/Sparkline";
+import { UserActions } from "@/src/ui/admin/UserActions";
 import { fmtDate, fmtDateTime, fmtInt } from "@/src/ui/admin/format";
 
 export const metadata: Metadata = { title: "User" };
@@ -47,7 +49,7 @@ export default async function AdminUserDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requireAdmin(); // defense in depth
+  const admin = await requireAdmin(); // defense in depth
 
   const { id } = await params;
   if (!UUID_RE.test(id)) notFound();
@@ -67,7 +69,7 @@ export default async function AdminUserDetailPage({
       </p>
       <h1 className="a-h1">{user.email}</h1>
       <p className="a-sub">
-        Read-only fiche · joined {fmtDate(user.createdAt)} · id {user.id}
+        Joined {fmtDate(user.createdAt)} · id {user.id}
       </p>
 
       <div className="a-cards">
@@ -89,6 +91,12 @@ export default async function AdminUserDetailPage({
             </dd>
             <dt>Profile public</dt>
             <dd>{user.profilePublic ? "yes" : "no"}</dd>
+            <dt>Role</dt>
+            <dd>
+              <span className={`a-pill${user.role === "admin" ? " is-warn" : ""}`}>
+                {user.role}
+              </span>
+            </dd>
             <dt>Lichess</dt>
             <dd>{user.lichessUsername ?? "—"}</dd>
             <dt>Chess.com</dt>
@@ -151,27 +159,15 @@ export default async function AdminUserDetailPage({
           </dl>
         </section>
 
-        <section className="a-card a-future">
-          <h3>Actions (Phase B)</h3>
-          <p className="a-section-note">
-            Not wired yet — listed so the next phase is visible. Every action will
-            write an audit_logs row.
-          </p>
-          <div className="a-future-list">
-            <button type="button" className="a-btn" disabled>
-              Grant premium
-            </button>
-            <button type="button" className="a-btn" disabled>
-              Revoke premium
-            </button>
-            <button type="button" className="a-btn" disabled>
-              Resend magic link
-            </button>
-            <button type="button" className="a-btn" disabled>
-              Delete / anonymize
-            </button>
-          </div>
-        </section>
+        <UserActions
+          userId={user.id}
+          email={user.email}
+          accountPlan={accountState?.plan ?? null}
+          isPro={accountState?.isPro ?? false}
+          role={user.role}
+          isSelf={user.id === admin.userId}
+          actorViaAllowlist={admin.viaAllowlist}
+        />
       </div>
 
       <section className="a-section">

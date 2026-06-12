@@ -385,6 +385,7 @@ export interface AdminUserDetail {
     profilePublic: boolean;
     plan: string;
     subscriptionStatus: string;
+    role: string;
     xp: number;
     streakCount: number;
     eloGoal: number;
@@ -501,6 +502,7 @@ export async function getUserDetail(id: string): Promise<AdminUserDetail | null>
       profilePublic: user.profilePublic,
       plan: user.plan,
       subscriptionStatus: user.subscriptionStatus,
+      role: user.role,
       xp: user.xp,
       streakCount: user.streakCount,
       eloGoal: user.eloGoal,
@@ -518,7 +520,161 @@ export async function getUserDetail(id: string): Promise<AdminUserDetail | null>
   };
 }
 
+/* --------------------------------------------------- Phase B: action target */
+
+/** Lean target snapshot for server actions (before-state for the audit trail). */
+export interface AdminActionTarget {
+  id: string;
+  email: string;
+  role: string;
+  /** Legacy users.plan (Auth.js account). */
+  usersPlan: string;
+  /** Phase-0 verified entitlement (account_states), null when no row exists. */
+  accountPlan: string | null;
+  isPro: boolean;
+}
+
+export async function getActionTarget(id: string): Promise<AdminActionTarget | null> {
+  const [u] = await db
+    .select({ id: users.id, email: users.email, role: users.role, plan: users.plan })
+    .from(users)
+    .where(eq(users.id, id))
+    .limit(1);
+  if (!u) return null;
+
+  const [st] = await db
+    .select({ plan: accountStates.plan, isPro: accountStates.isPro })
+    .from(accountStates)
+    .where(eq(accountStates.email, u.email.toLowerCase()))
+    .limit(1);
+
+  return {
+    id: u.id,
+    email: u.email,
+    role: u.role,
+    usersPlan: u.plan,
+    accountPlan: st?.plan ?? null,
+    isPro: st?.isPro ?? false,
+  };
+}
+
+/* ----------------------------------------------- Phase B: entitlement writes */
+
+/**
+ * Grant Premium — mirrors scripts/grant-premium.mjs (the reference comp logic):
+ * upsert account_states with is_pro=true, plan='lifetime'. Token minting is NOT
+ * part of granting — that is the separate "Send magic link" action.
+ */
+export async function grantPremiumPlan(emailRaw: string): Promise<void> {
+  const email = emailRaw.toLowerCase();
+  await db
+    .insert(accountStates)
+    .values({ email, isPro: true, plan: "lifetime", state: {} })
+    .onConflictDoUpdate({
+      target: accountStates.email,
+      set: { isPro: true, plan: "lifetime", updatedAt: new Date() },
+    });
+}
+
+/** Revoke Premium — back to the free plan (is_pro=false). */
+export async function revokePremiumPlan(emailRaw: string): Promise<void> {
+  const email = emailRaw.toLowerCase();
+  await db
+    .insert(accountStates)
+    .values({ email, isPro: false, plan: "free", state: {} })
+    .onConflictDoUpdate({
+      target: accountStates.email,
+      set: { isPro: false, plan: "free", updatedAt: new Date() },
+    });
+}
+
+/* ------------------------------------------------------ Phase B: role writes */
+
+/** Set users.role ('user' | 'admin'). Allowlist gating happens in the action. */
+export async function setUserRole(userId: string, role: "user" | "admin"): Promise<void> {
+  await db
+    .update(users)
+    .set({ role, updatedAt: new Date() })
+    .where(eq(users.id, userId));
+}
+
+/* ------------------------------------------------------- Phase B: RGPD writes */
+
+export function anonymizedEmailFor(userId: string): string {
+  return `deleted-${userId}@anon.chessheroquest.com`;
+}
+
+/**
+ * RGPD anonymize: keep the aggregate rows (training events, IQ snapshots,
+ * mastery… stay attached to the now-opaque user id) but purge ALL PII and make
+ * sign-in impossible:
+ *  - account_states row (keyed by the PII email) is DELETED → no magic link,
+ *    no Phase-0 state snapshot;
+ *  - users: email → deleted-{id}@anon…, display name / platform usernames /
+ *    password hash / Paddle ids nulled, consents reset;
+ *  - Auth.js sessions are JWT-only (no DB session/account tables in this app),
+ *    so there is nothing to delete there; credentials sign-in dies with the
+ *    password hash, magic-link with the account_states row.
+ */
+export async function anonymizeUserRows(userId: string, emailRaw: string): Promise<string> {
+  const anonEmail = anonymizedEmailFor(userId);
+  await db.delete(accountStates).where(eq(accountStates.email, emailRaw.toLowerCase()));
+  await db
+    .update(users)
+    .set({
+      email: anonEmail,
+      displayName: null,
+      passwordHash: null,
+      lichessUsername: null,
+      chesscomUsername: null,
+      consentMarketing: false,
+      profilePublic: false,
+      consentAt: null,
+      paddleCustomerId: null,
+      paddleSubscriptionId: null,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.id, userId));
+  return anonEmail;
+}
+
+/**
+ * RGPD delete: full cascade wipe — the logic of scripts/delete-user.mjs
+ * (DELETE FROM users cascades every user-owned row), plus:
+ *  - the email-keyed account_states row (no FK → must be removed explicitly);
+ *  - audit_logs.actor_user_id rows are detached first (that FK has no
+ *    ON DELETE — log rows are KEPT, only the dangling attribution is nulled).
+ */
+export async function deleteUserCascade(userId: string, emailRaw: string): Promise<void> {
+  await db
+    .update(auditLogs)
+    .set({ actorUserId: null })
+    .where(eq(auditLogs.actorUserId, userId));
+  await db.delete(accountStates).where(eq(accountStates.email, emailRaw.toLowerCase()));
+  await db.delete(users).where(eq(users.id, userId));
+}
+
 /* ------------------------------------------------------------------- audit */
+
+export interface AdminAuditEntry {
+  actorUserId: string;
+  action: string;
+  targetType: string;
+  targetId: string;
+  /** Free-form detail — by convention { email, before, after } for mutations. */
+  metadata: Record<string, unknown>;
+}
+
+/**
+ * STRICT audit write for Phase B actions (unlike the best-effort logAdminView):
+ * it deliberately does NOT catch. Actions call this BEFORE mutating
+ * (audit-of-intent — neon-http has no cross-statement transactions), so a
+ * failed audit insert aborts the whole action: an admin mutation must never
+ * be silently un-audited (LAW #7).
+ */
+export async function logAdminAction(entry: AdminAuditEntry): Promise<void> {
+  await db.insert(auditLogs).values(entry);
+}
 
 // In-memory throttle (per server instance, best-effort): one admin_view audit
 // row per actor per hour, not one per page render.

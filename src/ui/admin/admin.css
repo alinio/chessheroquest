@@ -145,10 +145,22 @@
 .chq-admin .a-kv dt { color: var(--a-muted); }
 .chq-admin .a-kv dd { margin: 0; overflow-wrap: anywhere; }
 
-/* ---- Phase-B placeholder actions ---- */
-.chq-admin .a-future { border-style: dashed; opacity: 0.75; }
-.chq-admin .a-future .a-btn { color: var(--a-faint); cursor: not-allowed; border-style: dashed; }
-.chq-admin .a-future-list { display: flex; flex-wrap: wrap; gap: 6px; }
+/* ---- Phase-B actions card ---- */
+.chq-admin .a-action-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin: 0 0 6px; }
+.chq-admin .a-action-label { font-size: 12px; color: var(--a-muted); }
+.chq-admin .a-action-note { font-size: 11px; color: var(--a-faint); margin: 0; }
+.chq-admin .a-action-msg { font-size: 11.5px; margin: -2px 0 8px; }
+.chq-admin .a-action-msg.is-ok { color: var(--a-good); }
+.chq-admin .a-action-msg.is-bad { color: var(--a-bad); }
+.chq-admin .a-btn:disabled { color: var(--a-faint); cursor: wait; }
+.chq-admin .a-btn.is-danger { color: var(--a-bad); border-color: color-mix(in srgb, var(--a-bad) 45%, transparent); }
+.chq-admin .a-btn.is-danger:hover { border-color: var(--a-bad); }
+.chq-admin .a-danger-zone { border-top: 1px solid var(--a-line-soft); margin-top: 10px; padding-top: 8px; display: grid; gap: 6px; }
+.chq-admin .a-confirm summary { cursor: pointer; font-size: 12px; font-weight: 600; color: var(--a-bad); }
+.chq-admin .a-confirm[open] { background: var(--a-raised); border: 1px solid color-mix(in srgb, var(--a-bad) 30%, transparent); border-radius: 7px; padding: 8px 10px; }
+.chq-admin .a-confirm .a-confirm-body { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.chq-admin .a-confirm .a-input { min-width: 0; flex: 1; }
+.chq-admin .a-confirm code { font-size: 11.5px; color: var(--a-text); background: var(--a-bg); border-radius: 4px; padding: 0 4px; overflow-wrap: anywhere; }
 
 /* ---- mobile (internal tool, but usable) ---- */
 @media (max-width: 840px) {
