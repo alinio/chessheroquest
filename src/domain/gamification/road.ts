@@ -38,3 +38,16 @@ export function roadProgress(openingIq: number, goal: EloGoal): number {
   const target = goalTargetIq(goal);
   return Math.min(1, Math.max(0, clampIq(openingIq) / target));
 }
+
+/**
+ * Highest Road goal whose opening requirement is fully met at this IQ — the
+ * "Estimated practical rank" insignia on the Profile. Below the first target
+ * the baseline tier (1000) is shown. An ESTIMATE, framed as such (§4.4).
+ */
+export function practicalRankElo(openingIq: number): EloGoal {
+  let rank: EloGoal = 1000;
+  for (const g of ELO_GOALS) {
+    if (clampIq(openingIq) >= goalTargetIq(g)) rank = g;
+  }
+  return rank;
+}

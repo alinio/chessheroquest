@@ -45,6 +45,10 @@ export interface UserProgress {
   eloGoal: number;
   /** Cards due for review now — the Daily Quest size. */
   dueCount: number;
+  /** Chosen display name (null → derive from email). */
+  displayName: string | null;
+  /** Account creation — "joined {date}" on the Profile. */
+  createdAt: Date | null;
 }
 
 /** The user's current progression, or null if they haven't taken the DNA Test yet. */
@@ -65,6 +69,8 @@ export async function getProgress(userId: string): Promise<UserProgress | null> 
       streakCount: users.streakCount,
       streakLastActiveDay: users.streakLastActiveDay,
       eloGoal: users.eloGoal,
+      displayName: users.displayName,
+      createdAt: users.createdAt,
     })
     .from(users)
     .where(eq(users.id, userId))
@@ -81,6 +87,8 @@ export async function getProgress(userId: string): Promise<UserProgress | null> 
     streakLastActiveDay: u?.streakLastActiveDay ?? null,
     eloGoal: u?.eloGoal ?? 1200,
     dueCount,
+    displayName: u?.displayName ?? null,
+    createdAt: u?.createdAt ?? null,
   };
 }
 

@@ -1,109 +1,91 @@
 /**
- * /profile — the player's identity (master-vision §28.1, solo view). Shows the
- * real Opening IQ, rank, streak/level, and the saved DNA card. Sign-out here.
+ * /profile — the hero card (acquired facts only, target-experience-spec §C).
+ * Server component: real progression (IQ trend, level, records), real seals
+ * (gold mastery + Guardian defeated), the dominant earned title, the saved
+ * DNA card, Road goal picker and sign-out. Nothing here is a to-do.
  */
 import { redirect } from "next/navigation";
 import { auth } from "@/src/lib/auth";
-import { getProgress, getLatestDnaResult } from "@/src/data/repos/progress";
-import { getAchievements } from "@/src/data/repos/achievements";
+import { getProgress, getLatestDnaResult, getIqTrend, getLinkedAccounts } from "@/src/data/repos/progress";
+import { getAchievements, getGuardianVictories } from "@/src/data/repos/achievements";
+import { getOpeningMastery } from "@/src/data/repos/openings";
+import { getTrainingStats, getBestStreak } from "@/src/data/repos/stats";
 import { rankForIq } from "@/src/domain/iq/calibration";
 import { xpProgress } from "@/src/domain/gamification/xp";
-import { isStreakAlive } from "@/src/domain/gamification/streak";
-import { DnaCard, ARCHETYPE_META } from "@/src/ui/screens/DnaCard";
-import { ShareButton } from "@/src/ui/ShareButton";
-import { RoadGoalPicker } from "@/src/ui/RoadGoalPicker";
-import { SignOutButton } from "@/src/ui/SignOutButton";
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="bg-surface rounded-card p-3">
-      <p className="font-display text-text-hi text-xl font-bold tabular-nums">{value}</p>
-      <p className="text-text-low text-xs">{label}</p>
-    </div>
-  );
-}
+import { practicalRankElo } from "@/src/domain/gamification/road";
+import { ASSETS, OPENING_NAMES, ARCHETYPE_REALM, REALM_NAMES, type OpeningId } from "@/src/lib/assets";
+import { OPENING_TO_PATH } from "@/src/lib/opening-paths";
+import { ProfileScreen, type ProfileData, type ProfileSeal } from "@/src/ui/profile/ProfileScreen";
+import { EmptyKingdom } from "@/src/ui/shell/EmptyKingdom";
 
 export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/signin");
+  const userId = session.user.id;
+  const email = session.user.email ?? "";
 
-  const [progress, dna, titles] = await Promise.all([
-    getProgress(session.user.id),
-    getLatestDnaResult(session.user.id),
-    getAchievements(session.user.id),
+  const progress = await getProgress(userId);
+  if (!progress || !progress.archetype) {
+    return (
+      <EmptyKingdom
+        section="Profile"
+        line="Your hero card lives here — portrait, earned titles, Opening IQ and your seal collection. Take the DNA test to forge it."
+      />
+    );
+  }
+
+  const [dna, titles, trend, mastery, wins, stats, linked] = await Promise.all([
+    getLatestDnaResult(userId),
+    getAchievements(userId),
+    getIqTrend(userId),
+    getOpeningMastery(userId),
+    getGuardianVictories(userId),
+    getTrainingStats(userId),
+    getLinkedAccounts(userId),
   ]);
+  const bestStreak = await getBestStreak(userId, progress.streakCount);
 
-  return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-6">
-      <header className="text-center">
-        <p className="font-display text-gold text-xs uppercase tracking-[0.3em]">Profile</p>
-        <h1 className="text-text-hi truncate text-lg font-medium">{session.user.email}</h1>
-      </header>
+  // Real seals in passport order: gold mastery AND Guardian defeated.
+  const ids = Object.keys(ASSETS.openings) as OpeningId[];
+  const seals: ProfileSeal[] = ids
+    .filter((id) => {
+      const pathId = OPENING_TO_PATH[id];
+      return pathId && mastery[pathId]?.state === "gold" && Boolean(wins[pathId]);
+    })
+    .map((id) => ({ id, name: OPENING_NAMES[id] }));
 
-      {progress ? (
-        <>
-          <section className="text-center">
-            <p
-              className="font-display text-gold-bright chq-app-halo text-6xl font-black tabular-nums"
-              style={{ textShadow: "0 0 28px rgba(227,178,60,0.45)" }}
-            >
-              {progress.iq}
-            </p>
-            <p className="font-display text-gold text-sm">{rankForIq(progress.iq)}</p>
-          </section>
+  // Dominant title = the most recent earned achievement (opening titles first).
+  const dominantTitle =
+    titles.find((t) => t.type !== "guardian_defeated")?.title ?? titles[0]?.title ?? null;
 
-          <section className="grid grid-cols-3 gap-3 text-center">
-            <Stat
-              label="Streak"
-              value={`${
-                isStreakAlive(
-                  { count: progress.streakCount, lastActiveDay: progress.streakLastActiveDay },
-                  new Date(),
-                )
-                  ? progress.streakCount
-                  : 0
-              }`}
-            />
-            <Stat label="Level" value={`${xpProgress(progress.xp).level}`} />
-            <Stat label="Due" value={`${progress.dueCount}`} />
-          </section>
+  const level = xpProgress(progress.xp);
+  const realm = ARCHETYPE_REALM[progress.archetype];
 
-          <RoadGoalPicker current={progress.eloGoal} />
+  const data: ProfileData = {
+    name: progress.displayName ?? email.split("@")[0] ?? "Hero",
+    email,
+    archetype: progress.archetype,
+    realmName: REALM_NAMES[realm],
+    joined: progress.createdAt
+      ? progress.createdAt.toLocaleDateString("en-US", { month: "short", year: "numeric" })
+      : "—",
+    dominantTitle,
+    level: level.level,
+    xpInto: level.into,
+    xpNeeded: level.needed,
+    iq: progress.iq,
+    iqDelta: trend.length >= 2 ? progress.iq - trend[0]! : 0,
+    iqTrend: trend.length >= 2 ? trend : [progress.iq, progress.iq],
+    practicalElo: practicalRankElo(progress.iq),
+    rankName: rankForIq(progress.iq),
+    seals,
+    totalOpenings: ids.length,
+    bestStreak,
+    drillsAnswered: stats.cardsReviewed,
+    eloGoal: progress.eloGoal,
+    dna,
+    savedUsernames: linked,
+  };
 
-          {titles.length > 0 && (
-            <section className="flex flex-col gap-2">
-              <p className="font-display text-text-hi text-sm uppercase tracking-[0.2em]">
-                Titles
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {titles.map((t) => (
-                  <span
-                    key={t.key}
-                    className="border-gold/50 text-gold chq-app-stamp inline-flex items-center gap-1 rounded-chip border px-3 py-1 text-xs font-semibold"
-                  >
-                    <span aria-hidden>★</span> {t.title}
-                  </span>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {dna && (
-            <>
-              <DnaCard result={dna} />
-              <ShareButton
-                text={`My Chess DNA: ${ARCHETYPE_META[dna.archetype].label} · Opening IQ ${dna.initialIq}. Discover yours →`}
-              />
-            </>
-          )}
-        </>
-      ) : (
-        <p className="text-text-mid text-center text-sm">
-          Take the Chess DNA Test to build your profile.
-        </p>
-      )}
-
-      <SignOutButton />
-    </main>
-  );
+  return <ProfileScreen data={data} />;
 }

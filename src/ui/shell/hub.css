@@ -636,7 +636,36 @@
 .chq-hub .pf-stat img { width: 40px; height: 40px; object-fit: contain; margin-bottom: 2px; }
 .chq-hub .pf-stat .n { font-family: var(--font-cinzel), "Cinzel", serif; font-size: 24px; font-weight: 700; color: var(--gold-bright); line-height: 1; }
 .chq-hub .pf-stat .k { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
-.chq-hub .pf-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.chq-hub .pf-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+/* hero card — IQ column (delta + sparkline + practical-rank insignia) */
+.chq-hub .pf-iqcol { width: 220px; flex-shrink: 0; position: relative; z-index: 1; display: flex; flex-direction: column; gap: 6px; }
+.chq-hub .pf-iq-big { font-family: var(--font-cinzel), "Cinzel", serif; font-weight: 700; font-size: 44px; line-height: 1; color: var(--gold-bright); text-shadow: 0 0 24px rgba(227, 178, 60, 0.4); margin: 0; }
+.chq-hub .pf-iq-delta { font-size: 12px; color: var(--muted); margin: 0; }
+.chq-hub .pf-iq-delta .up { color: #6fd89a; font-weight: 600; }
+.chq-hub .pf-spark { width: 100%; height: 34px; display: block; }
+.chq-hub .pf-rank { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+.chq-hub .pf-rank img { width: 38px; height: 38px; object-fit: contain; flex-shrink: 0; }
+.chq-hub .pf-rank b { display: block; font-size: 13px; color: var(--parchment); }
+.chq-hub .pf-rank small { display: block; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); }
+.chq-hub .pf-id .pf-title { color: var(--gold-bright); }
+/* generic profile card (seal row, at-the-board) */
+.chq-hub .pf-card { border: 1px solid var(--line-soft); border-radius: 14px; padding: 16px 18px; background: linear-gradient(180deg, rgba(30, 23, 48, 0.5), rgba(23, 17, 32, 0.5)); }
+.chq-hub .pf-card .ct { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-dim); font-weight: 600; }
+.chq-hub .pf-card .ct b { color: var(--gold-bright); }
+.chq-hub .pf-seals { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.chq-hub .pf-seal { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.chq-hub .pf-seal img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 8px rgba(241, 214, 128, 0.35)); }
+.chq-hub .pf-seal.empty { border: 1px dashed var(--line); background: rgba(255, 255, 255, 0.02); }
+.chq-hub .pf-board-line { color: var(--parchment); font-size: 14.5px; line-height: 1.55; margin-top: 10px; }
+.chq-hub .pf-board-line b { color: var(--gold-bright); }
+.chq-hub .pf-board-foot { color: var(--faint); font-size: 11.5px; margin-top: 8px; }
+.chq-hub .pf-dna { display: flex; flex-direction: column; gap: 14px; max-width: 440px; }
+.chq-hub .pf-footer { display: flex; justify-content: center; padding-top: 6px; border-top: 1px solid var(--line-soft); }
+@media (max-width: 900px) {
+  .chq-hub .pf-hero { flex-wrap: wrap; }
+  .chq-hub .pf-iqcol { width: 100%; }
+}
+@media (max-width: 640px) { .chq-hub .profile { padding: 18px 14px 32px; } }
 
 /* ============ REALMS — the 4 worlds ============ */
 .chq-hub .realms { padding: 26px 30px 40px; display: flex; flex-direction: column; gap: 18px; }

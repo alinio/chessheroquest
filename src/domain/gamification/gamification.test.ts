@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { levelForXp, xpForLevel, xpProgress } from "./xp";
 import { recordActivity, isStreakAlive, EMPTY_STREAK } from "./streak";
 import { generateDailyQuests } from "./quests";
-import { projectedEloGain, roadProgress, goalTargetIq, ELO_GOALS } from "./road";
+import { projectedEloGain, roadProgress, goalTargetIq, practicalRankElo, ELO_GOALS } from "./road";
 
 describe("XP & levels", () => {
   it("starts at level 1 and never decreases with XP", () => {
@@ -80,5 +80,15 @@ describe("Road to Elo (launch-default estimates, §4.4)", () => {
       expect(roadProgress(2000, g)).toBe(1);
       expect(roadProgress(goalTargetIq(g), g)).toBe(1);
     }
+  });
+});
+
+describe("practicalRankElo (Profile insignia — estimate, never inflated)", () => {
+  it("starts at the 1000 baseline and climbs only past each goal's target IQ", () => {
+    expect(practicalRankElo(0)).toBe(1000);
+    expect(practicalRankElo(goalTargetIq(1000) - 1)).toBe(1000);
+    expect(practicalRankElo(goalTargetIq(1200))).toBe(1200);
+    expect(practicalRankElo(goalTargetIq(1500))).toBe(1500);
+    expect(practicalRankElo(1000)).toBe(1800);
   });
 });

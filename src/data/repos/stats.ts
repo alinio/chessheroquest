@@ -113,6 +113,31 @@ export async function getTrainingStats(userId: string): Promise<TrainingStats> {
 }
 
 /**
+ * Best (longest) training streak ever, derived from the training_events log —
+ * the longest run of consecutive active days (day index = floor(epochMs/86400000),
+ * matching the streak domain). Never less than the current streak.
+ */
+export async function getBestStreak(userId: string, currentStreak: number): Promise<number> {
+  const rows = await db
+    .selectDistinct({
+      day: sql<number>`floor(extract(epoch from ${trainingEvents.createdAt}) / 86400)::int`,
+    })
+    .from(trainingEvents)
+    .where(eq(trainingEvents.userId, userId));
+
+  const days = rows.map((r) => r.day).sort((a, b) => a - b);
+  let best = 0;
+  let run = 0;
+  let prev: number | null = null;
+  for (const d of days) {
+    run = prev !== null && d === prev + 1 ? run + 1 : 1;
+    if (run > best) best = run;
+    prev = d;
+  }
+  return Math.max(best, currentStreak);
+}
+
+/**
  * Flat XP bonus for event victories (Guardian defeated). XP only — never IQ
  * (LAW #1: the IQ moves exclusively with measured competence).
  */
