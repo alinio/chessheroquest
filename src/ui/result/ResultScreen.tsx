@@ -18,6 +18,7 @@ import { PENDING_DNA_KEY } from "@/src/ui/PendingDnaSync";
 import { useStyleQuiz } from "@/src/ui/style-quiz/useStyleQuiz";
 import { ASSETS, getRankInsignia } from "@/src/lib/assets";
 import { PictureBg } from "@/src/ui/PictureBg";
+import { SaveProgress } from "@/src/ui/account/SaveProgress";
 
 function useHydrated() {
   return useSyncExternalStore(
@@ -220,6 +221,17 @@ export function ResultScreen() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* Email capture at the emotional peak (spec §C Funnel) — never blocking:
+          one optional field; the primary CTA below stays the visual primary. */}
+      <section style={{ marginTop: 24 }}>
+        <SaveProgress
+          title="Keep your result"
+          sub="Your DNA card + your 3-opening plan, in your inbox. One email, no spam."
+          cta="Email me my Chess DNA"
+          trackEvent="result_email_capture"
+        />
       </section>
 
       {/* Primary CTA → Hero Select (M5 stub) */}

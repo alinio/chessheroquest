@@ -13,6 +13,7 @@ export type AppEvent =
   | "drill_started"
   | "opening_conquered"
   | "progress_saved"
+  | "result_email_capture"
   | "checkout_opened"
   | "pro_unlocked";
 
