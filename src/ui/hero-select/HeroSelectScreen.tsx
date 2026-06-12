@@ -161,6 +161,10 @@ function PlanPicker({ plan, setPlan }: { plan: PlanKey; setPlan: (p: PlanKey) =>
           );
         })}
       </div>
+      {/* Reassurance — the three real guarantees (refund policy at /refunds). */}
+      <p style={{ ...eyebrow, fontSize: 10, color: "var(--chq-text-muted)", textAlign: "center", marginTop: 12 }}>
+        Cancel anytime · 14-day refund · Lifetime is one payment
+      </p>
     </div>
   );
 }
@@ -182,7 +186,7 @@ function BenefitsBox({ tier }: { tier: Tier }) {
       <OrnateFrame>
         <div style={{ padding: "28px 26px" }}>
           <div style={{ textAlign: "center" }}>
-            <p style={{ ...eyebrow, color: "var(--chq-gold-3)" }}>Your quest, if you accept it</p>
+            <p style={{ ...eyebrow, color: "var(--chq-gold-3)" }}>The full quest</p>
             <h2 className="chq-display chq-gold-text" style={{ fontSize: 26, fontWeight: 700, margin: "6px 0 0" }}>Become the King of Openings</h2>
             <p style={{ color: "var(--chq-text-2)", fontSize: 14, lineHeight: 1.55, margin: "8px auto 0", maxWidth: 600 }}>
               Conquer each opening to earn its seal and fill your <b style={{ color: "var(--chq-text-1)" }}>Opening Passport</b> — all 20 across the four realms. Master them and you walk into any game ready for <b style={{ color: "var(--chq-text-1)" }}>any opponent</b>.
@@ -272,8 +276,21 @@ function HeroCard({ archetype, recommended, matchPercent, tier, onEnter, onGoPre
                 return (
                   <li key={o.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 6, fontSize: 12.5 }}>
                     <span style={{ display: "flex", alignItems: "center", gap: 6, color: unlocked ? "var(--chq-text-1)" : "var(--chq-text-muted)" }}>
-                      {unlocked ? <span style={{ color: accent.base }}>✓</span> : <LockIcon size={12} />}
+                      {unlocked ? (
+                        // key on tier → locks flip to ✓ with a 60ms stagger on the
+                        // Free→Premium switch (chq-rise honors reduced-motion globally).
+                        <span
+                          key={premium ? "premium" : "free"}
+                          className="chq-rise"
+                          style={{ color: accent.base, "--chq-d": `${i * 60}ms` } as React.CSSProperties}
+                        >
+                          ✓
+                        </span>
+                      ) : (
+                        <LockIcon size={12} />
+                      )}
                       {o.name}
+                      <span style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)" }}>{o.eco}</span>
                     </span>
                     <span style={{ ...eyebrow, fontSize: 9, color: "var(--chq-text-muted)", whiteSpace: "nowrap" }}>{o.variations} var</span>
                   </li>
@@ -415,24 +432,24 @@ export function HeroSelectScreen() {
 
   return (
     <Shell>
-      <BenefitsBox tier={effectiveTier} />
-
-      {/* Free/Premium toggle — segmented pill, visually distinct from the plan price cards */}
-      {!isPro && (
-        <div style={{ display: "flex", justifyContent: "center", marginTop: 48 }}>
-          <div className="chq-seg" role="tablist" aria-label="Free or Premium">
-            <button type="button" data-active={tier === "free"} onClick={() => setTier("free")}>Free</button>
-            <button type="button" data-active={tier === "premium"} onClick={() => setTier("premium")}>Premium</button>
-          </div>
-        </div>
-      )}
-
+      {/* Heroes FIRST — the player arrives from "Meet your Hero"; the sales box
+          backs the choice up below instead of delaying it. */}
       <div style={{ padding: "20px 20px 0", textAlign: "center", maxWidth: 680, marginInline: "auto" }}>
         <h1 className="chq-display chq-gold-text" style={{ fontSize: 28, fontWeight: 700, margin: 0 }}>Choose your Hero</h1>
         <p style={{ ...eyebrow, color: "var(--chq-text-muted)", marginTop: 8 }}>
           {recommended ? "Your Chess DNA points one way — but the choice is yours. Every hero is free to start." : "Pick any hero — the first opening is free."}
         </p>
       </div>
+
+      {/* Free/Premium toggle — segmented pill, visually distinct from the plan price cards */}
+      {!isPro && (
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
+          <div className="chq-seg" role="tablist" aria-label="Free or Premium">
+            <button type="button" data-active={tier === "free"} onClick={() => setTier("free")}>Free</button>
+            <button type="button" data-active={tier === "premium"} onClick={() => setTier("premium")}>Premium</button>
+          </div>
+        </div>
+      )}
 
       {effectiveTier === "premium" && <PlanPicker plan={plan} setPlan={setPlan} />}
 
@@ -448,6 +465,10 @@ export function HeroSelectScreen() {
             onGoPremium={() => goPremium(a)}
           />
         ))}
+      </div>
+
+      <div style={{ marginTop: 32 }}>
+        <BenefitsBox tier={effectiveTier} />
       </div>
 
       <WhatYouUnlock />
