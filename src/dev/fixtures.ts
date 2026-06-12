@@ -3,11 +3,11 @@
  * the real screen components can render fully without auth/onboarding/stores.
  * DEV-ONLY — never imported by production flows.
  */
-import type { Archetype, RealmId, OpeningId } from "@/src/lib/assets";
+import { OPENING_NAMES, type Archetype, type RealmId, type OpeningId } from "@/src/lib/assets";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 import { fenAfter, moveSquaresAt } from "@/src/domain/repertoire/line";
-import { PATH_SIDE } from "@/src/domain/world/guardians";
-import { OPENING_TO_PATH, OPENING_LINES } from "@/src/lib/opening-paths";
+import { KINGDOM_BOSSES, PATH_SIDE } from "@/src/domain/world/guardians";
+import { OPENING_TO_PATH, OPENING_LINES, realmOpeningIds } from "@/src/lib/opening-paths";
 
 /** Demo analytics for /dev/screens/insights (mirrors InsightsData in InsightsScreen). */
 export const DEMO_INSIGHTS = {
@@ -27,6 +27,13 @@ export const DEMO_INSIGHTS = {
   ],
 };
 
+/** Tabiya preview of the realm's next unsealed opening (real fenAfter, LAW #2). */
+export interface RealmNextLine {
+  openingName: string;
+  fen: string;
+  orientation: "white" | "black";
+  lastMove: { from: string; to: string } | null;
+}
 export interface RealmEntry {
   id: RealmId;
   name: string;
@@ -36,13 +43,32 @@ export interface RealmEntry {
   sealed: number;
   total: number;
   current: boolean;
+  /** First unsealed opening's tabiya — null when the realm is fully sealed. */
+  next?: RealmNextLine | null;
+  /** Realm Boss name (KINGDOM_BOSSES — authored, never invented). */
+  bossName?: string;
 }
+
+/** Demo "next opening" = the realm's opening at index `sealed` (registry order). */
+function demoRealmNext(realm: RealmId, sealed: number): RealmNextLine | null {
+  const id = realmOpeningIds(realm)[sealed];
+  const pathId = id ? OPENING_TO_PATH[id] : null;
+  const path = pathId ? STARTER_PATHS.find((p) => p.id === pathId) : undefined;
+  if (!id || !path || path.moves.length === 0) return null;
+  return {
+    openingName: OPENING_NAMES[id],
+    fen: fenAfter(path, path.moves.length),
+    orientation: PATH_SIDE[path.id] ?? "white",
+    lastMove: moveSquaresAt(path, path.moves.length - 1),
+  };
+}
+
 /** The 4 realms overview for /realms. */
 export const DEMO_REALMS: RealmEntry[] = [
-  { id: "ember-marches", name: "Ember Marches", sub: "Realm of the Warrior", archetype: "warrior", accent: "#e0413b", sealed: 2, total: 5, current: false },
-  { id: "obsidian-court", name: "Obsidian Court", sub: "Realm of the Strategist", archetype: "strategist", accent: "#8a7bd8", sealed: 3, total: 5, current: true },
-  { id: "aegis-bastion", name: "Aegis Bastion", sub: "Realm of the Defender", archetype: "defender", accent: "#4fb477", sealed: 1, total: 5, current: false },
-  { id: "mirage-bazaar", name: "Mirage Bazaar", sub: "Realm of the Trickster", archetype: "trickster", accent: "#46c7d8", sealed: 0, total: 5, current: false },
+  { id: "ember-marches", name: "Ember Marches", sub: "Realm of the Warrior", archetype: "warrior", accent: "#e0413b", sealed: 2, total: 5, current: false, next: demoRealmNext("ember-marches", 2), bossName: KINGDOM_BOSSES["ember-marches"]?.name },
+  { id: "obsidian-court", name: "Obsidian Court", sub: "Realm of the Strategist", archetype: "strategist", accent: "#8a7bd8", sealed: 3, total: 5, current: true, next: demoRealmNext("obsidian-court", 3), bossName: KINGDOM_BOSSES["obsidian-court"]?.name },
+  { id: "aegis-bastion", name: "Aegis Bastion", sub: "Realm of the Defender", archetype: "defender", accent: "#4fb477", sealed: 1, total: 5, current: false, next: demoRealmNext("aegis-bastion", 1), bossName: KINGDOM_BOSSES["aegis-bastion"]?.name },
+  { id: "mirage-bazaar", name: "Mirage Bazaar", sub: "Realm of the Trickster", archetype: "trickster", accent: "#46c7d8", sealed: 5, total: 5, current: false, next: null, bossName: KINGDOM_BOSSES["mirage-bazaar"]?.name },
 ];
 
 export interface ProfileFixture {

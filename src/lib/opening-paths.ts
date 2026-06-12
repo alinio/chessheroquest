@@ -35,6 +35,13 @@ export function learnHref(id: OpeningId): string | null {
   return path ? `/train/${path}/learn` : null;
 }
 
+/** The realm's opening ids, in registry order (the gauntlet sequence). */
+export function realmOpeningIds(realm: RealmId): OpeningId[] {
+  return (Object.keys(ASSETS.openings) as OpeningId[]).filter(
+    (id) => ASSETS.openings[id].realm === realm,
+  );
+}
+
 /** The realm's curated path ids, in registry order (the gauntlet sequence). */
 export function realmPathIds(realm: RealmId): string[] {
   return (Object.keys(ASSETS.openings) as OpeningId[])
