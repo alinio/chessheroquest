@@ -12,7 +12,8 @@ import type { ExplorerStats } from "@/src/domain/world/explorer";
 
 export interface ExplorerRow {
   san: string;
-  name: string;
+  /** Optional label (variation name, note) — pure stat rows omit it. */
+  name?: string;
   explain?: string;
   explorer?: ExplorerStats;
   /** Main-line / best move — visually emphasised. */
@@ -22,6 +23,7 @@ export interface ExplorerRow {
 }
 
 const eyebrow = { fontSize: 10, letterSpacing: ".1em", textTransform: "uppercase" } as const;
+const GAMES_FMT = new Intl.NumberFormat("en", { notation: "compact" });
 
 function tagBg(tone?: "gold" | "good" | "bad") {
   if (tone === "bad") return "#d1495b";
@@ -52,10 +54,12 @@ export function MoveExplorerList({ rows, compact = false, ariaLabel = "Candidate
           <>
             <span className="chq-display" style={{ fontSize: 16, fontWeight: 700, color: r.highlight ? "var(--chq-gold-2)" : "var(--chq-text-1)", whiteSpace: "nowrap" }}>{r.san}</span>
             <span style={{ minWidth: 0 }}>
-              <span style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: "var(--chq-text-1)" }}>{r.name}</span>
-                {r.tag && <span style={{ ...eyebrow, fontSize: 8, padding: "2px 6px", borderRadius: 999, fontWeight: 700, color: "#08080A", background: tagBg(r.tag.tone) }}>{r.tag.label}</span>}
-              </span>
+              {(r.name || r.tag) && (
+                <span style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                  {r.name && <span style={{ fontSize: 13, fontWeight: 600, color: "var(--chq-text-1)" }}>{r.name}</span>}
+                  {r.tag && <span style={{ ...eyebrow, fontSize: 8, padding: "2px 6px", borderRadius: 999, fontWeight: 700, color: "#08080A", background: tagBg(r.tag.tone) }}>{r.tag.label}</span>}
+                </span>
+              )}
               {!compact && r.explain && <span style={{ display: "block", fontSize: 12, color: "var(--chq-text-2)", lineHeight: 1.4, marginTop: 3 }}>{r.explain}</span>}
               {pop != null && (
                 <span style={{ display: "flex", alignItems: "center", gap: 7, marginTop: 5 }}>
@@ -67,7 +71,11 @@ export function MoveExplorerList({ rows, compact = false, ariaLabel = "Candidate
               )}
             </span>
             <span style={{ fontSize: 12, color: "var(--chq-text-muted)", whiteSpace: "nowrap", justifySelf: "end" }}>
-              {r.explorer?.eval ? `engine ${r.explorer.eval}` : "—"}
+              {r.explorer?.eval
+                ? `engine ${r.explorer.eval}`
+                : r.explorer?.gamesCount != null
+                  ? `${GAMES_FMT.format(r.explorer.gamesCount)} games`
+                  : "—"}
             </span>
           </>
         );

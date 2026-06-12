@@ -17,12 +17,11 @@ export default async function TrainLineLearnPage({
   const path = STARTER_PATHS.find((p) => p.id === slug);
   if (!path) notFound();
 
+  // No banner header — the LineTrainer's compact HUD is the whole chrome;
+  // the screen's width goes to the board + explorer panel.
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col gap-6 px-4 py-6">
-      <header className="text-center">
-        <p className="font-display text-gold text-xs uppercase tracking-[0.3em]">Learn</p>
-        <h1 className="font-display text-text-hi text-2xl font-bold">Play the line</h1>
-      </header>
+    <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col gap-4 px-4 py-6 lg:px-8">
+      <h1 className="sr-only">{`Learn — ${path.name}`}</h1>
       <LineTrainer path={path} />
     </main>
   );
