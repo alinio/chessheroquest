@@ -34,6 +34,14 @@ const STATE_LABEL: Record<QuestNode["state"], string> = {
   available: "Available now",
   locked: "Locked — seal the path to reach it",
 };
+/** Realm-specific 21:9 map art (Higgsfield drop 06-12) — one world per realm. */
+const REALM_MAP: Record<RealmId, string> = {
+  "ember-marches": "/art/maps/map-ember-marches.webp",
+  "obsidian-court": "/art/maps/map-obsidian-court.webp",
+  "aegis-bastion": "/art/maps/map-aegis-bastion.webp",
+  "mirage-bazaar": "/art/maps/map-mirage-bazaar.webp",
+};
+
 const REALM_ACCENT: Record<RealmId, string> = {
   "ember-marches": "#e0413b",
   "obsidian-court": "#8a7bd8",
@@ -143,7 +151,7 @@ export function QuestMapScreen({ quest }: { quest: QuestMapFixture }) {
       <div className="map-wrap" style={{ "--accent": REALM_ACCENT[quest.realm] } as CSSProperties}>
         <div className="map">
           <div className="map-bg">
-            <PictureBg landscape={ASSETS.backgrounds.questMap} portrait={ASSETS.backgrounds.questMapPortrait} />
+            <PictureBg landscape={REALM_MAP[quest.realm] ?? ASSETS.backgrounds.questMap} portrait={ASSETS.backgrounds.questMapPortrait} />
           </div>
 
           <svg className="path" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
