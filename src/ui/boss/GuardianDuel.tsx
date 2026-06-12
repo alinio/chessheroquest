@@ -48,6 +48,8 @@ export function GuardianDuel({
   masteryState = null,
   sealedBefore = null,
   totalSeals = 20,
+  realmDefeated = null,
+  realmTotal = 5,
 }: {
   path: CuratedPath;
   guardian: Guardian;
@@ -60,6 +62,9 @@ export function GuardianDuel({
       one-time SEAL celebration shows sealedBefore + 1 of totalSeals. */
   sealedBefore?: number | null;
   totalSeals?: number;
+  /** Realm Guardians defeated INCLUDING this duel (victory screen only). */
+  realmDefeated?: number | null;
+  realmTotal?: number;
 }) {
   const side = PATH_SIDE[path.id] ?? "white";
   const allowed = DIFFICULTY.medium.mistakesAllowed;
@@ -279,6 +284,11 @@ export function GuardianDuel({
                   : ` +${XP_REWARDS.bossDefeated} XP — drill it to gold to stamp the seal in your Passport.`
                 : " Sign in to record your victories."}
             </p>
+            {realmDefeated != null && (
+              <p className="desc" style={{ marginTop: 2 }}>
+                <b style={{ color: "var(--gold-bright, #f1d680)" }}>{realmDefeated}/{realmTotal}</b> Guardians defeated in this realm.
+              </p>
+            )}
             {/* The full line you just proved — any slip marked in red. */}
             <div className="win-sheet">
               <NotationStrip

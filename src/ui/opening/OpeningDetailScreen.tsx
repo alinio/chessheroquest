@@ -32,6 +32,12 @@ export interface OpeningLineView {
   id: string;
   name: string;
   mastery: OpeningMasteryView | null;
+  /** Half-moves in the curated line (real STARTER_PATHS length). */
+  moves?: number;
+  /** Honest session estimate for this line (player moves). */
+  minutes?: number;
+  /** True when the line has at least one SRS card due now. */
+  dueToday?: boolean;
 }
 
 type Step = "learn" | "drill" | "guardian";
@@ -159,7 +165,13 @@ export function OpeningDetailScreen({
             return (
               <div className="op-line" key={l.id}>
                 <span className="ol-wrap">
-                  <span className="ol-name">{sub}</span>
+                  <span className="ol-name">
+                    {sub}
+                    {l.dueToday && <span className="ol-due">due today</span>}
+                  </span>
+                  {l.moves != null && l.minutes != null && (
+                    <span className="ol-meta">{l.moves} moves · ~{l.minutes} min</span>
+                  )}
                   <Stepper m={l.mastery} />
                 </span>
                 <span className="ol-state">

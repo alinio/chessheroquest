@@ -293,9 +293,11 @@ export function Drill({
 
   return (
     <section className="flex w-full flex-col gap-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <ModeChip mode="recall" />
-        <p className="font-display text-gold text-sm tabular-nums">
+        {/* The line being drilled — always named in the HUD. */}
+        <p className="text-text-mid min-w-0 flex-1 truncate text-center text-sm">{path.name}</p>
+        <p className="font-display text-gold shrink-0 text-sm tabular-nums">
           {index + 1}/{items.length}
         </p>
       </div>

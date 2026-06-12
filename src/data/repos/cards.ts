@@ -95,6 +95,18 @@ export async function getDueCards(
     .map((r) => ({ fen: r.fen, expected: r.move!, opening: r.opening }));
 }
 
+/** Curated path slugs with at least one due card — the per-line "due today". */
+export async function getDueSlugs(userId: string, now: Date): Promise<Set<string>> {
+  const rows = await db
+    .select({ slug: pathTemplates.slug })
+    .from(cards)
+    .innerJoin(nodes, eq(nodes.id, cards.nodeId))
+    .innerJoin(pathTemplates, eq(pathTemplates.id, nodes.pathTemplateId))
+    .where(and(eq(cards.userId, userId), lte(cards.dueAt, now)))
+    .groupBy(pathTemplates.slug);
+  return new Set(rows.map((r) => r.slug));
+}
+
 /** Number of the user's cards due at `now` — powers the Daily Quest. */
 export async function getDueCount(userId: string, now: Date): Promise<number> {
   const rows = await db
