@@ -64,6 +64,9 @@ export function RealmGauntlet({
   const [ply, setPly] = useState(0);
   const [mistakes, setMistakes] = useState(0);
   const [flash, setFlash] = useState<"idle" | "correct" | "wrong">("idle");
+  // Pedagogical slip toast — the slip is already counted, hiding the theory
+  // move has no exam value left (same contract as the Guardian duel).
+  const [slipNote, setSlipNote] = useState<string | null>(null);
   const attemptsRef = useRef<Attempt[]>([]);
   const turnStartRef = useRef(0);
   const postedRef = useRef(false);
@@ -139,12 +142,19 @@ export function RealmGauntlet({
         setMistakes((m) => {
           const next = m + 1;
           if (next > MISTAKES_ALLOWED) setPhase("lost");
+          else {
+            const idea = path.comments?.[ply];
+            setSlipNote(
+              `Slip ${next} of ${MISTAKES_ALLOWED} — the line plays ${path.moves[ply]}${idea ? `: ${idea}` : "."} Play it to continue.`,
+            );
+          }
           return next;
         });
         return false;
       }
 
       setFlash("correct");
+      setSlipNote(null);
       window.setTimeout(() => setFlash("idle"), 400);
       setPly((p) => p + 1);
       return true;
@@ -184,6 +194,9 @@ export function RealmGauntlet({
             <p className="howto">
               {paths.map((p) => p.name.split(" — ")[0]).join(" · ")}
             </p>
+            <p className="howto" style={{ opacity: 0.8 }}>
+              All five are gold in your Passport. Now prove them in one breath.
+            </p>
             <button className="btn-gold" type="button" onClick={() => setPhase("duel")}>
               Face the Gauntlet
             </button>
@@ -208,15 +221,26 @@ export function RealmGauntlet({
                 allowDragging={phase === "duel" && isPlayersPly(ply)}
               />
             </div>
+            {slipNote && phase === "duel" && (
+              <p className="dv-text" aria-live="polite" style={{ maxWidth: 460, textAlign: "center" }}>{slipNote}</p>
+            )}
             <div className="duel-dots" aria-label={`opening ${pathIndex + 1} of ${paths.length}`}>
               {paths.map((p, i) => (
                 <span key={p.id} className={`ddot${i < pathIndex || (i === pathIndex && ply >= path.moves.length) ? " hit" : ""}`} />
               ))}
             </div>
+            {/* fine dots — YOUR moves inside the current line (how much is left) */}
+            <div className="duel-dots" aria-label={`move ${answeredThisPath} of ${totalThisPath} in this line`} style={{ gap: 5, opacity: 0.85 }}>
+              {pathChallenges(path, side).map((c) => (
+                <span key={c.ply} className={`ddot${c.ply < ply ? " hit" : ""}`} style={{ width: 7, height: 7 }} />
+              ))}
+            </div>
 
             {phase === "lost" && (
               <div className="duel-verdict">
-                <p className="dv-text">The Gauntlet holds. Review your lines and return — the realm waits.</p>
+                <p className="dv-text">
+                  The Gauntlet holds. {MISTAKES_ALLOWED + 1} slips — the <b>{path.name.split(" — ")[0]}</b> is where it broke. Drill it, then return.
+                </p>
                 <div className="dv-actions">
                   <button className="btn-gold" type="button" onClick={restart}>Run it again</button>
                   <Link className="retreat" href="/quest">← Back to the realm</Link>
@@ -230,6 +254,11 @@ export function RealmGauntlet({
           <div className="center">
             <p className="eyebrow">Opening {pathIndex + 1} cleared</p>
             <h1 className="name serif">Next: {paths[pathIndex + 1]?.name.split(" — ")[0]}</h1>
+            {/* The side switch between lines is THE gauntlet trap — announce it. */}
+            <p className="desc">
+              You command{" "}
+              <b>{(PATH_SIDE[paths[pathIndex + 1]?.id ?? ""] ?? "white") === "white" ? "White" : "Black"}</b>.
+            </p>
           </div>
         )}
 

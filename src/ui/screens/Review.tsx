@@ -5,8 +5,13 @@ import { Chess } from "chess.js";
 import type { PieceDropHandlerArgs } from "react-chessboard";
 import Link from "next/link";
 import { Board } from "@/src/ui/board/Board";
+import { ModeChip } from "@/src/ui/board/ModeChip";
+import { NotationStrip } from "@/src/ui/board/NotationStrip";
 import { CoachSheet } from "@/src/ui/screens/CoachSheet";
 import type { DueCard } from "@/src/data/repos/cards";
+import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
+import { plyOfFen } from "@/src/domain/repertoire/line";
+import { PATH_SIDE } from "@/src/domain/world/guardians";
 
 interface ReviewResult {
   fen: string;
@@ -38,6 +43,12 @@ export function Review({ items, userId }: { items: DueCard[]; userId?: string })
   const startRef = useRef(0);
 
   const current = items[index];
+
+  // Re-anchor the card in its curated line — jumping between openings, the
+  // player needs the context back every card: line, side, path so far.
+  const path = current ? STARTER_PATHS.find((x) => x.name === current.opening) : undefined;
+  const playerSide: "white" | "black" = path ? (PATH_SIDE[path.id] ?? "white") : current ? sideToMove(current.fen) : "white";
+  const cardPly = path && current ? plyOfFen(path, current.fen) : -1;
 
   useEffect(() => {
     startRef.current = performance.now();
@@ -154,7 +165,7 @@ export function Review({ items, userId }: { items: DueCard[]; userId?: string })
           >
             Explore openings
           </Link>
-          <Link href="/dashboard" className="text-text-low text-sm underline">
+          <Link href="/train" className="text-text-low text-sm underline">
             Back to your hub
           </Link>
         </div>
@@ -166,18 +177,28 @@ export function Review({ items, userId }: { items: DueCard[]; userId?: string })
 
   return (
     <section className="flex w-full flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <p className="text-text-mid truncate text-sm">{current.opening}</p>
-        <p className="font-display text-gold text-sm tabular-nums">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-text-mid truncate text-sm">
+          {current.opening}
+          <span className="text-text-low"> · You play {playerSide === "white" ? "White" : "Black"}</span>
+        </p>
+        <p className="font-display text-gold shrink-0 text-sm tabular-nums">
           {index + 1}/{items.length}
         </p>
+      </div>
+
+      <div className="flex flex-col items-center gap-2 self-center">
+        <ModeChip mode="recall" />
+        {path && cardPly > 0 && (
+          <NotationStrip sans={path.moves} currentPly={cardPly} variant="path" />
+        )}
       </div>
 
       <div className="w-full max-w-[min(92vw,520px)] self-center">
         <Board
           position={boardFen}
           onPieceDrop={onPieceDrop}
-          orientation={sideToMove(current.fen)}
+          orientation={playerSide}
           allowDragging={feedback === "idle"}
         />
       </div>
