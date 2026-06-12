@@ -18,6 +18,7 @@ export type LandingEvent =
   | "sticky_cta_click"
   | "pain_section_cta_click"
   | "kingdoms_cta_click"
+  | "how_cta_click"
   | "final_cta_click"
   | "dna_test_started"
   | "dna_test_completed"
@@ -41,6 +42,7 @@ export type CtaSection =
   | "sticky"
   | "pain"
   | "kingdoms"
+  | "how"
   | "final";
 
 // Module-level singleton: set once when the provider mounts (client only).

@@ -7,6 +7,7 @@ import { OpeningIQGauge } from "./OpeningIQGauge";
 import { Panel } from "./Panel";
 import { LANDING_ASSETS } from "../assets";
 import { useReducedMotion } from "../hooks";
+import { DNA_TEST_BANK } from "@/src/domain/dna-test/bank";
 
 /**
  * S3 product demo — a self-contained, deterministic 15s clip of the real flow,
@@ -26,6 +27,16 @@ import { useReducedMotion } from "../hooks";
  * TODO: demo data, not live (428 · Strategist · Top 38% · quiz Q&A · strongest/weakest · train-next).
  */
 const STAGE_MS = [3000, 3000, 3000, 3000] as const; // TEST→QUIZ→SCORE→DNA→ROAD
+
+// The demo's TEST beat = the bank's REAL Italian position (italian-c50): the
+// name/ECO label and the post-pick explorer feedback come straight from the
+// curated Lichess snapshot — never invented (LAW #2).
+const DEMO_POS = DNA_TEST_BANK.find((q) => q.id === "italian-c50");
+const DEMO_PICK = DEMO_POS?.options.find((o) => o.san === "Bc5");
+const TEST_LABEL = DEMO_POS ? `${DEMO_POS.openingName} · ${DEMO_POS.eco}` : null;
+const TEST_FEEDBACK = DEMO_PICK?.explorer
+  ? `Main line — ${DEMO_PICK.explorer.popularityPct}% of ${DEMO_PICK.explorer.ratingBand} play this`
+  : null;
 
 // Position 7/20 — Italian Game after 1.e4 e5 2.Nf3 Nc6 3.Bc4 (Black to move).
 const POS7: MiniPosition = {
@@ -79,6 +90,9 @@ export function ProductDemoS3() {
   const [stage, setStage] = useState(0); // 0 TEST·1 QUIZ·2 SCORE·3 DNA·4 ROAD
   const [testStep, setTestStep] = useState(0); // 0 idle · 1 select · 2 confirm · 3 advance
   const [quizPicked, setQuizPicked] = useState(false);
+  /** Manual scrub via the stepper pauses autoplay; it resumes after 8s idle. */
+  const [paused, setPaused] = useState(false);
+  const pauseRef = useRef<number | null>(null);
 
   // Toggle inView (don't latch) so the clip restarts each time it re-enters view
   // — the visitor reliably catches the animation from the top, not the held end
@@ -97,35 +111,51 @@ export function ProductDemoS3() {
     return () => io.disconnect();
   }, []);
 
-  // Master timeline (deterministic). Reduced-motion → final frame. All state
-  // changes run from timer callbacks (never synchronously in the effect body).
+  // Clip (re)start: entering view / replay resets to the top. Reduced-motion →
+  // composed final frame. State changes run from timer callbacks only.
   useEffect(() => {
     if (!inView) return;
-    if (reduce) {
-      const t = setTimeout(() => {
+    const t = setTimeout(() => {
+      if (reduce) {
         setStage(4);
         setTestStep(3);
         setQuizPicked(true);
-      }, 0);
-      return () => clearTimeout(t);
-    }
-    const t1 = STAGE_MS[0];
-    const t2 = t1 + STAGE_MS[1];
-    const t3 = t2 + STAGE_MS[2];
-    const t4 = t3 + STAGE_MS[3];
-    const timers = [
-      setTimeout(() => {
+      } else {
         setStage(0);
         setTestStep(0);
         setQuizPicked(false);
-      }, 0),
-      setTimeout(() => setStage(1), t1),
-      setTimeout(() => setStage(2), t2),
-      setTimeout(() => setStage(3), t3),
-      setTimeout(() => setStage(4), t4),
-    ];
-    return () => timers.forEach(clearTimeout);
+        setPaused(false);
+      }
+    }, 0);
+    return () => clearTimeout(t);
   }, [inView, reduce, runId]);
+
+  // Autoplay — one stage at a time, suspended while the visitor scrubs.
+  useEffect(() => {
+    if (!inView || reduce || paused || stage >= 4) return;
+    const t = setTimeout(
+      () => setStage((v) => Math.min(4, v + 1)),
+      STAGE_MS[stage] ?? 3000,
+    );
+    return () => clearTimeout(t);
+  }, [inView, reduce, paused, stage, runId]);
+
+  // Stepper scrub: jump to a stage with its sub-beats in a sensible state,
+  // pause autoplay, resume after 8s of inactivity.
+  const scrub = (i: number) => {
+    setStage(i);
+    setTestStep(i === 0 ? 0 : 3);
+    setQuizPicked(i > 1);
+    setPaused(true);
+    if (pauseRef.current) window.clearTimeout(pauseRef.current);
+    pauseRef.current = window.setTimeout(() => setPaused(false), 8000);
+  };
+  useEffect(
+    () => () => {
+      if (pauseRef.current) window.clearTimeout(pauseRef.current);
+    },
+    [],
+  );
 
   // TEST sub-beats: select Bc5 → confirm → advance one position.
   useEffect(() => {
@@ -151,7 +181,7 @@ export function ProductDemoS3() {
   return (
     <Panel variant="ornate" className="mx-auto w-full max-w-xl">
       <div ref={ref} className="p-5 sm:p-6">
-        <div className="relative h-[21rem] overflow-hidden sm:h-[20rem]">
+        <div className="relative h-[23rem] overflow-hidden sm:h-[21.5rem]">
           {/* ---- TEST ---- */}
           <Layer show={stage === 0}>
             <p className="text-[0.6rem] uppercase tracking-[0.2em] text-text-low">
@@ -166,16 +196,29 @@ export function ProductDemoS3() {
                       ? { ...POS7, highlight: [3, 2] }
                       : POS7
                 }
-                size={150}
+                size={142}
               />
             </div>
-            <p className="mt-2 text-[0.72rem] font-medium text-text-hi">
+            {TEST_LABEL && (
+              <p className="mt-1.5 text-[0.62rem] font-medium text-text-mid">
+                {TEST_LABEL}
+              </p>
+            )}
+            <p className="mt-1.5 text-[0.72rem] font-medium text-text-hi">
               Best move?
             </p>
             <div className="mt-2 grid w-44 grid-cols-2 gap-2">
               <MoveButton label="Bc5" selected={testStep >= 1} confirmed={testStep >= 2} />
               <MoveButton label="Nf6" />
             </div>
+            {/* explorer truth, revealed AFTER the pick (real bank snapshot) */}
+            <p
+              className="mt-2 min-h-4 text-[0.62rem] font-medium text-gold transition-opacity duration-300"
+              style={{ opacity: testStep >= 2 && TEST_FEEDBACK ? 1 : 0 }}
+              aria-hidden={testStep < 2}
+            >
+              {TEST_FEEDBACK}
+            </p>
           </Layer>
 
           {/* ---- QUIZ (style + level) ---- */}
@@ -224,11 +267,14 @@ export function ProductDemoS3() {
           )}
           {/* SCORE caption */}
           <div
-            className="pointer-events-none absolute inset-x-0 top-[74%] text-center transition-opacity duration-500"
+            className="pointer-events-none absolute inset-x-0 top-[72%] flex flex-col items-center gap-1 text-center transition-opacity duration-500"
             style={{ opacity: stage === 2 ? 1 : 0 }}
           >
             <span className="rounded-chip border border-gold/40 bg-gold/10 px-2.5 py-0.5 text-[0.66rem] font-semibold text-gold">
               Top 38%
+            </span>
+            <span className="text-[0.58rem] uppercase tracking-[0.18em] text-text-low">
+              Opening IQ · 0–1000
             </span>
           </div>
 
@@ -319,9 +365,9 @@ export function ProductDemoS3() {
           </Layer>
         </div>
 
-        {/* stepper + replay */}
+        {/* stepper (clickable scrub) + replay */}
         <div className="mt-4 flex flex-col items-center gap-2 sm:flex-row sm:justify-center sm:gap-3">
-          <Stepper stage={stage} />
+          <Stepper stage={stage} onStep={scrub} />
           <button
             type="button"
             onClick={() => setRunId((r) => r + 1)}
@@ -335,6 +381,9 @@ export function ProductDemoS3() {
             ↻ Replay
           </button>
         </div>
+        <p className="mt-2 text-center text-[0.58rem] text-text-low">
+          Demo data — your numbers will be yours.
+        </p>
       </div>
     </Panel>
   );
@@ -404,19 +453,23 @@ function StatRow({
   );
 }
 
-function Stepper({ stage }: { stage: number }) {
+function Stepper({ stage, onStep }: { stage: number; onStep: (i: number) => void }) {
   return (
     <div className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
       {STEPS.map((label, i) => (
         <div key={label} className="flex items-center gap-1.5">
           {i > 0 && <span className="h-px w-3 bg-hairline" aria-hidden />}
-          <span
-            className={`rounded-chip px-2 py-0.5 text-[0.56rem] font-semibold uppercase tracking-wide transition-colors duration-300 ${
+          <button
+            type="button"
+            onClick={() => onStep(i)}
+            aria-label={`Show the ${label} step`}
+            aria-current={i === stage ? "step" : undefined}
+            className={`cursor-pointer rounded-chip px-2 py-0.5 text-[0.56rem] font-semibold uppercase tracking-wide transition-colors duration-300 hover:text-gold ${
               i === stage ? "bg-gold/15 text-gold" : "text-text-low"
             }`}
           >
             {label}
-          </span>
+          </button>
         </div>
       ))}
     </div>

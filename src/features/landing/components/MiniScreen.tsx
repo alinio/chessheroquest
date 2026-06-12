@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { LANDING_ASSETS } from "../assets";
 import { MiniBoard, type MiniPosition } from "./MiniBoard";
 import { WaxSeal } from "./WaxSeal";
+import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
+import { fenAfter } from "@/src/domain/repertoire/line";
 
 /**
  * Coded mini screen-mockups for the three journey steps AFTER the reveal:
@@ -34,6 +35,22 @@ const ITALIAN: MiniPosition = {
   ],
 };
 
+/** FEN board field → MiniBoard ranks ("." for empties). */
+function ranksFromFen(fen: string): string[] {
+  return fen
+    .split(" ")[0]!
+    .split("/")
+    .map((row) => row.replace(/\d/g, (d) => ".".repeat(Number(d))));
+}
+
+// The TRAIN mock shows a REAL drill position: the Caro-Kann's second curated
+// line (vs the Advance), at the ply where it is Black — the player — to move.
+// Derived via fenAfter over the real path (LAW #2: never a hand-drawn diagram).
+const CARO_LINE_2 = STARTER_PATHS.find((p) => p.id === "caro-kann-advance");
+const TRAIN_POS: MiniPosition | null = CARO_LINE_2
+  ? { ranks: ranksFromFen(fenAfter(CARO_LINE_2, 5)) }
+  : null;
+
 /** Shared screen frame — identical across all three mockups. */
 function Screen({ children }: { children: React.ReactNode }) {
   return (
@@ -62,66 +79,26 @@ function DiscoverScreen() {
   );
 }
 
-/** TRAIN — pick your hero + opening, keep the daily streak. */
+/** TRAIN — a real drill moment: your line, your move, your streak. */
 function TrainScreen() {
-  const quests = [
-    { label: "Daily Quest", done: true },
-    { label: "Learn your opening", done: true },
-    { label: "Fix a weak line", done: false },
-  ];
   return (
     <Screen>
-      <div className="mb-2 flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <Image
-            src={LANDING_ASSETS.crests.strategist}
-            alt=""
-            width={28}
-            height={28}
-            className="h-7 w-7 object-contain [mix-blend-mode:screen]"
-          />
-          <span className="text-text-low">+</span>
-          <span className="relative block h-7 w-7 overflow-hidden rounded-md border border-gold/30">
-            {/* opening tile — reuse existing art (public/art/tiles) */}
-            <Image
-              src="/art/tiles/tile-ruylopez.png"
-              alt=""
-              fill
-              sizes="28px"
-              className="object-cover"
-            />
-          </span>
-        </div>
-        <span className="inline-flex items-center gap-1 text-sm font-bold text-gold">
+      <div className="mb-2 flex items-center justify-end">
+        <span className="inline-flex items-center gap-1 rounded-chip border border-gold/40 bg-gold/10 px-2 py-0.5 text-[0.62rem] font-semibold text-gold">
           <span className="animate-[chq-crest-pulse_2s_ease-in-out_infinite]">
             🔥
           </span>
-          12
+          12-day streak
         </span>
       </div>
-      <ul className="space-y-1.5">
-        {quests.map((q) => (
-          <li
-            key={q.label}
-            className="flex items-center gap-2 rounded-md border border-hairline/70 bg-surface/60 px-2 py-1.5"
-          >
-            <span
-              className={`flex h-4 w-4 items-center justify-center rounded-full text-[0.6rem] ${
-                q.done
-                  ? "bg-state-solid text-abyss"
-                  : "border border-hairline text-text-low"
-              }`}
-            >
-              {q.done ? "✓" : ""}
-            </span>
-            <span
-              className={`text-[0.72rem] ${q.done ? "text-text-mid line-through" : "text-text-hi"}`}
-            >
-              {q.label}
-            </span>
-          </li>
-        ))}
-      </ul>
+      <div className="flex justify-center">
+        {TRAIN_POS ? <MiniBoard position={TRAIN_POS} size={116} /> : null}
+      </div>
+      <div className="mt-3 flex justify-center">
+        <span className="rounded-chip border border-gold/40 bg-gold/10 px-3 py-1 text-[0.62rem] font-semibold text-gold">
+          Your move — Caro-Kann, line 2
+        </span>
+      </div>
     </Screen>
   );
 }

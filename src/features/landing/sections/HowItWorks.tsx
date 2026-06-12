@@ -1,4 +1,5 @@
 import { Panel } from "../components/Panel";
+import { CTAButton } from "../components/CTAButton";
 import { MiniScreen } from "../components/MiniScreen";
 import { OrnamentalDivider } from "../components/OrnamentalDivider";
 import { Reveal } from "../components/Reveal";
@@ -59,6 +60,13 @@ export function HowItWorks() {
             </Reveal>
           ))}
         </ol>
+
+        {/* the journey ends on the one action that starts it */}
+        <Reveal index={3}>
+          <div className="mt-10 flex justify-center">
+            <CTAButton section="how" label="Take the Free Chess DNA Test" />
+          </div>
+        </Reveal>
       </div>
     </section>
   );

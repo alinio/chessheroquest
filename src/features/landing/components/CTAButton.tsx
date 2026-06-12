@@ -10,6 +10,7 @@ const EVENT_BY_SECTION: Record<CtaSection, LandingEvent> = {
   sticky: "sticky_cta_click",
   pain: "pain_section_cta_click",
   kingdoms: "kingdoms_cta_click",
+  how: "how_cta_click",
   final: "final_cta_click",
 };
 
