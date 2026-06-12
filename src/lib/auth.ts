@@ -27,7 +27,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!parsed.success) return null;
 
         const email = parsed.data.email.toLowerCase();
-        const rows = await db.select().from(users).where(eq(users.email, email)).limit(1);
+        // Explicit columns: a full-row select breaks the moment the Drizzle
+        // schema knows a column the database doesn't have yet (deploy-before-
+        // migrate) — login must never depend on schema drift.
+        const rows = await db
+          .select({ id: users.id, email: users.email, passwordHash: users.passwordHash, displayName: users.displayName })
+          .from(users)
+          .where(eq(users.email, email))
+          .limit(1);
         const user = rows[0];
 
         // Constant-time: always run scrypt (against a dummy hash if the user is

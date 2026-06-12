@@ -421,8 +421,39 @@ export interface AdminUserDetail {
 }
 
 export async function getUserDetail(id: string): Promise<AdminUserDetail | null> {
-  const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  // Explicit columns + guarded role: the fiche must render even before
+  // migration 0011 lands (deploy-before-migrate must never 500 the admin).
+  const [user] = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      displayName: users.displayName,
+      createdAt: users.createdAt,
+      plan: users.plan,
+      subscriptionStatus: users.subscriptionStatus,
+      streakCount: users.streakCount,
+      xp: users.xp,
+      eloGoal: users.eloGoal,
+      archetype: users.archetype,
+      lichessUsername: users.lichessUsername,
+      chesscomUsername: users.chesscomUsername,
+      consentMarketing: users.consentMarketing,
+      ageBand: users.ageBand,
+      consentAt: users.consentAt,
+      profilePublic: users.profilePublic,
+      updatedAt: users.updatedAt,
+    })
+    .from(users)
+    .where(eq(users.id, id))
+    .limit(1);
   if (!user) return null;
+  let role = "user";
+  try {
+    const [r] = await db.select({ role: users.role }).from(users).where(eq(users.id, id)).limit(1);
+    role = r?.role ?? "user";
+  } catch {
+    /* 0011 not applied yet — default role */
+  }
 
   const [stateRows, dnaRows, iqRows, masteryRows, achievementRows, eventRows] =
     await Promise.all([
@@ -502,7 +533,7 @@ export async function getUserDetail(id: string): Promise<AdminUserDetail | null>
       profilePublic: user.profilePublic,
       plan: user.plan,
       subscriptionStatus: user.subscriptionStatus,
-      role: user.role,
+      role,
       xp: user.xp,
       streakCount: user.streakCount,
       eloGoal: user.eloGoal,
@@ -536,7 +567,7 @@ export interface AdminActionTarget {
 
 export async function getActionTarget(id: string): Promise<AdminActionTarget | null> {
   const [u] = await db
-    .select({ id: users.id, email: users.email, role: users.role, plan: users.plan })
+    .select({ id: users.id, email: users.email, plan: users.plan })
     .from(users)
     .where(eq(users.id, id))
     .limit(1);
@@ -551,7 +582,7 @@ export async function getActionTarget(id: string): Promise<AdminActionTarget | n
   return {
     id: u.id,
     email: u.email,
-    role: u.role,
+    role: "user",
     usersPlan: u.plan,
     accountPlan: st?.plan ?? null,
     isPro: st?.isPro ?? false,
