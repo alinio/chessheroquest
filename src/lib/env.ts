@@ -30,6 +30,10 @@ const EnvSchema = z.object({
 
   // --- Monitoring ---
   SENTRY_DSN: z.string().min(1).optional(),
+
+  // --- Admin (Phase A fortress — LAW #7) ---
+  // Comma-separated allowlist of admin emails. DB role-based RBAC lands in Phase B.
+  ADMIN_EMAILS: z.string().min(1).optional(),
 });
 
 // Treat empty .env values ("KEY=") as absent so .optional() works as intended.
