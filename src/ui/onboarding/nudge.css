@@ -1,0 +1,82 @@
+/* Nudge — anchored one-phrase popover (target-experience-spec §B5).
+   Lives inside a position:relative anchor; max ONE visible at a time
+   (the host enforces the seal > IQ > streak > realm > XP priority).
+   Spring-in 160ms; plain fade under prefers-reduced-motion. */
+
+.chq-nudge-anchor { position: relative; display: inline-flex; }
+
+.chq-nudge {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 70;
+  width: min(264px, 78vw);
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(227, 178, 60, 0.45);
+  background: linear-gradient(180deg, #241d10, #15110a);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55), 0 0 18px rgba(227, 178, 60, 0.12);
+  text-align: left;
+  animation: chq-nudge-in 160ms cubic-bezier(0.2, 0.9, 0.35, 1.25) both;
+}
+/* arrow toward the anchor */
+.chq-nudge::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  right: 18px;
+  width: 9px;
+  height: 9px;
+  transform: rotate(45deg);
+  background: #241d10;
+  border-left: 1px solid rgba(227, 178, 60, 0.45);
+  border-top: 1px solid rgba(227, 178, 60, 0.45);
+}
+.chq-nudge p {
+  margin: 0;
+  font-family: var(--font-manrope), "Manrope", system-ui, sans-serif;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--color-text-hi, #f3eee2);
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: normal;
+}
+.chq-nudge .nd-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+.chq-nudge .nd-link {
+  font-family: var(--font-manrope), "Manrope", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-gold-bright, #f4ce6a);
+  text-decoration: none;
+}
+.chq-nudge .nd-gotit {
+  margin-left: auto;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(227, 178, 60, 0.5);
+  background: rgba(227, 178, 60, 0.1);
+  color: var(--color-gold-bright, #f4ce6a);
+  font-family: var(--font-manrope), "Manrope", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+@keyframes chq-nudge-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.94); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chq-nudge { animation: chq-nudge-fade 160ms ease both; }
+  @keyframes chq-nudge-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}

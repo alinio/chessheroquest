@@ -7,7 +7,7 @@
  */
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
@@ -16,6 +16,7 @@ import {
   IconFlame, IconMap2, IconChartLine, IconAward, IconShield,
   IconMap, IconLogout, IconSettings,
 } from "./icons";
+import { Nudge, nudgeSeen } from "@/src/ui/onboarding/Nudge";
 
 export type HubNav = "train" | "quest" | "insights" | "passport" | "profile";
 
@@ -57,6 +58,22 @@ export function AppShell({
 }) {
   const pathname = usePathname();
   const current = active ?? deriveActive(pathname);
+
+  // First-encounter nudges (spec §B5): ONE visible max, priority seal > IQ >
+  // streak. The seal slot is consumed by the full-screen SealCelebration; the
+  // IQ nudge fires the first time a non-null IQ is on screen, streak follows.
+  const [nudge, setNudge] = useState<"iq" | "streak" | null>(null);
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      if (iq != null && !nudgeSeen("iq")) {
+        setNudge("iq");
+      } else if (streak != null && streak >= 2 && !nudgeSeen("streak")) {
+        setNudge("streak");
+      }
+    }, 600);
+    return () => window.clearTimeout(t);
+  }, [iq, streak]);
+
   return (
     <div className="chq-hub">
       <div className="app">
@@ -97,13 +114,32 @@ export function AppShell({
             <div className="topbar-right">
               {/* Labeled chips — a chess player never has to guess a number. */}
               {streak != null && (
-                <span className="chip streak" title="Training streak — consecutive days trained">
-                  <IconFlame />{streak}<small>day streak</small>
+                <span className="chq-nudge-anchor">
+                  <span className="chip streak" title="Training streak — consecutive days trained">
+                    <IconFlame />{streak}<small>day streak</small>
+                  </span>
+                  {nudge === "streak" && (
+                    <Nudge
+                      concept="streak"
+                      text={`Day ${streak} of your streak — consecutive days trained. One session a day keeps the flame alive.`}
+                      onDismiss={() => setNudge(null)}
+                    />
+                  )}
                 </span>
               )}
               {iq != null && (
-                <span className="chip iq" title="Opening IQ (0–1000) — rises only when your real opening skill rises">
-                  {iq}<small>Opening IQ</small>
+                <span className="chq-nudge-anchor">
+                  <span className="chip iq" title="Opening IQ (0–1000) — rises only when your real opening skill rises">
+                    {iq}<small>Opening IQ</small>
+                  </span>
+                  {nudge === "iq" && (
+                    <Nudge
+                      concept="iq"
+                      text="Your Opening IQ. It only rises when your moves on the board get better — never for logging in."
+                      link={{ href: "/insights", label: "See the trend" }}
+                      onDismiss={() => setNudge(null)}
+                    />
+                  )}
                 </span>
               )}
               {heroAvatar && (
