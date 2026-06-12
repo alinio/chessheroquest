@@ -14,6 +14,7 @@ import { MiniBoard } from "@/src/ui/board/MiniBoard";
 import { generateDailyQuests, type Quest } from "@/src/domain/gamification/quests";
 import { xpProgress } from "@/src/domain/gamification/xp";
 import { HowItWorks } from "@/src/ui/onboarding/HowItWorks";
+import { XpNudgeAnchor } from "@/src/ui/onboarding/XpNudge";
 
 export interface TodayOpeningRef {
   /** STARTER_PATHS id — routes to /drill/[slug] and /train/[slug]/learn. */
@@ -112,9 +113,11 @@ export function TodayScreen({ data }: { data: TodayData }) {
 
       {/* thin HUD — streak + level only (the canonical IQ lives in the top bar) */}
       <div className="today-hud">
-        <span className="h">
-          Level <b>{level.level}</b> · {level.into}/{level.needed} XP
-        </span>
+        <XpNudgeAnchor xp={data.xp}>
+          <span className="h">
+            Level <b>{level.level}</b> · {level.into}/{level.needed} XP
+          </span>
+        </XpNudgeAnchor>
         <span className="sep" />
         <span className="h">{allClear ? "Review clear ✓" : `${data.dueDrills} due today`}</span>
       </div>

@@ -176,7 +176,13 @@ function TestRunner({ position, index, reduced, onAnswer }: { position: TestPosi
       </p>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <span style={{ ...eyebrow, color: "var(--chq-text-2)" }}>Position {index + 1} / {TEST_LENGTH}</span>
-        <span style={{ fontSize: 12, color: "var(--chq-text-muted)", fontVariantNumeric: "tabular-nums" }}>⏱ {fmt(elapsedSec)}</span>
+        <span
+          style={{ fontSize: 12, color: "var(--chq-text-muted)", fontVariantNumeric: "tabular-nums" }}
+          title="Untimed — the clock just measures your pace"
+          aria-label={`Untimed — the clock just measures your pace. Elapsed ${fmt(elapsedSec)}`}
+        >
+          ⏱ {fmt(elapsedSec)}
+        </span>
       </div>
       <ProgressBar value={index / TEST_LENGTH} height={4} ariaLabel={`Position ${index + 1} of ${TEST_LENGTH}`} />
 
@@ -285,6 +291,11 @@ export function DnaTestScreen() {
             <p style={{ ...eyebrow, fontSize: 10, color: "var(--chq-text-muted)" }}>
               Scale 0–1000 · opening theory + accuracy · rises only when your real skill does
             </p>
+            {result.openingIq >= 1000 && (
+              <p style={{ color: "var(--chq-text-2)", fontSize: 13, lineHeight: 1.6 }}>
+                8/8 — the short test can&apos;t find your ceiling. Your IQ is capped until you train.
+              </p>
+            )}
             <p style={{ color: "var(--chq-text-2)", fontSize: 13, lineHeight: 1.6 }}>
               {result.positionsAnswered} positions · strongest: <b style={{ color: "var(--chq-text-1)" }}>{result.strongestFamily}</b>
               {result.weakestFamily ? (

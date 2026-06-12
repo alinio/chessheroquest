@@ -176,6 +176,8 @@ export interface QuestNode {
   tabiyaFen?: string | null;
   side?: "white" | "black";
   lastMove?: { from: string; to: string } | null;
+  /** Preformatted conquest date ("Jun 12") — real achievement date, else null. */
+  conqueredAt?: string | null;
 }
 export interface QuestMapFixture {
   realm: RealmId;

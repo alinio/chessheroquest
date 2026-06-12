@@ -117,6 +117,13 @@
   100% { box-shadow: 0 0 0 10px rgba(241, 214, 128, 0); }
 }
 .chq-hub .chip.pulse { animation: chq-chip-pulse 0.6s ease-out 1; }
+/* Post-seal Passport arrival — the fresh seal stamps in once (StampArrival). */
+@keyframes chq-stamp-arrive {
+  0% { transform: scale(1.6); opacity: 0; }
+  60% { transform: scale(0.94); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.chq-hub .op.stamp-arrive .seal img { animation: chq-stamp-arrive 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: 0.45s; }
 .chq-hub .hero-av {
   width: 36px; height: 36px; border-radius: 50%; position: relative; flex-shrink: 0; overflow: visible;
   box-shadow: 0 0 0 2px var(--gold), 0 0 10px rgba(138, 123, 216, 0.4);

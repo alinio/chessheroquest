@@ -8,13 +8,14 @@
  * state. Full-bleed realm illustration, luminous realm-accent path, détouré
  * node medallions + the boss at the summit. Rendered inside AppShell.
  */
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import "@/src/ui/shell/hub.css";
 import { ASSETS, getNodeArt, getOpeningArt, PLACEHOLDER, type NodeState, type RealmId } from "@/src/lib/assets";
 import { PictureBg } from "@/src/ui/PictureBg";
 import { MiniBoard } from "@/src/ui/board/MiniBoard";
 import { learnHref } from "@/src/lib/opening-paths";
+import { Nudge, nudgeSeen } from "@/src/ui/onboarding/Nudge";
 import type { QuestMapFixture, QuestNode } from "@/src/dev/fixtures";
 
 const STATE_MEDALLION: Record<QuestNode["state"], NodeState> = {
@@ -80,6 +81,9 @@ function NodeDossier({
           ⚔ Learn the {node.name} →
         </Link>
       )}
+      {node.state === "conquered" && node.conqueredAt && (
+        <p className="d-meta">Conquered {node.conqueredAt}</p>
+      )}
       {node.state === "conquered" &&
         (node.pathId ? (
           <Link className="btn-ghost d-cta" href={`/drill/${node.pathId}`}>
@@ -101,6 +105,16 @@ export function QuestMapScreen({ quest }: { quest: QuestMapFixture }) {
   // The dossier opens on the ACTIVE node by default — the map greets you with
   // the position you're about to train, not a tooltip.
   const [openId, setOpenId] = useState<QuestNode["id"] | null>(quest.continueId);
+
+  // First arrival on the Quest map → the realm nudge (spec §B5: one nudge max;
+  // it yields to the higher-priority IQ nudge until that one is dismissed).
+  const [realmNudge, setRealmNudge] = useState(false);
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      if (!nudgeSeen("realm") && nudgeSeen("iq")) setRealmNudge(true);
+    }, 600);
+    return () => window.clearTimeout(t);
+  }, []);
   const points = [...quest.nodes.map((n) => `${n.x},${n.y}`), `${quest.bossX},${quest.bossY}`];
   const pathD = "M" + points.join(" L");
   const continueName = quest.nodes.find((n) => n.id === quest.continueId)?.name ?? "";
@@ -114,7 +128,16 @@ export function QuestMapScreen({ quest }: { quest: QuestMapFixture }) {
           <h2 className="serif">{quest.realmName}</h2>
           <div className="sub">{quest.realmSub}</div>
         </div>
-        <div className="qprogress"><b>{quest.conquered} / {quest.total}</b><span>conquered</span></div>
+        <span className="chq-nudge-anchor">
+          <div className="qprogress"><b>{quest.conquered} / {quest.total}</b><span>conquered</span></div>
+          {realmNudge && (
+            <Nudge
+              concept="realm"
+              text={`${quest.total} openings guard this realm. Conquer them node by node — seal all ${quest.total} and the Realm Boss appears.`}
+              onDismiss={() => setRealmNudge(false)}
+            />
+          )}
+        </span>
       </div>
 
       <div className="map-wrap" style={{ "--accent": REALM_ACCENT[quest.realm] } as CSSProperties}>

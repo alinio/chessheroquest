@@ -37,6 +37,8 @@ export function SealCelebration({
     try {
       window.localStorage.setItem(sealSeenKey(pathId), "1");
       window.localStorage.setItem("chq.nudge.seal.v1", "1");
+      // Arm the one-time Passport stamp arrival (scroll + scale-in over there).
+      window.sessionStorage.setItem("chq.stamp.pending.v1", pathId);
     } catch {
       /* storage unavailable — the celebration still shows this once */
     }

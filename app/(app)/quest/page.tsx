@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/src/lib/auth";
 import { getProgress } from "@/src/data/repos/progress";
 import { getOpeningMastery } from "@/src/data/repos/openings";
+import { getAchievements } from "@/src/data/repos/achievements";
 import { ARCHETYPE_REALM, ASSETS, OPENING_NAMES, REALM_NAMES, type OpeningId, type RealmId } from "@/src/lib/assets";
 import { OPENING_TO_PATH, OPENING_LINES } from "@/src/lib/opening-paths";
 import { KINGDOM_BOSSES, PATH_SIDE } from "@/src/domain/world/guardians";
@@ -57,7 +58,18 @@ export default async function QuestPage({
   const home = progress.archetype ? ARCHETYPE_REALM[progress.archetype] : "obsidian-court";
   const realm: RealmId = REALM_IDS.includes(realmParam as RealmId) ? (realmParam as RealmId) : home;
 
-  const mastery = await getOpeningMastery(session.user.id);
+  const [mastery, achievements] = await Promise.all([
+    getOpeningMastery(session.user.id),
+    getAchievements(session.user.id),
+  ]);
+  // Real conquest dates: the opening_conquered achievement per mainline path.
+  const conqueredDates = new Map(
+    achievements
+      .filter((a) => a.type === "opening_conquered")
+      .map((a) => [a.key, a.createdAt] as const),
+  );
+  const fmtDate = (d: Date) =>
+    d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   const openingIds = (Object.keys(ASSETS.openings) as OpeningId[]).filter(
     (id) => ASSETS.openings[id].realm === realm,
   );
@@ -91,6 +103,10 @@ export default async function QuestPage({
       tabiyaFen: path ? fenAfter(path, path.moves.length) : null,
       side: path ? (PATH_SIDE[path.id] ?? "white") : "white",
       lastMove: path ? moveSquaresAt(path, path.moves.length - 1) : null,
+      conqueredAt:
+        nodeState === "conquered" && pathId && conqueredDates.has(pathId)
+          ? fmtDate(conqueredDates.get(pathId)!)
+          : null,
     };
   });
 

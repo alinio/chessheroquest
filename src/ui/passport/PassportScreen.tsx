@@ -17,6 +17,7 @@ import {
 } from "@/src/lib/assets";
 import { MiniBoard } from "@/src/ui/board/MiniBoard";
 import { BarFill } from "@/src/ui/components/BarFill";
+import { StampArrival } from "./StampArrival";
 import type { MedallionState } from "@/src/domain/passport";
 
 const REALMS_ORDER: { id: RealmId; name: string; accent: string; archetype: Archetype }[] = [
@@ -95,12 +96,13 @@ function Medallion({ o, accent }: { o: PassportOpeningView; accent: string }) {
   );
 
   const cls = `op ${o.medallion}`;
+  const domId = `pp-med-${o.id}`; // StampArrival scrolls here post-seal
   return o.href ? (
-    <Link className={cls} href={o.href} style={{ "--accent": accent } as CSSProperties}>
+    <Link id={domId} className={cls} href={o.href} style={{ "--accent": accent } as CSSProperties}>
       {body}
     </Link>
   ) : (
-    <div className={cls} style={{ "--accent": accent } as CSSProperties}>
+    <div id={domId} className={cls} style={{ "--accent": accent } as CSSProperties}>
       {body}
     </div>
   );
@@ -119,6 +121,7 @@ export function PassportScreen({
 
   return (
     <main className="passport">
+      <StampArrival />
       {/* COVER HERO — the count + the rule of the game, in 3 steps */}
       <section className="cover-hero">
         <div className="cover-img">
