@@ -11,11 +11,11 @@ import { usePathname } from "next/navigation";
 const LIVE_SECTIONS = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/users", label: "Users" },
+  { href: "/admin/system", label: "System" },
 ] as const;
 
 // Greyed-out roadmap (ADMIN.md build order). Not links — nothing to reach yet.
 const FUTURE_SECTIONS = [
-  { label: "System", phase: "Phase B" },
   { label: "Finance", phase: "Phase C" },
   { label: "Analytics", phase: "Phase C" },
   { label: "Blog", phase: "Phase D" },

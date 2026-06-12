@@ -656,6 +656,50 @@ export async function deleteUserCascade(userId: string, emailRaw: string): Promi
 
 /* ------------------------------------------------------------------- audit */
 
+export const AUDIT_PAGE_SIZE = 100;
+
+export interface AdminAuditRow {
+  id: string;
+  createdAt: Date;
+  actorUserId: string | null;
+  /** Resolved from users by actor id; null when the actor was deleted/detached. */
+  actorEmail: string | null;
+  action: string;
+  targetType: string | null;
+  targetId: string | null;
+  metadata: unknown;
+}
+
+/** Last 100 audit rows (newest first), optionally filtered by exact action. */
+export async function listAuditLogs(action?: string): Promise<AdminAuditRow[]> {
+  const filter = action?.trim();
+  return db
+    .select({
+      id: auditLogs.id,
+      createdAt: auditLogs.createdAt,
+      actorUserId: auditLogs.actorUserId,
+      actorEmail: users.email,
+      action: auditLogs.action,
+      targetType: auditLogs.targetType,
+      targetId: auditLogs.targetId,
+      metadata: auditLogs.metadata,
+    })
+    .from(auditLogs)
+    .leftJoin(users, eq(auditLogs.actorUserId, users.id))
+    .where(filter ? eq(auditLogs.action, filter) : undefined)
+    .orderBy(desc(auditLogs.createdAt))
+    .limit(AUDIT_PAGE_SIZE);
+}
+
+/** Distinct action names present in the log — feeds the ?action= filter. */
+export async function listAuditActions(): Promise<string[]> {
+  const rows = await db
+    .selectDistinct({ action: auditLogs.action })
+    .from(auditLogs)
+    .orderBy(auditLogs.action);
+  return rows.map((r) => r.action);
+}
+
 export interface AdminAuditEntry {
   actorUserId: string;
   action: string;

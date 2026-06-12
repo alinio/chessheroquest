@@ -145,6 +145,15 @@
 .chq-admin .a-kv dt { color: var(--a-muted); }
 .chq-admin .a-kv dd { margin: 0; overflow-wrap: anywhere; }
 
+/* ---- audit JSON detail (System page) ---- */
+.chq-admin .a-json summary { cursor: pointer; font-size: 11.5px; color: var(--a-accent); }
+.chq-admin .a-json pre {
+  margin: 4px 0 2px; padding: 6px 8px; max-width: 420px; max-height: 220px; overflow: auto;
+  font-size: 11px; line-height: 1.4; white-space: pre-wrap; overflow-wrap: anywhere;
+  background: var(--a-bg); border: 1px solid var(--a-line-soft); border-radius: 6px;
+  color: var(--a-muted);
+}
+
 /* ---- Phase-B actions card ---- */
 .chq-admin .a-action-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin: 0 0 6px; }
 .chq-admin .a-action-label { font-size: 12px; color: var(--a-muted); }
