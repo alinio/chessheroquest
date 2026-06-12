@@ -11,7 +11,7 @@ import {
   getArchetypeArt, getOpeningArt, getRankInsignia, PLACEHOLDER, type Archetype, type OpeningId,
 } from "@/src/lib/assets";
 import type { DnaResult } from "@/src/domain/dna/types";
-import { DnaCard, ARCHETYPE_META } from "@/src/ui/screens/DnaCard";
+import { DnaCard, archetypeMeta } from "@/src/ui/screens/DnaCard";
 import { ShareButton } from "@/src/ui/ShareButton";
 import { RoadGoalPicker } from "@/src/ui/RoadGoalPicker";
 import { SignOutButton } from "@/src/ui/SignOutButton";
@@ -83,7 +83,7 @@ export function ProfileScreen({ data }: { data: ProfileData }) {
             {data.dominantTitle ? (
               <b className="pf-title">★ {data.dominantTitle}</b>
             ) : (
-              <b className="pf-title">{ARCHETYPE_META[data.archetype].label}</b>
+              <b className="pf-title">{archetypeMeta(data.archetype).label}</b>
             )}{" "}
             · joined {data.joined}
           </p>
@@ -163,7 +163,7 @@ export function ProfileScreen({ data }: { data: ProfileData }) {
           <DnaCard result={data.dna} />
           <div className="pf-actions">
             <ShareButton
-              text={`My Chess DNA: ${ARCHETYPE_META[data.dna.archetype].label} · Opening IQ ${data.dna.initialIq}. Discover yours →`}
+              text={`My Chess DNA: ${archetypeMeta(data.dna.archetype).label} · Opening IQ ${data.dna.initialIq}. Discover yours →`}
             />
             <Link className="btn-ghost" href="/dna-test">Re-take the test</Link>
           </div>

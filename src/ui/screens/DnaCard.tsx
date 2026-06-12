@@ -11,6 +11,11 @@ interface ArchetypeMeta {
 }
 
 /** Display metadata for each DNA tribe (master-vision §9 / DESIGN.md archetype colors). */
+const FALLBACK_META: ArchetypeMeta = { label: "Hero", tagline: "", colorVar: "var(--color-strategist)" };
+/** Safe lookup — stored archetype strings must never crash a page. */
+export function archetypeMeta(key: string | null | undefined): ArchetypeMeta {
+  return (key && ARCHETYPE_META[key as Archetype]) || FALLBACK_META;
+}
 export const ARCHETYPE_META: Record<Archetype, ArchetypeMeta> = {
   warrior: { label: "Warrior", tagline: "Attack relentlessly", colorVar: "var(--color-warrior)" },
   strategist: { label: "Strategist", tagline: "Outmaneuver, then crush", colorVar: "var(--color-strategist)" },
@@ -24,7 +29,7 @@ export const ARCHETYPE_META: Record<Archetype, ArchetypeMeta> = {
  * color, the Opening IQ rendered as treasure. Built to be screenshot-shared.
  */
 export function DnaCard({ result }: { result: DnaResult }) {
-  const meta = ARCHETYPE_META[result.archetype];
+  const meta = archetypeMeta(result.archetype);
   const crest: CSSProperties = { backgroundColor: meta.colorVar };
 
   return (
@@ -66,13 +71,13 @@ export function DnaCard({ result }: { result: DnaResult }) {
         <div className="bg-raised rounded-card p-3">
           <dt className="text-text-low text-xs">Strength</dt>
           <dd className="text-text-hi mt-0.5 font-medium">
-            {ARCHETYPE_META[result.strongestArchetype].label}
+            {archetypeMeta(result.strongestArchetype).label}
           </dd>
         </div>
         <div className="bg-raised rounded-card p-3">
           <dt className="text-text-low text-xs">Train next</dt>
           <dd className="text-text-hi mt-0.5 font-medium">
-            {ARCHETYPE_META[result.weakestArchetype].label}
+            {archetypeMeta(result.weakestArchetype).label}
           </dd>
         </div>
       </dl>
