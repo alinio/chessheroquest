@@ -40,7 +40,7 @@ export default async function AdminLayout({
         <div className="a-side-foot">
           {admin.email}
           <br />
-          Phase A — env allowlist. DB roles + 2FA in Phase B.
+          Phase B — env allowlist + DB roles. 2FA later.
         </div>
       </aside>
       <main className="a-main">{children}</main>

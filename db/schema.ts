@@ -8,6 +8,7 @@
  *  - The data moat (§30) + ARCHITECTURE "instrument from day 1": `training_events`
  *    logs every attempt. This raw signal cannot be reconstructed retroactively.
  */
+import { sql } from "drizzle-orm";
 import {
   pgTable,
   pgEnum,
@@ -22,6 +23,7 @@ import {
   jsonb,
   index,
   uniqueIndex,
+  check,
 } from "drizzle-orm/pg-core";
 
 /* ------------------------------------------------------------------ enums */
@@ -96,42 +98,50 @@ export const achievementTypeEnum = pgEnum("achievement_type", [
 
 /* ------------------------------------------------------------------ users */
 
-export const users = pgTable("users", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  email: varchar("email", { length: 320 }).notNull().unique(),
-  passwordHash: varchar("password_hash", { length: 255 }),
-  displayName: varchar("display_name", { length: 64 }),
-  archetype: archetypeEnum("archetype"), // set by the DNA Test
+export const users = pgTable(
+  "users",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    email: varchar("email", { length: 320 }).notNull().unique(),
+    passwordHash: varchar("password_hash", { length: 255 }),
+    displayName: varchar("display_name", { length: 64 }),
+    archetype: archetypeEnum("archetype"), // set by the DNA Test
 
-  // LAW #5 — minor safety. Capture at signup; do not backfill later.
-  birthYear: integer("birth_year"),
-  ageBand: ageBandEnum("age_band"),
-  consentMarketing: boolean("consent_marketing").notNull().default(false),
-  profilePublic: boolean("profile_public").notNull().default(false), // private by default
-  consentAt: timestamp("consent_at", { withTimezone: true }),
+    // LAW #5 — minor safety. Capture at signup; do not backfill later.
+    birthYear: integer("birth_year"),
+    ageBand: ageBandEnum("age_band"),
+    consentMarketing: boolean("consent_marketing").notNull().default(false),
+    profilePublic: boolean("profile_public").notNull().default(false), // private by default
+    consentAt: timestamp("consent_at", { withTimezone: true }),
 
-  // Billing (Paddle). Plan/status mirror the verified webhook state.
-  plan: planEnum("plan").notNull().default("free"),
-  subscriptionStatus: subscriptionStatusEnum("subscription_status")
-    .notNull()
-    .default("none"),
-  paddleCustomerId: varchar("paddle_customer_id", { length: 64 }),
-  paddleSubscriptionId: varchar("paddle_subscription_id", { length: 64 }),
+    // Billing (Paddle). Plan/status mirror the verified webhook state.
+    plan: planEnum("plan").notNull().default("free"),
+    subscriptionStatus: subscriptionStatusEnum("subscription_status")
+      .notNull()
+      .default("none"),
+    paddleCustomerId: varchar("paddle_customer_id", { length: 64 }),
+    paddleSubscriptionId: varchar("paddle_subscription_id", { length: 64 }),
 
-  // Engagement (daily loop). Streak day index = floor(epochMs / 86_400_000).
-  xp: integer("xp").notNull().default(0),
-  streakCount: integer("streak_count").notNull().default(0),
-  streakLastActiveDay: integer("streak_last_active_day"),
-  // Road to Elo goal (master-vision §5): 1000 | 1200 | 1500 | 1800.
-  eloGoal: integer("elo_goal").notNull().default(1200),
+    // Engagement (daily loop). Streak day index = floor(epochMs / 86_400_000).
+    xp: integer("xp").notNull().default(0),
+    streakCount: integer("streak_count").notNull().default(0),
+    streakLastActiveDay: integer("streak_last_active_day"),
+    // Road to Elo goal (master-vision §5): 1000 | 1200 | 1500 | 1800.
+    eloGoal: integer("elo_goal").notNull().default(1200),
 
-  // Linked platforms (game sync — public usernames only, re-fetched on demand).
-  lichessUsername: varchar("lichess_username", { length: 64 }),
-  chesscomUsername: varchar("chesscom_username", { length: 64 }),
+    // Linked platforms (game sync — public usernames only, re-fetched on demand).
+    lichessUsername: varchar("lichess_username", { length: 64 }),
+    chesscomUsername: varchar("chesscom_username", { length: 64 }),
 
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-});
+    // LAW #7 — back-office RBAC (Phase B). 'user' | 'admin' (CHECK below). Granting
+    // 'admin' is reserved to ADMIN_EMAILS (env allowlist) admins — anti-escalation.
+    role: text("role").notNull().default("user"),
+
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [check("users_role_check", sql`${t.role} in ('user', 'admin')`)],
+);
 
 /* ----------------------------------------------- repertoires & opening tree */
 

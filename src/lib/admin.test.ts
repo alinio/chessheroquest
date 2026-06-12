@@ -1,17 +1,36 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
 /**
- * Admin fortress (Phase A) — allowlist parsing + the requireAdmin guard.
- * env/auth/navigation are mocked: env.ts is server-only (throws under jsdom)
- * and auth() needs a live session.
+ * Admin fortress (Phase B) — allowlist parsing + the requireAdmin guard
+ * (env allowlist OR users.role = 'admin'). env/auth/db/navigation are mocked:
+ * env.ts is server-only (throws under jsdom), auth() needs a live session and
+ * db needs a DATABASE_URL.
  */
 const mocks = vi.hoisted(() => ({
   env: { ADMIN_EMAILS: undefined as string | undefined },
   auth: vi.fn(),
+  /** Rows returned by the role lookup (db.select…limit). */
+  roleRows: [] as { role: string }[],
+  /** Simulate "migration 0011 not applied" (column missing → query throws). */
+  dbThrows: false,
 }));
 
 vi.mock("@/src/lib/env", () => ({ env: mocks.env }));
 vi.mock("@/src/lib/auth", () => ({ auth: mocks.auth }));
+vi.mock("@/src/data/db", () => ({
+  db: {
+    select: () => ({
+      from: () => ({
+        where: () => ({
+          limit: async () => {
+            if (mocks.dbThrows) throw new Error('column "role" does not exist');
+            return mocks.roleRows;
+          },
+        }),
+      }),
+    }),
+  },
+}));
 vi.mock("next/navigation", () => ({
   notFound: vi.fn(() => {
     throw new Error("NEXT_NOT_FOUND");
@@ -68,6 +87,8 @@ describe("requireAdmin", () => {
   beforeEach(() => {
     mocks.env.ADMIN_EMAILS = "root@chq.io";
     mocks.auth.mockReset();
+    mocks.roleRows = [];
+    mocks.dbThrows = false;
   });
 
   it("404s when there is no session (route stays invisible)", async () => {
@@ -77,6 +98,7 @@ describe("requireAdmin", () => {
 
   it("404s for a signed-in non-admin (no talking 403)", async () => {
     mocks.auth.mockResolvedValue({ user: { id: "u1", email: "player@chq.io" } });
+    mocks.roleRows = [{ role: "user" }];
     await expect(requireAdmin()).rejects.toThrow("NEXT_NOT_FOUND");
   });
 
@@ -85,6 +107,29 @@ describe("requireAdmin", () => {
     await expect(requireAdmin()).resolves.toEqual({
       userId: "u1",
       email: "root@chq.io",
+      viaAllowlist: true,
     });
+  });
+
+  it("grants access via users.role = 'admin' (viaAllowlist=false)", async () => {
+    mocks.auth.mockResolvedValue({ user: { id: "u2", email: "ops@chq.io" } });
+    mocks.roleRows = [{ role: "admin" }];
+    await expect(requireAdmin()).resolves.toEqual({
+      userId: "u2",
+      email: "ops@chq.io",
+      viaAllowlist: false,
+    });
+  });
+
+  it("allowlist keeps working even when the role read throws (migration not applied)", async () => {
+    mocks.auth.mockResolvedValue({ user: { id: "u1", email: "root@chq.io" } });
+    mocks.dbThrows = true;
+    await expect(requireAdmin()).resolves.toMatchObject({ viaAllowlist: true });
+  });
+
+  it("404s a non-allowlisted user when the role read throws (fail closed)", async () => {
+    mocks.auth.mockResolvedValue({ user: { id: "u2", email: "ops@chq.io" } });
+    mocks.dbThrows = true;
+    await expect(requireAdmin()).rejects.toThrow("NEXT_NOT_FOUND");
   });
 });
