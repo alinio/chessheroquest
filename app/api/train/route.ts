@@ -6,9 +6,13 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/src/lib/auth";
 import { recordTraining } from "@/src/data/repos/stats";
+import { getOpeningMastery } from "@/src/data/repos/openings";
 
 const BodySchema = z.object({
   mode: z.enum(["learn", "drill", "review", "sparring", "dna_test"]),
+  /** Curated path the session trained — when present, the response carries the
+      line's POST-session mastery (drives the inline GOLD celebration). */
+  pathId: z.string().min(1).optional(),
   attempts: z
     .array(
       z.object({
@@ -46,5 +50,13 @@ export async function POST(request: Request) {
     parsed.data.mode,
     parsed.data.attempts,
   );
-  return NextResponse.json({ ok: true, ...outcome });
+
+  // Real post-session mastery of the trained line (never computed client-side).
+  let mastery: { state: string; studied: number; total: number } | null = null;
+  if (parsed.data.pathId) {
+    const m = (await getOpeningMastery(session.user.id))[parsed.data.pathId];
+    if (m) mastery = { state: m.state, studied: m.studied, total: m.total };
+  }
+
+  return NextResponse.json({ ok: true, ...outcome, mastery });
 }

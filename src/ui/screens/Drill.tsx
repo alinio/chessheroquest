@@ -8,7 +8,9 @@ import { Board } from "@/src/ui/board/Board";
 import { ModeChip } from "@/src/ui/board/ModeChip";
 import { NotationStrip } from "@/src/ui/board/NotationStrip";
 import { CoachSheet } from "@/src/ui/screens/CoachSheet";
+import { GoldLineCard } from "@/src/ui/celebrations/GoldLineCard";
 import type { CuratedPath } from "@/src/domain/repertoire/types";
+import type { MasteryState } from "@/src/domain/mastery";
 import { fenAfter, expectedMoveAt } from "@/src/domain/repertoire/line";
 import { PATH_SIDE } from "@/src/domain/world/guardians";
 import { newCard, reviewCard } from "@/src/domain/srs/fsrs";
@@ -56,7 +58,20 @@ const SUCCESS_BEAT_MS = 1100;
  * FSRS (LAW #6) — the resulting review interval is surfaced so the hidden engine
  * is verifiable. Cards are session-local for now (persistence lands with auth).
  */
-export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) {
+export function Drill({
+  path,
+  userId,
+  preMastery = null,
+  openingName,
+}: {
+  path: CuratedPath;
+  userId?: string;
+  /** REAL mastery state of this line before the session (server-provided) —
+      with the post-session state from /api/train it detects the gold moment. */
+  preMastery?: MasteryState | null;
+  /** Canonical opening display name for the celebration copy. */
+  openingName?: string;
+}) {
   const items = useMemo(() => buildItems(path), [path]);
   // The board NEVER flips mid-drill: you train the line from YOUR side of the
   // repertoire (PATH_SIDE), exactly as you'll sit at the real board.
@@ -74,6 +89,12 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
     text: null,
   });
   const questStartRef = useRef(0);
+  /** Post-session mastery of the line (real, from /api/train). */
+  const [postMastery, setPostMastery] = useState<{
+    state: MasteryState;
+    studied: number;
+    total: number;
+  } | null>(null);
 
   const current = items[index];
 
@@ -97,13 +118,19 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
             headers: { "content-type": "application/json" },
             body: JSON.stringify({
               mode: "drill",
+              pathId: path.id,
               attempts: finalResults.map((r) => ({
                 correct: r.correct,
                 latencyMs: r.latencyMs,
                 fen: r.fen,
               })),
             }),
-          });
+          })
+            .then((r) => (r.ok ? r.json() : null))
+            .then((d) => {
+              if (d?.mastery?.state) setPostMastery(d.mastery);
+            })
+            .catch(() => {});
         }
         return;
       }
@@ -111,7 +138,7 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
       setBoardFen(nextItem.fen);
       setFeedback("idle");
     },
-    [index, items, results, userId],
+    [index, items, results, userId, path.id],
   );
 
   const onPieceDrop = useCallback(
@@ -191,12 +218,22 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
     setBoardFen(items[0]?.fen ?? "");
     setPending(null);
     setCoach({ open: false, loading: false, text: null });
+    setPostMastery(null);
   }, [items]);
 
   if (done) {
     const correct = results.filter((r) => r.correct).length;
+    // The line turned gold DURING this session (real states, both server-computed).
+    const turnedGold = preMastery !== "gold" && postMastery?.state === "gold";
     return (
       <section className="flex flex-1 flex-col gap-5">
+        {turnedGold && postMastery && (
+          <GoldLineCard
+            openingName={openingName ?? path.name}
+            positions={postMastery.total}
+            challengeHref={`/boss/${path.id}`}
+          />
+        )}
         <header className="text-center">
           <p className="font-display text-gold text-xs uppercase tracking-[0.3em]">
             Drill complete
@@ -225,13 +262,16 @@ export function Drill({ path, userId }: { path: CuratedPath; userId?: string }) 
         </p>
 
         {/* One full pass unlocks the Guardian (gating: a complete drill pass,
-            not gold — spec §C). The duel is the next step; re-drilling stays. */}
-        <Link
-          href={`/boss/${path.id}`}
-          className="rounded-chip bg-gold text-abyss mx-auto flex min-h-[48px] items-center px-8 font-semibold"
-        >
-          Guardian unlocked — challenge him →
-        </Link>
+            not gold — spec §C). The duel is the next step; re-drilling stays.
+            When the GOLD card is up, ITS CTA owns the challenge — no doubles. */}
+        {!turnedGold && (
+          <Link
+            href={`/boss/${path.id}`}
+            className="rounded-chip bg-gold text-abyss mx-auto flex min-h-[48px] items-center px-8 font-semibold"
+          >
+            Guardian unlocked — challenge him →
+          </Link>
+        )}
         <button
           type="button"
           onClick={restart}

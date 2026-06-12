@@ -23,6 +23,7 @@ import type { CuratedPath } from "@/src/domain/repertoire/types";
 import type { MasteryState } from "@/src/domain/mastery";
 import { fenAfter } from "@/src/domain/repertoire/line";
 import { XP_REWARDS } from "@/src/domain/gamification/xp";
+import { SealCelebration, sealSeenKey } from "@/src/ui/celebrations/SealCelebration";
 
 const REALM_ACCENT: Record<RealmId, { accent: string; bright: string }> = {
   "ember-marches": { accent: "#e0413b", bright: "#ff6a52" },
@@ -45,6 +46,8 @@ export function GuardianDuel({
   openingName,
   userId,
   masteryState = null,
+  sealedBefore = null,
+  totalSeals = 20,
 }: {
   path: CuratedPath;
   guardian: Guardian;
@@ -53,6 +56,10 @@ export function GuardianDuel({
   userId?: string;
   /** Real mastery of this line (drives the single contextual victory CTA). */
   masteryState?: MasteryState | null;
+  /** Seals already stamped (gold + Guardian beaten) BEFORE this duel — the
+      one-time SEAL celebration shows sealedBefore + 1 of totalSeals. */
+  sealedBefore?: number | null;
+  totalSeals?: number;
 }) {
   const side = PATH_SIDE[path.id] ?? "white";
   const allowed = DIFFICULTY.medium.mistakesAllowed;
@@ -71,6 +78,8 @@ export function GuardianDuel({
   const attemptsRef = useRef<Attempt[]>([]);
   const turnStartRef = useRef(0);
   const postedRef = useRef(false);
+  /** One-time full-screen SEAL celebration (victory at gold mastery). */
+  const [sealFx, setSealFx] = useState(false);
 
   const isPlayersPly = useCallback(
     (p: number) => (p % 2 === 0 ? "white" : "black") === side,
@@ -96,6 +105,20 @@ export function GuardianDuel({
     }, 650);
     return () => window.clearTimeout(t);
   }, [phase, ply, path, isPlayersPly]);
+
+  // Victory at gold = the seal moment. Full-screen, ONCE per opening — a
+  // replayed duel (or a refresh) never replays it (localStorage guard).
+  useEffect(() => {
+    if (phase !== "won" || masteryState !== "gold") return;
+    try {
+      if (window.localStorage.getItem(sealSeenKey(path.id))) return;
+    } catch {
+      /* storage unavailable → still celebrate this once */
+    }
+    // A short beat: the victory screen lands, then the stamp comes down.
+    const t = window.setTimeout(() => setSealFx(true), 550);
+    return () => window.clearTimeout(t);
+  }, [phase, masteryState, path.id]);
 
   // Victory: persist the sparring session + Guardian bonus (signed-in players).
   useEffect(() => {
@@ -250,7 +273,11 @@ export function GuardianDuel({
             <img className="win-seal" src={ASSETS.passport.stampMastered} alt="" />
             <p className="desc">
               The <b style={{ color: "var(--gold-bright, #f1d680)" }}>{openingName}</b> bends the knee.
-              {userId ? ` +${XP_REWARDS.bossDefeated} XP — drill it to gold to stamp the seal in your Passport.` : " Sign in to record your victories."}
+              {userId
+                ? masteryState === "gold"
+                  ? ` +${XP_REWARDS.bossDefeated} XP — the seal is stamped in your Passport.`
+                  : ` +${XP_REWARDS.bossDefeated} XP — drill it to gold to stamp the seal in your Passport.`
+                : " Sign in to record your victories."}
             </p>
             {/* The full line you just proved — any slip marked in red. */}
             <div className="win-sheet">
@@ -269,7 +296,10 @@ export function GuardianDuel({
             {/* ONE contextual CTA: the next real step for THIS line. */}
             <div className="dv-actions">
               {masteryState === "gold" ? (
-                <Link className="btn-gold" href="/quest">Back to the realm →</Link>
+                <>
+                  <Link className="btn-gold" href="/passport">See the seal →</Link>
+                  <Link className="retreat" href="/quest">Back to the realm</Link>
+                </>
               ) : (
                 <>
                   <Link className="btn-gold" href={`/drill/${path.id}`}>Drill to gold →</Link>
@@ -278,6 +308,16 @@ export function GuardianDuel({
               )}
             </div>
           </div>
+        )}
+
+        {sealFx && (
+          <SealCelebration
+            pathId={path.id}
+            openingName={openingName}
+            sealCount={(sealedBefore ?? 0) + 1}
+            totalSeals={totalSeals}
+            onContinue={() => setSealFx(false)}
+          />
         )}
       </div>
     </div>

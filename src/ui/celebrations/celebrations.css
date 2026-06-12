@@ -1,0 +1,153 @@
+/* Celebrations (target-experience-spec §B6) — three tiers; these are the P0
+   two: the inline GOLD card (a line reaches gold during a session) and the
+   one-time full-screen SEAL (Guardian beaten at gold mastery). Every
+   celebration carries the real number that triggered it. No generic confetti —
+   stamp/flame/banner only. Self-contained values (DESIGN.md token fallbacks). */
+
+/* ---- Inline GOLD card (drill recap) ---- */
+.chq-goldcard {
+  border: 1px solid rgba(227, 178, 60, 0.55);
+  border-radius: 16px;
+  padding: 20px 18px;
+  text-align: center;
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(227, 178, 60, 0.16), transparent 60%),
+    linear-gradient(180deg, rgba(43, 33, 12, 0.85), rgba(16, 13, 8, 0.92));
+  box-shadow: 0 0 28px rgba(227, 178, 60, 0.18), 0 14px 34px rgba(0, 0, 0, 0.45);
+  animation: chq-gold-rise 0.5s ease both;
+}
+.chq-goldcard .gc-eyebrow {
+  font-family: var(--font-manrope), "Manrope", system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(227, 178, 60, 0.8);
+  margin: 0 0 6px;
+}
+.chq-goldcard .gc-title {
+  font-family: var(--font-cinzel), "Cinzel", serif;
+  font-size: 21px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-gold-bright, #f4ce6a);
+  text-shadow: 0 0 22px rgba(227, 178, 60, 0.45);
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+.chq-goldcard .gc-sub {
+  font-family: var(--font-manrope), "Manrope", system-ui, sans-serif;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--color-text-mid, #b9b6ac);
+  margin: 0 0 14px;
+}
+.chq-goldcard .gc-sub b { color: var(--color-text-hi, #f3eee2); }
+.chq-goldcard .gc-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 26px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--color-gold-bright, #f4ce6a), var(--color-gold, #e3b23c));
+  color: #1a1407;
+  font-family: var(--font-manrope), "Manrope", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(227, 178, 60, 0.35);
+}
+@keyframes chq-gold-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Full-screen SEAL (one-time, Guardian victory at gold) ---- */
+.chq-sealfx {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(90% 70% at 50% 40%, rgba(58, 44, 14, 0.55), transparent 70%),
+    rgba(8, 6, 10, 0.94);
+  animation: chq-seal-fade 0.3s ease both;
+}
+.chq-sealfx .sfx-inner { max-width: 460px; text-align: center; }
+.chq-sealfx .sfx-stamp {
+  width: 168px;
+  height: 168px;
+  object-fit: contain;
+  margin: 0 auto 18px;
+  display: block;
+  filter: drop-shadow(0 0 28px rgba(241, 214, 128, 0.55));
+  /* the stamp lands: 1.6 → 1 over 600ms (spec §B6) */
+  animation: chq-stamp 0.6s cubic-bezier(0.2, 0.85, 0.3, 1.15) both;
+}
+.chq-sealfx .sfx-eyebrow {
+  font-family: var(--font-manrope), "Manrope", system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(227, 178, 60, 0.8);
+  margin: 0 0 8px;
+}
+.chq-sealfx .sfx-title {
+  font-family: var(--font-cinzel), "Cinzel", serif;
+  font-size: 30px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-gold-bright, #f4ce6a);
+  text-shadow: 0 0 30px rgba(227, 178, 60, 0.5);
+  margin: 0 0 12px;
+  line-height: 1.15;
+}
+.chq-sealfx .sfx-steps {
+  font-family: var(--font-manrope), "Manrope", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-mid, #b9b6ac);
+  margin: 0 0 8px;
+}
+.chq-sealfx .sfx-count {
+  font-family: var(--font-cinzel), "Cinzel", serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-gold, #e3b23c);
+  margin: 0 0 20px;
+}
+.chq-sealfx .sfx-continue {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 34px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(180deg, var(--color-gold-bright, #f4ce6a), var(--color-gold, #e3b23c));
+  color: #1a1407;
+  font-family: var(--font-manrope), "Manrope", system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+}
+@keyframes chq-stamp {
+  from { opacity: 0; transform: scale(1.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes chq-seal-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chq-goldcard { animation: none; }
+  .chq-sealfx { animation: chq-seal-fade 0.2s ease both; }
+  .chq-sealfx .sfx-stamp { animation: chq-seal-fade 0.2s ease both; }
+}

@@ -7,10 +7,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { auth } from "@/src/lib/auth";
 import { getOpeningMastery } from "@/src/data/repos/openings";
+import { getGuardianVictories } from "@/src/data/repos/achievements";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 import { GUARDIANS } from "@/src/domain/world/guardians";
-import { PATH_TO_OPENING } from "@/src/lib/opening-paths";
-import { ASSETS, OPENING_NAMES } from "@/src/lib/assets";
+import { OPENING_TO_PATH, PATH_TO_OPENING } from "@/src/lib/opening-paths";
+import { ASSETS, OPENING_NAMES, type OpeningId } from "@/src/lib/assets";
 import { GuardianDuel } from "@/src/ui/boss/GuardianDuel";
 
 export const metadata: Metadata = {
@@ -33,10 +34,22 @@ export default async function GuardianDuelPage({
 
   const session = await auth();
   // Real mastery of this line → the single contextual victory CTA
-  // (not gold yet → "Drill to gold", gold → next step).
-  const masteryState = session?.user?.id
-    ? ((await getOpeningMastery(session.user.id))[path.id]?.state ?? null)
-    : null;
+  // (not gold yet → "Drill to gold", gold → the seal moment), plus the
+  // current seal count for the one-time SEAL celebration.
+  let masteryState = null;
+  let sealedBefore: number | null = null;
+  const ids = Object.keys(ASSETS.openings) as OpeningId[];
+  if (session?.user?.id) {
+    const [mastery, wins] = await Promise.all([
+      getOpeningMastery(session.user.id),
+      getGuardianVictories(session.user.id),
+    ]);
+    masteryState = mastery[path.id]?.state ?? null;
+    sealedBefore = ids.filter((id) => {
+      const pid = OPENING_TO_PATH[id];
+      return pid && mastery[pid]?.state === "gold" && Boolean(wins[pid]);
+    }).length;
+  }
 
   return (
     <GuardianDuel
@@ -46,6 +59,8 @@ export default async function GuardianDuelPage({
       openingName={OPENING_NAMES[openingId]}
       userId={session?.user?.id}
       masteryState={masteryState}
+      sealedBefore={sealedBefore}
+      totalSeals={ids.length}
     />
   );
 }
