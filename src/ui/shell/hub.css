@@ -611,6 +611,9 @@
 .chq-hub .perf-row .wr.up { color: #6fd89a; }
 .chq-hub .perf-row .wr.down { color: #e0726b; }
 .chq-hub .perf-row .wr.flat { color: var(--muted); }
+.chq-hub .fixfirst { display: flex; align-items: center; gap: 14px; margin-top: 12px; padding: 12px; border: 1px solid var(--line-soft); border-radius: 14px; background: rgba(255, 255, 255, 0.02); }
+.chq-hub .fixfirst .chq-miniboard { flex-shrink: 0; }
+.chq-hub .fixfirst .ff-side { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
 .chq-hub .weak-row { margin-top: 12px; }
 .chq-hub .weak-row .wl { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--parchment); margin-bottom: 5px; }
 .chq-hub .weak-row .wl span { color: var(--muted); }

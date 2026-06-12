@@ -11,7 +11,12 @@ import { getTrainingStats } from "@/src/data/repos/stats";
 import { getOpeningMastery } from "@/src/data/repos/openings";
 import { roadProgress, projectedEloGain, type EloGoal, ELO_GOALS } from "@/src/domain/gamification/road";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
-import { InsightsScreen, type InsightsData, type InsightsWeakness } from "@/src/ui/insights/InsightsScreen";
+import { fenAfter, moveSquaresAt } from "@/src/domain/repertoire/line";
+import { PATH_SIDE } from "@/src/domain/world/guardians";
+import { toOpeningFamily } from "@/src/domain/games/openingFamily";
+import { PATH_TO_OPENING } from "@/src/lib/opening-paths";
+import { OPENING_NAMES } from "@/src/lib/assets";
+import { InsightsScreen, type FixFirstBoard, type InsightsData, type InsightsWeakness } from "@/src/ui/insights/InsightsScreen";
 import { EmptyKingdom } from "@/src/ui/shell/EmptyKingdom";
 
 const STATE_ORDER = { leak: 0, review: 1, solid: 2, gold: 3 } as const;
@@ -42,13 +47,36 @@ export default async function InsightsPage() {
     : 1200;
 
   // Weakest = started openings with the lowest mastery (leaks first).
-  const weaknesses: InsightsWeakness[] = STARTER_PATHS
-    .map((p) => ({ name: p.name, m: mastery[p.id] }))
-    .filter((x): x is { name: string; m: NonNullable<typeof x.m> } => Boolean(x.m && x.m.studied > 0))
+  const weakest = STARTER_PATHS
+    .map((p) => ({ path: p, m: mastery[p.id] }))
+    .filter((x): x is { path: (typeof STARTER_PATHS)[number]; m: NonNullable<typeof x.m> } => Boolean(x.m && x.m.studied > 0))
     .sort((a, b) => STATE_ORDER[a.m.state] - STATE_ORDER[b.m.state] || a.m.studied / a.m.total - b.m.studied / b.m.total)
     .filter((x) => x.m.state === "leak" || x.m.state === "review")
-    .slice(0, 3)
-    .map((x) => ({ name: x.name, state: x.m.state, studied: x.m.studied, total: x.m.total }));
+    .slice(0, 3);
+
+  const weaknesses: InsightsWeakness[] = weakest.map((x) => ({
+    name: x.path.name,
+    state: x.m.state,
+    studied: x.m.studied,
+    total: x.m.total,
+  }));
+
+  // #1 leak's critical position: the line's REAL tabiya (fenAfter, LAW #2).
+  // The synced-games cross-reference happens client-side (FixFirstGames) — the
+  // sync summary lives in the browser store; we only ship the family key.
+  let fixFirst: FixFirstBoard | null = null;
+  const top = weakest[0];
+  if (top && top.path.moves.length > 0) {
+    const openingId = PATH_TO_OPENING[top.path.id];
+    fixFirst = {
+      fen: fenAfter(top.path, top.path.moves.length),
+      orientation: PATH_SIDE[top.path.id] ?? "white",
+      lastMove: moveSquaresAt(top.path, top.path.moves.length - 1),
+      slug: top.path.id,
+      family: toOpeningFamily(openingId ? OPENING_NAMES[openingId] : top.path.name),
+      minutes: Math.max(2, Math.ceil(Math.ceil(top.path.moves.length / 2) / 2)),
+    };
+  }
 
   const data: InsightsData = {
     openingIq: progress.iq,
@@ -61,6 +89,7 @@ export default async function InsightsPage() {
     drillsThisWeek: stats.drillsThisWeek,
     cardsReviewed: stats.cardsReviewed,
     weaknesses,
+    fixFirst,
   };
 
   return <InsightsScreen data={data} savedUsernames={linked} />;

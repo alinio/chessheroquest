@@ -25,6 +25,19 @@ export const DEMO_INSIGHTS = {
     { name: "French Defense — Classical", state: "review" as const, studied: 4, total: 5 },
     { name: "Caro-Kann Defense — Classical", state: "solid" as const, studied: 5, total: 5 },
   ],
+  // #1 leak's REAL tabiya (fenAfter over the curated Sicilian Dragon mainline).
+  fixFirst: (() => {
+    const p = STARTER_PATHS.find((x) => x.id === "sicilian-dragon");
+    if (!p || p.moves.length === 0) return null;
+    return {
+      fen: fenAfter(p, p.moves.length),
+      orientation: PATH_SIDE[p.id] ?? ("white" as const),
+      lastMove: moveSquaresAt(p, p.moves.length - 1),
+      slug: p.id,
+      family: "Sicilian Dragon",
+      minutes: Math.max(2, Math.ceil(Math.ceil(p.moves.length / 2) / 2)),
+    };
+  })(),
 };
 
 /** Tabiya preview of the realm's next unsealed opening (real fenAfter, LAW #2). */

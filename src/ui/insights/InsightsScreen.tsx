@@ -5,16 +5,32 @@
  * stats from training_events, synced real games (client store), and weakest
  * openings from FSRS mastery. SVG/CSS charts only. Honest empty states.
  */
+import Link from "next/link";
 import "@/src/ui/shell/hub.css";
 import { getRankInsignia } from "@/src/lib/assets";
 import type { MasteryState } from "@/src/domain/mastery";
+import { MiniBoard } from "@/src/ui/board/MiniBoard";
 import { RealGamesCard } from "./RealGamesCard";
+import { FixFirstGames } from "./FixFirstGames";
 
 export interface InsightsWeakness {
   name: string;
   state: MasteryState;
   studied: number;
   total: number;
+}
+
+/** The #1 leak's critical position (tabiya over the real curated line). */
+export interface FixFirstBoard {
+  fen: string;
+  orientation: "white" | "black";
+  lastMove: { from: string; to: string } | null;
+  /** Curated path slug → /drill/{slug}. */
+  slug: string;
+  /** Games-sync opening family for the client-side cross-reference. */
+  family: string;
+  /** Honest drill-length estimate (player moves in the line). */
+  minutes: number;
 }
 
 export interface InsightsData {
@@ -33,6 +49,8 @@ export interface InsightsData {
   drillsThisWeek: number;
   cardsReviewed: number;
   weaknesses: InsightsWeakness[];
+  /** Board card above the first leak row — null when no weakness exists. */
+  fixFirst?: FixFirstBoard | null;
 }
 
 function iqPaths(trend: number[]) {
@@ -134,6 +152,27 @@ export function InsightsScreen({
               No leaks today — every line you&apos;ve studied is holding. The next seal is waiting in your Passport.
             </p>
           ) : (
+            <>
+              {data.fixFirst && (
+                <div className="fixfirst">
+                  <MiniBoard
+                    fen={data.fixFirst.fen}
+                    orientation={data.fixFirst.orientation}
+                    lastMove={data.fixFirst.lastMove}
+                    px={110}
+                    caption="This is where it goes wrong for you."
+                  />
+                  <div className="ff-side">
+                    <FixFirstGames family={data.fixFirst.family} />
+                    <Link className="btn-gold sm" href={`/drill/${data.fixFirst.slug}`} style={{ textDecoration: "none" }}>
+                      Patch it → ~{data.fixFirst.minutes} min
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+          {data.weaknesses.length > 0 &&
             data.weaknesses.map((w) => {
               const pct = w.total > 0 ? Math.round((w.studied / w.total) * 100) : 0;
               return (
@@ -142,8 +181,7 @@ export function InsightsScreen({
                   <div className={`wbar ${w.state}`}><span style={{ width: `${Math.max(pct, 4)}%` }} /></div>
                 </div>
               );
-            })
-          )}
+            })}
         </section>
       </div>
     </main>
