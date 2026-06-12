@@ -6,7 +6,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/src/lib/auth";
-import { getProgress } from "@/src/data/repos/progress";
+import { getProgress, getLatestDnaResult } from "@/src/data/repos/progress";
 import { getOpeningMastery } from "@/src/data/repos/openings";
 import { getDueCards } from "@/src/data/repos/cards";
 import { isStreakAlive } from "@/src/domain/gamification/streak";
@@ -14,6 +14,9 @@ import { pickFocusOpenings } from "@/src/domain/gamification/focus";
 import { STARTER_PATHS } from "@/src/domain/repertoire/starter-paths";
 import { fenAfter, moveSquaresAt, plyOfFen } from "@/src/domain/repertoire/line";
 import { PATH_SIDE } from "@/src/domain/world/guardians";
+import { PATH_TO_OPENING } from "@/src/lib/opening-paths";
+import { OPENING_NAMES } from "@/src/lib/assets";
+import { MiniBoard } from "@/src/ui/board/MiniBoard";
 import type { CuratedPath } from "@/src/domain/repertoire/types";
 import { TodayScreen, type TodayBoardView, type TodayData } from "@/src/ui/today/TodayScreen";
 import { ASSETS } from "@/src/lib/assets";
@@ -53,6 +56,58 @@ export default async function TodayPage() {
               and exactly where you&apos;re losing games.
             </p>
             <Link className="btn-gold cta" href="/dna-test">Start the test →</Link>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  // FIRST RUN — progress exists (DNA done) but NO training yet (0 due, 0 XP):
+  // Day 1, one named line, one CTA. Never "All clear" or a lost streak on an
+  // account that is three minutes old (spec §C Funnel).
+  if (progress.dueCount === 0 && progress.xp === 0) {
+    const dna = await getLatestDnaResult(session.user.id);
+    const firstPath =
+      (dna?.recommendedPathId
+        ? STARTER_PATHS.find((p) => p.id === dna.recommendedPathId)
+        : undefined) ?? STARTER_PATHS[0]!;
+    const openingId = PATH_TO_OPENING[firstPath.id];
+    const openingName = openingId ? OPENING_NAMES[openingId] : firstPath.name;
+    const learnHref = `/train/${firstPath.id}/learn`;
+    const ply = Math.min(2, firstPath.moves.length);
+
+    return (
+      <main className="today-v2 today-first">
+        <section className="today-hero">
+          <div className="bg">
+            <PictureBg landscape={ASSETS.backgrounds.today} portrait={ASSETS.backgrounds.todayPortrait} />
+          </div>
+          <div className="hero-split">
+            <div className="focal">
+              <p className="eyebrow gold">Day 1</p>
+              <h1 className="serif">Your first line awaits.</h1>
+              <p className="sub">
+                <b style={{ color: "var(--gold-bright)" }}>{openingName}</b> — the backbone of
+                your repertoire. Learn 3 moves, earn your first XP.
+              </p>
+              <Link className="btn-gold cta" href={learnHref}>Learn {openingName} →</Link>
+            </div>
+            {ply > 0 && (
+              /* the position Learn opens on — the board IS the button */
+              <Link
+                className="hero-board"
+                href={learnHref}
+                aria-label={`${openingName} — learn the line`}
+              >
+                <MiniBoard
+                  fen={fenAfter(firstPath, ply)}
+                  orientation={PATH_SIDE[firstPath.id] ?? "white"}
+                  lastMove={ply > 0 ? moveSquaresAt(firstPath, ply - 1) : null}
+                  size="hero"
+                  caption={<><b>{firstPath.name}</b> · your first line</>}
+                />
+              </Link>
+            )}
           </div>
         </section>
       </main>
