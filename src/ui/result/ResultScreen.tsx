@@ -19,6 +19,9 @@ import { useStyleQuiz } from "@/src/ui/style-quiz/useStyleQuiz";
 import { ASSETS, getRankInsignia } from "@/src/lib/assets";
 import { PictureBg } from "@/src/ui/PictureBg";
 import { SaveProgress } from "@/src/ui/account/SaveProgress";
+import { MiniBoard } from "@/src/ui/board/MiniBoard";
+import { useCountUp } from "@/src/ui/hooks/useCountUp";
+import "./result-reveal.css";
 
 function useHydrated() {
   return useSyncExternalStore(
@@ -63,6 +66,10 @@ export function ResultScreen() {
   const mounted = useHydrated();
   const dna = useDnaTest((s) => s.result);
   const quiz = useStyleQuiz((s) => s.result);
+
+  const iq = dna?.openingIq ?? SAMPLE.iq;
+  // Gauge count-up (800ms) — part of the sequenced reveal; reduced-motion jumps.
+  const gaugeIq = useCountUp(iq, 800);
 
   useEffect(() => {
     track("result_viewed");
@@ -118,7 +125,6 @@ export function ResultScreen() {
   }
 
   const isSample = !dna || !quiz;
-  const iq = dna?.openingIq ?? SAMPLE.iq;
   const strongest = dna?.strongestFamily ?? SAMPLE.strongest;
   // null weakest on a REAL result = flawless run (never re-brand it with sample data)
   const weakest = dna ? dna.weakestFamily : SAMPLE.weakest;
@@ -131,6 +137,9 @@ export function ResultScreen() {
   const label = cleanLabel(archetype);
   const topPercent = provisionalTopPercent(iq);
   const recs = roadToElo(archetype, weakest);
+  // The weak family's REAL test position (DNA_TEST_BANK) — null when flawless
+  // or when the family has no bank position (then nothing is shown).
+  const weakBoard = weakest ? DNA_TEST_BANK.find((p) => p.openingFamily === weakest) : undefined;
 
   return (
     <Shell>
@@ -144,6 +153,7 @@ export function ResultScreen() {
       <OrnateFrame variant="hero" hero={archetype}>
         <div style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, textAlign: "center" }}>
           <div
+            className="chq-rr chq-rr-crest"
             style={{
               width: 84,
               height: 84,
@@ -157,23 +167,29 @@ export function ResultScreen() {
           >
             <LogoMark size={40} />
           </div>
-          <h1 className="chq-display" style={{ fontSize: 26, fontWeight: 700, color: accent.base, textTransform: "uppercase", margin: 0 }}>
+          <h1 className="chq-display chq-rr chq-rr-crest" style={{ fontSize: 26, fontWeight: 700, color: accent.base, textTransform: "uppercase", margin: 0 }}>
             The {label}
           </h1>
-          <OpeningIQGauge value={iq} size={150} />
-          <p style={{ ...eyebrow, color: "var(--chq-text-2)" }}>Top {topPercent}% · {matchPercent}% match</p>
+          <div className="chq-rr chq-rr-gauge" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+            <OpeningIQGauge value={gaugeIq} size={150} />
+            <p style={{ ...eyebrow, color: "var(--chq-text-2)", margin: 0 }}>Top ~{topPercent}% (provisional) · {matchPercent}% match</p>
+          </div>
 
           {reasons.length > 0 && (
             <ul style={{ listStyle: "none", padding: 0, margin: "2px 0", display: "flex", flexDirection: "column", gap: 5 }}>
-              {reasons.map((r) => (
-                <li key={r} style={{ color: "var(--chq-text-2)", fontSize: 14 }}>
+              {reasons.map((r, i) => (
+                <li
+                  key={r}
+                  className="chq-rr chq-rr-reason"
+                  style={{ color: "var(--chq-text-2)", fontSize: 14, "--rr-i": i } as React.CSSProperties}
+                >
                   <span style={{ color: accent.base }}>◆</span> {r}
                 </li>
               ))}
             </ul>
           )}
 
-          <div style={{ display: "flex", gap: 10, width: "100%", marginTop: 4 }}>
+          <div className="chq-rr chq-rr-facts" style={{ display: "flex", gap: 10, width: "100%", marginTop: 4 }}>
             {[
               ["Best Opening", strongest],
               ["Biggest Weakness", weakestLabel],
@@ -187,8 +203,27 @@ export function ResultScreen() {
         </div>
       </OrnateFrame>
 
+      {/* The weak family's real test position — the board IS the diagnosis. */}
+      {weakBoard && weakest && (
+        <section
+          className="chq-rr chq-rr-board"
+          style={{ marginTop: 16, display: "flex", justifyContent: "center" }}
+        >
+          <MiniBoard
+            fen={weakBoard.fen}
+            orientation={weakBoard.sideToMove}
+            px={120}
+            caption={
+              <>
+                <b>{weakest}</b> · This is where it goes wrong for you.
+              </>
+            }
+          />
+        </section>
+      )}
+
       {/* Road to Elo — the plan, explained (founder: no share/save detours here). */}
-      <section style={{ marginTop: 28 }}>
+      <section className="chq-rr chq-rr-road" style={{ marginTop: 28 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, borderBottom: "1px solid var(--chq-line)", paddingBottom: 8 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={getRankInsignia(1000)} alt="" width={34} height={34} style={{ display: "block" }} />
@@ -225,7 +260,7 @@ export function ResultScreen() {
 
       {/* Email capture at the emotional peak (spec §C Funnel) — never blocking:
           one optional field; the primary CTA below stays the visual primary. */}
-      <section style={{ marginTop: 24 }}>
+      <section className="chq-rr chq-rr-late" style={{ marginTop: 24 }}>
         <SaveProgress
           title="Keep your result"
           sub="Your DNA card + your 3-opening plan, in your inbox. One email, no spam."

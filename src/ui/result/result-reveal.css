@@ -1,0 +1,19 @@
+/* /result sequenced reveal — crest → gauge (count-up) → reasons (stagger) →
+   weakness board → road. Pure CSS animations; prefers-reduced-motion shows the
+   final state immediately (the count-up hook handles its own reduction). */
+@keyframes chq-rr-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.chq-rr { animation: chq-rr-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.chq-rr-crest { animation-delay: 0s; }
+.chq-rr-gauge { animation-delay: 0.25s; }
+/* Reasons stagger 120ms apart, after the gauge count-up (~0.25s + 0.8s). */
+.chq-rr-reason { animation-delay: calc(1.05s + var(--rr-i, 0) * 0.12s); }
+.chq-rr-facts { animation-delay: 1.3s; }
+.chq-rr-board { animation-delay: 1.45s; }
+.chq-rr-road { animation-delay: 1.6s; }
+.chq-rr-late { animation-delay: 1.8s; }
+@media (prefers-reduced-motion: reduce) {
+  .chq-rr { animation: none; }
+}
